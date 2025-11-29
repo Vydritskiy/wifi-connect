@@ -58,7 +58,6 @@ h1{
 /* лента слайдов */
 .track{
   display:flex;
-  width:200%; /* 2 слайда по 100% */
   height:100%;
   transform:translateX(0);
   transition:transform 0.7s cubic-bezier(.22,.61,.36,1);
@@ -308,16 +307,34 @@ body.neon{
 <script>
 const PASSWORD = "Jgthfnbdysq1913";
 
-const track  = document.getElementById("track");
-const slides = document.querySelectorAll(".slide");
-const dots   = document.querySelectorAll(".dots span");
-let index    = 0;
-let qrObj    = null;
+const track    = document.getElementById("track");
+const carousel = document.getElementById("carousel");
+const slides   = document.querySelectorAll(".slide");
+const dots     = document.querySelectorAll(".dots span");
+let index      = 0;
+let qrObj      = null;
+let slideWidth = 0;
+
+/* пересчёт ширины карусели и обновление позиции трека */
+function recalcWidth(){
+  slideWidth = carousel.offsetWidth;
+  updateTrack(true);
+}
 
 /* ---- общий хелпер ---- */
-function updateTrack(){
-  // сдвигаем ленту: каждый слайд = 100%
-  track.style.transform = `translateX(${-index*100}%)`;
+function updateTrack(skipAnim){
+  if(slideWidth === 0) return;
+
+  if(skipAnim){
+    const old = track.style.transition;
+    track.style.transition = "none";
+    track.style.transform = `translateX(${-index * slideWidth}px)`;
+    // форсируем перерисовку
+    void track.offsetWidth;
+    track.style.transition = old || "transform 0.7s cubic-bezier(.22,.61,.36,1)";
+  }else{
+    track.style.transform = `translateX(${-index * slideWidth}px)`;
+  }
 
   dots.forEach((d,i)=>d.classList.toggle("active", i===index));
 
@@ -332,11 +349,11 @@ function updateTrack(){
 /* ---- навигация (стрелки и круговой переход) ---- */
 function nextSlide(){
   index = (index + 1) % slides.length;   // вперёд
-  updateTrack();
+  updateTrack(false);
 }
 function prevSlide(){
   index = (index - 1 + slides.length) % slides.length; // назад
-  updateTrack();
+  updateTrack(false);
 }
 
 /* ---- свайп: touch + мышь ---- */
@@ -357,7 +374,7 @@ function swipeMove(e){
   const dx = p.clientX - startX;
   const dy = p.clientY - startY;
   if(Math.abs(dx) > Math.abs(dy) + 10){
-    e.preventDefault();  // гасим вертикальный скролл, когда явно свайп по горизонтали
+    e.preventDefault();  // гасим вертикальный скролл, когда свайп по горизонтали
   }
 }
 
@@ -366,14 +383,13 @@ function swipeEnd(e){
   const p = e.changedTouches ? e.changedTouches[0] : e;
   const dx = p.clientX - startX;
   if(Math.abs(dx) > 40){
-    if(dx < 0) nextSlide();  // свайп влево → лента едет влево → следующая карта
-    else       prevSlide();  // свайп вправо → лента едет вправо → предыдущая
+    if(dx < 0) nextSlide();  // свайп влево → следующая карта
+    else       prevSlide();  // свайп вправо → предыдущая
   }
   startX = startY = null;
   draggingMouse = false;
 }
 
-const carousel = document.getElementById("carousel");
 carousel.addEventListener("touchstart", swipeStart, {passive:true});
 carousel.addEventListener("touchmove",  swipeMove,  {passive:false});
 carousel.addEventListener("touchend",   swipeEnd);
@@ -432,8 +448,11 @@ function toggleTheme(){
   const oldAndroid = /Android\s([0-6]\.|7\.0)/i.test(ua);
   const oldIOS     = /OS\s(9_|10_)/i.test(ua);
   index = (oldAndroid || oldIOS) ? 1 : 0;
-  updateTrack();
 })();
+
+/* старт: ширина + позиция */
+window.addEventListener("load", recalcWidth);
+window.addEventListener("resize", recalcWidth);
 </script>
 </body>
 </html>
