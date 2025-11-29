@@ -272,14 +272,14 @@ const networks = ["r2d5","r2d2"];
 let selectedIndex = 0;
 
 const track = document.getElementById("nwTrack");
-const wrap = document.getElementById("nwWrap");
+const wrap  = document.getElementById("nwWrap");
 
 /* ==========================
-       CORE SELECT FUNCTION
+     APPLY SELECTION
 ========================== */
 function applySelection(){
   const width = wrap.clientWidth;
-  track.style.transform = "translateX(" + (-selectedIndex * width) + "px)";
+  track.style.transform = `translateX(${-selectedIndex * width}px)`;
 
   document.querySelectorAll(".net-card").forEach((c, i)=>{
     c.classList.toggle("active", i === selectedIndex);
@@ -294,20 +294,25 @@ function applySelection(){
   const net = networks[selectedIndex];
   document.getElementById("helperText").textContent =
     net === "r2d5"
-      ? "Выбрана r2d5 (5 GHz) — быстрее, если устройство поддерживает."
-      : "Выбрана r2d2 (2.4 GHz) — стабильнее на расстоянии и старых устройствах.";
+    ? "Выбрана r2d5 (5 GHz) — быстрее, если устройство поддерживает."
+    : "Выбрана r2d2 (2.4 GHz) — стабильнее на расстоянии и старых устройствах.";
 }
 
+/* ==========================
+    CIRCULAR / LOOP SCROLL
+========================== */
 function selectIndex(i){
-  if(i < 0 || i >= networks.length) return;
+  if(i < 0) i = networks.length - 1;
+  if(i >= networks.length) i = 0;
   selectedIndex = i;
   applySelection();
 }
 
 /* ==========================
-         SWIPE (mobile)
+          SWIPE
 ========================== */
 let startX = null;
+
 wrap.addEventListener("touchstart", e=>{
   startX = e.touches[0].clientX;
 }, {passive:true});
@@ -318,28 +323,36 @@ wrap.addEventListener("touchend", e=>{
 
   if(Math.abs(dx) > 40){
     if(dx < 0) selectIndex(selectedIndex + 1);
-    else selectIndex(selectedIndex - 1);
+    else      selectIndex(selectedIndex - 1);
   }
   startX = null;
 });
 
 /* ==========================
-        CLICK (PC & Mobile)
+        CLICK SELECT
 ========================== */
 document.querySelectorAll(".net-card").forEach((card, idx)=>{
   card.addEventListener("click", ()=>selectIndex(idx));
 });
 
 /* ==========================
-       WHEEL (PC)
+     WHEEL NAVIGATION
 ========================== */
 wrap.addEventListener("wheel", e=>{
   if(e.deltaY > 0) selectIndex(selectedIndex + 1);
-  else selectIndex(selectedIndex - 1);
+  else             selectIndex(selectedIndex - 1);
 });
 
 /* ==========================
-       AUTO-THEME
+      KEYBOARD SUPPORT
+========================== */
+document.addEventListener("keydown", e=>{
+  if(e.key === "ArrowRight") selectIndex(selectedIndex + 1);
+  if(e.key === "ArrowLeft")  selectIndex(selectedIndex - 1);
+});
+
+/* ==========================
+      THEME
 ========================== */
 function updateThemeIcon(){
   document.querySelector(".theme-toggle").textContent =
@@ -354,29 +367,27 @@ function toggleTheme(){
 
 (function initTheme(){
   const stored = localStorage.theme;
-  const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
+  const prefersDark = matchMedia("(prefers-color-scheme: dark)").matches;
 
-  if(stored === "dark"){
-    document.body.classList.add("neon");
-  } else if(stored === "system"){
-    if(prefersDark) document.body.classList.add("neon");
-  } else {
-    if(prefersDark) document.body.classList.add("neon");
-  }
+  if(stored === "dark") document.body.classList.add("neon");
+  else if(stored === "system" && prefersDark) document.body.classList.add("neon");
+  else if(!stored && prefersDark) document.body.classList.add("neon");
+
   updateThemeIcon();
 })();
 
 /* ==========================
-     AUTOSELECT BEST NETWORK
+   AUTOSELECT BEST NETWORK
 ========================== */
 (function autoSelectBest(){
   const ua = navigator.userAgent;
+
   const oldAndroid = /Android\s([0-6]\.\d|7\.0)/i.test(ua);
-  const oldIOS = /OS\s(9_|10_|11_)/i.test(ua);
+  const oldIOS     = /OS\s(9_|10_|11_)/i.test(ua);
 
   let prefer5 = !(oldAndroid || oldIOS);
 
-  const conn = navigator.connection || navigator.webkitConnection || null;
+  const conn = navigator.connection;
   if(conn){
     if(conn.downlink < 10) prefer5 = false;
     if(conn.rtt < 30 && conn.downlink > 30) prefer5 = true;
@@ -386,15 +397,14 @@ function toggleTheme(){
 })();
 
 /* ==========================
-         QR GENERATION
+        QR GENERATION
 ========================== */
 function showQR(){
   const net = networks[selectedIndex];
   const wifiString = `WIFI:T:WPA;S:${net};P:${PASSWORD};;`;
 
-  const canvas = document.getElementById("qrCanvas");
   new QRious({
-    element: canvas,
+    element: document.getElementById("qrCanvas"),
     value: wifiString,
     size: 200,
     level: "H",
@@ -406,7 +416,7 @@ function showQR(){
 }
 
 /* ==========================
-      ANDROID AUTOCONNECT
+   ANDROID AUTOCONNECT
 ========================== */
 function autoConnect(){
   const net = networks[selectedIndex];
@@ -422,17 +432,18 @@ function copyPass(){
 }
 
 /* ==========================
-         INIT ON LOAD
+         INIT
 ========================== */
 window.addEventListener("load", ()=>{
   applySelection();
-  window.addEventListener("resize", ()=>applySelection());
+  window.addEventListener("resize", applySelection);
 
   if("serviceWorker" in navigator){
     navigator.serviceWorker.register("sw.js");
   }
 });
 </script>
+
 
 </body>
 </html>
