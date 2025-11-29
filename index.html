@@ -1,1 +1,438 @@
-<!-- index placeholder: insert full v3.7 HTML here -->
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Wi-Fi Connect</title>
+<link rel="manifest" href="manifest.json">
+
+<style>
+:root{
+  --accent:#9b75ff;
+  --accent2:#c5a0ff;
+  --bg1:#1a0f35;
+  --bg2:#070017;
+  --card-bg:rgba(15,0,40,0.92);
+  --text:#f3ebff;
+}
+
+*{box-sizing:border-box;margin:0;padding:0;}
+
+body{
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
+  background:radial-gradient(circle at top,var(--bg1),var(--bg2));
+  min-height:100vh;
+  color:var(--text);
+  overflow-x:hidden;
+}
+
+/* контейнер */
+.wrapper{
+  max-width:520px;
+  margin:40px auto;
+  padding:16px;
+}
+
+h1{
+  text-align:center;
+  font-size:26px;
+  margin-bottom:24px;
+}
+
+/* внешняя карточка */
+.card{
+  background:var(--card-bg);
+  border-radius:28px;
+  padding:24px 24px 22px;
+  box-shadow:0 22px 70px rgba(0,0,0,0.6);
+  position:relative;
+}
+
+/* область слайдера */
+.carousel{
+  position:relative;
+  height:340px;              /* высота под «экранчик» + подписи */
+  overflow:hidden;
+}
+
+/* отдельный слайд */
+.slide{
+  position:absolute;
+  inset:0;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:flex-start;
+  opacity:0;
+  pointer-events:none;
+  transition:opacity .3s ease;
+}
+
+.slide.active{
+  opacity:1;
+  pointer-events:auto;
+}
+
+/* внутренняя прямоугольная карточка, как на старом варианте */
+.slide-card{
+  width:100%;
+  max-width:480px;
+  height:260px;
+  margin:0 auto;
+  border-radius:32px;
+  padding:26px 28px 20px;
+  background:radial-gradient(circle at top,#2b184f,#0b021e);
+  border:1px solid rgba(190,155,255,0.7);
+  box-shadow:
+    0 0 0 1px rgba(80,40,160,0.7),
+    0 20px 40px rgba(0,0,0,0.8);
+  display:flex;
+  flex-direction:column;
+  justify-content:space-between;
+}
+
+/* область с иконкой и основным названием */
+.slide-inner{
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:flex-start;
+  flex:1;
+}
+
+/* иконка внутри прямоугольника */
+.slide-inner img{
+  width:120px;
+  max-height:140px;
+  object-fit:contain;
+  margin-bottom:10px;
+  filter:drop-shadow(0 0 18px rgba(170,140,255,0.7));
+}
+
+/* крупный SSID внутри карточки */
+.slide-ssid-main{
+  font-size:24px;
+  font-weight:600;
+  margin-top:2px;
+}
+
+/* подпись "5 GHz / 2.4 GHz" внутри карточки */
+.slide-ssid-sub{
+  font-size:16px;
+  opacity:.85;
+}
+
+/* подпись под карточкой */
+.slide-caption{
+  text-align:center;
+  font-size:14px;
+  opacity:.85;
+  margin-top:10px;
+}
+
+/* стрелки */
+.nav-arrow{
+  position:absolute;
+  top:50%;
+  transform:translateY(-50%);
+  width:52px;
+  height:52px;
+  border-radius:50%;
+  background:rgba(0,0,0,0.55);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  cursor:pointer;
+  z-index:20;
+  backdrop-filter:blur(3px);
+}
+.nav-arrow.left{ left:-26px; }
+.nav-arrow.right{ right:-26px; }
+.nav-arrow img{
+  width:22px;
+  pointer-events:none;
+}
+
+/* точки */
+.dots{
+  text-align:center;
+  margin-top:8px;
+}
+.dots span{
+  width:10px;height:10px;
+  display:inline-block;
+  margin:0 4px;
+  border-radius:50%;
+  background:#5d4f94;
+  transition:.2s;
+}
+.dots span.active{
+  background:var(--accent);
+  box-shadow:0 0 10px var(--accent);
+}
+
+/* кнопки */
+.btn{
+  width:100%;
+  padding:15px;
+  border-radius:18px;
+  border:none;
+  font-size:16px;
+  background:linear-gradient(135deg,var(--accent),var(--accent2));
+  color:white;
+  margin-top:14px;
+  cursor:pointer;
+  box-shadow:0 12px 32px rgba(0,0,0,0.55);
+  transition:.12s;
+}
+.btn:hover{
+  transform:translateY(-1px);
+  filter:brightness(1.04);
+}
+
+/* QR */
+.qr{
+  display:none;
+  text-align:center;
+  margin-top:16px;
+}
+#qrCanvas{
+  display:inline-block;
+  width:200px;height:200px;
+  background:white;
+  padding:10px;
+  border-radius:14px;
+}
+
+/* подпись под всем блоком */
+.helper{
+  margin-top:10px;
+  font-size:13px;
+  opacity:.85;
+  text-align:center;
+}
+
+/* переключатель темы */
+.theme-toggle{
+  position:fixed;
+  top:14px;right:14px;
+  width:46px;height:46px;
+  border-radius:50%;
+  background:rgba(0,0,0,0.4);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:23px;
+  color:#ffd98a;
+  cursor:pointer;
+  z-index:40;
+}
+
+body.neon{
+  background:radial-gradient(circle at top,#060012,#000);
+}
+</style>
+</head>
+<body>
+
+<div class="theme-toggle" onclick="toggleTheme()">☀️</div>
+
+<div class="wrapper">
+  <h1>Подключение к Wi-Fi</h1>
+
+  <div class="card">
+
+    <div class="carousel" id="carousel">
+      <!-- r2d5 -->
+      <div class="slide active" data-net="r2d5">
+        <div class="slide-card">
+          <div class="slide-inner">
+            <img src="icons/icon_r2d5.svg" alt="r2d5">
+            <div class="slide-ssid-main">r2d5</div>
+            <div class="slide-ssid-sub">5 GHz</div>
+          </div>
+          <div class="slide-caption">
+            r2d5 · быстрее, если поддерживается
+          </div>
+        </div>
+      </div>
+
+      <!-- r2d2 -->
+      <div class="slide" data-net="r2d2">
+        <div class="slide-card">
+          <div class="slide-inner">
+            <img src="icons/icon_r2d2.svg" alt="r2d2">
+            <div class="slide-ssid-main">r2d2</div>
+            <div class="slide-ssid-sub">2.4 GHz</div>
+          </div>
+          <div class="slide-caption">
+            r2d2 · стабильнее на расстоянии
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- стрелки -->
+    <div class="nav-arrow left" onclick="prevSlide()">
+      <img src="icons/arrow_left.svg" alt="">
+    </div>
+    <div class="nav-arrow right" onclick="nextSlide()">
+      <img src="icons/arrow_right.svg" alt="">
+    </div>
+
+    <!-- точки -->
+    <div class="dots" id="dots">
+      <span class="active"></span>
+      <span></span>
+    </div>
+
+    <!-- кнопки -->
+    <button class="btn" onclick="autoConnect()">Подключиться автоматически (Android)</button>
+    <button class="btn" onclick="showQR()">Показать QR-код</button>
+    <button class="btn" onclick="copyPass()">Скопировать пароль</button>
+
+    <!-- QR -->
+    <div class="qr" id="qrBox">
+      <div id="qrCanvas"></div>
+    </div>
+
+    <!-- подпись внизу -->
+    <div class="helper" id="helperText"></div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
+
+<script>
+const PASSWORD = "Jgthfnbdysq1913";
+
+let slides = document.querySelectorAll(".slide");
+let dots   = document.querySelectorAll(".dots span");
+let index  = 0;
+let qrObj  = null;
+
+/* -------- обновление UI -------- */
+function updateSlide(){
+  slides.forEach((s,i)=>s.classList.toggle("active", i===index));
+  dots.forEach((d,i)=>d.classList.toggle("active", i===index));
+
+  const net = slides[index].dataset.net;
+  updateHelper(net);
+  document.getElementById("qrBox").style.display = "none";
+}
+
+function prevSlide(){
+  index = (index - 1 + slides.length) % slides.length;
+  updateSlide();
+}
+function nextSlide(){
+  index = (index + 1) % slides.length;
+  updateSlide();
+}
+
+/* -------- свайп: touch + мышь, без прокрутки страницы -------- */
+let swipeStartX = null;
+let swipeStartY = null;
+let draggingMouse = false;
+
+function swipeStart(e){
+  const p = e.touches ? e.touches[0] : e;
+  swipeStartX = p.clientX;
+  swipeStartY = p.clientY;
+  draggingMouse = !e.touches;
+}
+
+function swipeMove(e){
+  if(swipeStartX === null) return;
+  const p = e.touches ? e.touches[0] : e;
+  const dx = p.clientX - swipeStartX;
+  const dy = p.clientY - swipeStartY;
+  if(Math.abs(dx) > Math.abs(dy) + 10){
+    e.preventDefault(); // блокируем вертикальный скролл
+  }
+}
+
+function swipeEnd(e){
+  if(swipeStartX === null) return;
+  const p = e.changedTouches ? e.changedTouches[0] : e;
+  const dx = p.clientX - swipeStartX;
+  if(Math.abs(dx) > 40){
+    if(dx < 0) nextSlide();
+    else       prevSlide();
+  }
+  swipeStartX = swipeStartY = null;
+  draggingMouse = false;
+}
+
+const carousel = document.getElementById("carousel");
+carousel.addEventListener("touchstart", swipeStart, {passive:true});
+carousel.addEventListener("touchmove",  swipeMove,  {passive:false});
+carousel.addEventListener("touchend",   swipeEnd);
+carousel.addEventListener("mousedown",  swipeStart);
+carousel.addEventListener("mousemove",  e=>{ if(draggingMouse) swipeMove(e); });
+carousel.addEventListener("mouseup",    swipeEnd);
+carousel.addEventListener("mouseleave", e=>{ if(draggingMouse) swipeEnd(e); });
+
+/* -------- helper -------- */
+function updateHelper(net){
+  helperText.textContent =
+    net === "r2d5"
+      ? "Выбрана r2d5 (5 GHz) — обычно быстрее, если устройство поддерживает 5 GHz."
+      : "Выбрана r2d2 (2.4 GHz) — стабильнее на расстоянии и старых устройствах.";
+}
+
+/* -------- QR -------- */
+function showQR(){
+  const net = slides[index].dataset.net;
+  const payload = `WIFI:T:WPA;S:${net};P:${PASSWORD};;`;
+
+  if(!qrObj){
+    qrObj = new QRCode(document.getElementById("qrCanvas"), {
+      width:200,height:200
+    });
+  }
+  qrObj.clear();
+  qrObj.makeCode(payload);
+  document.getElementById("qrBox").style.display = "block";
+}
+
+/* -------- авто-подключение (Android) -------- */
+function autoConnect(){
+  const net = slides[index].dataset.net;
+  location.href = `WIFI:T:WPA;S:${net};P:${PASSWORD};;`;
+}
+
+/* -------- копирование -------- */
+function copyPass(){
+  navigator.clipboard.writeText(PASSWORD).then(()=>alert("Пароль скопирован"));
+}
+
+/* -------- тема -------- */
+function toggleTheme(){
+  document.body.classList.toggle("neon");
+  localStorage.theme = document.body.classList.contains("neon") ? "dark" : "light";
+  document.querySelector(".theme-toggle").textContent =
+    document.body.classList.contains("neon") ? "🌙" : "☀️";
+}
+(function initTheme(){
+  const stored = localStorage.theme;
+  const prefersDark = window.matchMedia &&
+                      window.matchMedia("(prefers-color-scheme: dark)").matches;
+  if(stored==="dark" || (!stored && prefersDark)){
+    document.body.classList.add("neon");
+  }
+  document.querySelector(".theme-toggle").textContent =
+    document.body.classList.contains("neon") ? "🌙" : "☀️";
+})();
+
+/* -------- авто-выбор сети -------- */
+(function autoPick(){
+  const ua = navigator.userAgent;
+  const oldAndroid = /Android\s([0-6]\.|7\.0)/i.test(ua);
+  const oldIOS     = /OS\s(9_|10_)/i.test(ua);
+  index = (oldAndroid || oldIOS) ? 1 : 0;
+  updateSlide();
+})();
+</script>
+</body>
+</html>
