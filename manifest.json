@@ -1,0 +1,9 @@
+{
+  "name": "Wi-Fi Connect",
+  "short_name": "WiFi",
+  "start_url": ".",
+  "display": "standalone",
+  "background_color": "#080015",
+  "theme_color": "#9b75ff",
+  "icons": []
+}
