@@ -1,0 +1,11 @@
+<svg width="256" height="256" viewBox="0 0 256 256" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g fill="#A578FF">
+<path d="M128 40c-22 0-40 18-40 40v12h80V80c0-22-18-40-40-40z"/>
+<circle cx="128" cy="72" r="12" fill="#fff"/>
+<path d="M128 128c-20 0-40 6-56 18-6 5-6 13 0 18s16 5 22 0c10-8 22-12 34-12s24 4 34 12c6 5 16 5 22 0s6-13 0-18c-16-12-36-18-56-18z"/>
+<path d="M128 156c-14 0-28 4-38 12-5 4-5 11 0 15s14 4 19 0c7-6 13-8 19-8s12 2 19 8c5 4 14 4 19 0s5-11 0-15c-10-8-24-12-38-12z"/>
+<circle cx="128" cy="208" r="10"/>
+<text x="128" y="240" font-family="Arial" font-size="32" fill="#A578FF" text-anchor="middle">r2d5</text>
+<text x="128" y="268" font-family="Arial" font-size="20" fill="#A578FF" text-anchor="middle">5 GHz</text>
+</g>
+</svg>
