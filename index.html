@@ -102,14 +102,6 @@ h1{
   transition:transform .25s ease, box-shadow .25s ease;
 }
 
-/* лёгкий 3D-эффект при свайпе */
-.slide-card.swipe-left{
-  transform:rotateY(-7deg);
-}
-.slide-card.swipe-right{
-  transform:rotateY(7deg);
-}
-
 /* область с иконкой и названием */
 .slide-inner{
   display:flex;
@@ -259,6 +251,25 @@ h1{
   gap:6px;
 }
 
+/* идеи имён */
+.fake-names{
+  margin-top:14px;
+  font-size:13px;
+  opacity:.9;
+}
+.fake-title{
+  font-weight:600;
+  margin-bottom:4px;
+}
+.fake-names ul{
+  list-style:none;
+  margin:0;
+  padding:0;
+}
+.fake-names li{
+  margin-bottom:2px;
+}
+
 /* «инста»-карточка */
 .share-card{
   margin-top:10px;
@@ -309,20 +320,16 @@ h1{
   box-shadow:0 6px 18px rgba(0,0,0,0.6);
 }
 
-/* панель админки — слой, который включается/выключается */
+/* панель админки */
 .admin-panel{
   position:fixed;
   inset:0;
   z-index:44;
-  pointer-events:none;        /* по умолчанию не перехватывает клики */
+  pointer-events:none;
 }
-
-/* когда открыта — начинаем принимать клики */
 .admin-panel.open{
   pointer-events:auto;
 }
-
-/* фон под панелью */
 .admin-backdrop{
   position:absolute;
   inset:0;
@@ -331,13 +338,9 @@ h1{
   opacity:0;
   transition:opacity .25s ease-out;
 }
-
-/* при открытии делаем фон видимым */
 .admin-panel.open .admin-backdrop{
   opacity:1;
 }
-
-/* сама «ванночка» с настройками */
 .admin-inner{
   position:absolute;
   left:0;right:0;
@@ -352,12 +355,9 @@ h1{
   transform:translateY(100%);
   transition:transform .25s ease-out;
 }
-
-/* при открытии поднимаем панель вверх */
 .admin-panel.open .admin-inner{
   transform:translateY(0);
 }
-
 .admin-inner h2{
   font-size:18px;
   margin-bottom:8px;
@@ -543,6 +543,12 @@ body.neon{
       <div class="guest-info-row">🐾 <span>У нас живёт кот, он дружелюбный.</span></div>
     </div>
 
+    <!-- идеи имён -->
+    <div class="fake-names">
+      <div class="fake-title">Идеи имён для Wi-Fi:</div>
+      <ul id="fakeList"></ul>
+    </div>
+
     <!-- «инста»-карточка -->
     <div class="share-card">
       <div class="share-title">#WiFiAtR2D2</div>
@@ -582,7 +588,7 @@ body.neon{
 
     <div class="admin-row">
       <label for="admMaps">Ссылка «Как добраться»</label>
-      <input id="admMaps" type="text" placeholder="https://maps.app.goo.gl/...">
+      <input id="admMaps" type="text" placeholder="https://www.google.com/maps">
     </div>
 
     <div class="admin-row">
@@ -619,7 +625,7 @@ const defaultConfig = {
     "Ванная — направо.",
     "У нас живёт кот, он дружелюбный."
   ],
-  mapsUrl: "https://maps.app.goo.gl/XXXXXXXX"
+  mapsUrl: "https://www.google.com/maps"
 };
 
 let CONFIG = loadConfig();
@@ -650,6 +656,7 @@ const guestTagEl  = document.getElementById("guestMode");
 const netStatus   = document.getElementById("netStatus");
 const dots        = document.querySelectorAll(".dots span");
 const welcomeEl   = document.getElementById("welcomeText");
+const fakeListEl  = document.getElementById("fakeList");
 let   slides      = Array.from(document.querySelectorAll(".slide"));
 const REAL_COUNT  = slides.length;
 
@@ -675,7 +682,7 @@ track.insertBefore(lastClone, track.firstChild);
 slides = Array.from(document.querySelectorAll(".slide"));
 
 /* ---------- конфиг helpers ---------- */
-function getCurrentBand(){     // "5" или "24"
+function getCurrentBand(){
   const logical = (index - 1 + REAL_COUNT) % REAL_COUNT;
   return logical === 0 ? "5" : "24";
 }
@@ -788,15 +795,10 @@ track.addEventListener("transitionend", e=>{
   isAnimating = false;
 });
 
-/* ---------- свайп ---------- */
+/* ---------- свайп (без анимации карточки) ---------- */
 let startX = null;
 let startY = null;
 let draggingMouse = false;
-
-function currentSlideCard(){
-  const s = slides[index];
-  return s ? s.querySelector(".slide-card") : null;
-}
 
 function swipeStart(e){
   const target = e.target;
@@ -815,14 +817,6 @@ function swipeMove(e){
   const dx = p.clientX - startX;
   const dy = p.clientY - startY;
 
-  const cardEl = currentSlideCard();
-  if(cardEl){
-    cardEl.classList.remove("swipe-left","swipe-right");
-    if(Math.abs(dx) > 15){
-      cardEl.classList.add(dx < 0 ? "swipe-left" : "swipe-right");
-    }
-  }
-
   if(Math.abs(dx) > Math.abs(dy) + 10){
     e.preventDefault();
   }
@@ -836,11 +830,6 @@ function swipeEnd(e){
   if(Math.abs(dx) > 40){
     if(dx < 0) nextSlide();
     else       prevSlide();
-  }
-
-  const cardEl = currentSlideCard();
-  if(cardEl){
-    cardEl.classList.remove("swipe-left","swipe-right");
   }
 
   startX = startY = null;
@@ -888,7 +877,8 @@ function copyPass(){
 
 /* ---------- ссылка на карту ---------- */
 function openMaps(){
-  window.open(CONFIG.mapsUrl || defaultConfig.mapsUrl, "_blank");
+  const url = CONFIG.mapsUrl || defaultConfig.mapsUrl;
+  window.open(url, "_blank");
 }
 
 /* ---------- звук ---------- */
@@ -965,6 +955,40 @@ function updateOnlineStatus(){
 window.addEventListener("online", updateOnlineStatus);
 window.addEventListener("offline", updateOnlineStatus);
 
+/* ---------- генератор фейковых имён ---------- */
+function generateFakeNames(){
+  if(!fakeListEl) return;
+  const adjectives = [
+    "Neon","Cosmic","Lazy","Hyper","Secret","Midnight",
+    "Pixel","Silent","Turbo","Happy","Retro","Rogue",
+    "Galactic","Sleepy","Magic","Hidden"
+  ];
+  const nouns = [
+    "Penguin","Router","Falcon","Coffee","Droid","Fox",
+    "Otter","Unicorn","Knight","Nerd","Panda","Dragon",
+    "Potato","Ninja","Cat","Badger"
+  ];
+  const suffixes = [
+    "5G","2_4G","_guest","_home","_wifi","_lair","_network","_lab"
+  ];
+
+  const used = new Set();
+  const names = [];
+
+  while(names.length < 3){
+    const a = adjectives[Math.floor(Math.random()*adjectives.length)];
+    const n = nouns[Math.floor(Math.random()*nouns.length)];
+    const s = suffixes[Math.floor(Math.random()*suffixes.length)];
+    const name = `${a}${n}${s}`;
+    if(!used.has(name)){
+      used.add(name);
+      names.push(name);
+    }
+  }
+
+  fakeListEl.innerHTML = names.map(n => `<li>${n}</li>`).join("");
+}
+
 /* ---------- авто-выбор сети для старых устройств ---------- */
 (function autoPick(){
   const oldAndroid = /android\s([0-6]\.|7\.0)/i.test(ua);
@@ -1023,6 +1047,7 @@ window.addEventListener("load", ()=>{
   recalcWidth();
   applyConfigToUI();
   updateOnlineStatus();
+  generateFakeNames();
 });
 window.addEventListener("resize", recalcWidth);
 </script>
