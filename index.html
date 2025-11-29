@@ -16,7 +16,6 @@ body {
 }
 
 :root {
-    /* светлая тема */
     --bg:#f5f6ff;
     --fg:#000;
     --card:#ffffffaa;
@@ -25,7 +24,6 @@ body {
 }
 
 body.neon {
-    /* тёмная тема */
     --bg:#070013;
     --fg:#dcd3ff;
     --card:#15002baa;
@@ -33,99 +31,69 @@ body.neon {
     --btn:#7e5dff;
 }
 
-.container { 
-    padding:20px; 
-    max-width:480px; 
-    margin:auto; 
-}
-
-.card {
-    background:var(--card);
-    backdrop-filter:blur(20px);
-    border-radius:20px;
-    padding:25px;
-    margin-top:40px;
-    transition:0.3s;
-}
-
+.container { padding:20px; max-width:480px; margin:auto; }
+.card { background:var(--card); backdrop-filter:blur(20px); border-radius:20px; padding:25px; margin-top:40px; transition:0.3s; }
 h1 { text-align:center; margin-top:40px; }
 
 button {
-    width:100%;
-    padding:15px;
-    border-radius:15px;
-    border:none;
-    font-size:18px;
-    margin-top:15px;
-    background:var(--btn);
-    color:white;
-    cursor:pointer;
+    width:100%; padding:15px; border-radius:15px; border:none; font-size:18px;
+    margin-top:15px; background:var(--btn); color:white; cursor:pointer;
 }
 
-/* Кнопка переключения темы */
 .theme-toggle{
-    position:fixed;
-    top:10px; right:10px;
-    width:46px;
-    height:46px;
-    border-radius:50%;
-    background:var(--btn);
-    display:flex;
-    justify-content:center;
-    align-items:center;
-    cursor:pointer;
-    font-size:22px;
-    color:white;
+    position:fixed; top:10px; right:10px;
+    width:46px; height:46px; border-radius:50%; background:var(--btn);
+    display:flex; justify-content:center; align-items:center;
+    cursor:pointer; font-size:22px; color:white;
 }
 
-/* Селект */
-select {
-    width:100%;
-    padding:14px;
-    border-radius:14px;
-    border:none;
+.network-list {
+    display:flex; flex-direction:column; gap:12px;
+    margin-bottom:20px;
+}
+
+.network-item {
+    display:flex; align-items:center; gap:15px;
     background:var(--select-bg);
-    color:var(--fg);
-    font-size:18px;
-    margin-bottom:18px;
+    padding:12px;
+    border-radius:14px;
+    cursor:pointer;
+    transition:0.2s;
 }
 
-/* Иконки сетей */
-.net-icons {
-    display:flex;
-    justify-content:flex-start;
-    gap:20px;
-    margin-bottom:10px;
+.network-item:hover {
+    transform:scale(1.02);
 }
 
-.net-icons img {
-    width:52px;
-    height:52px;
-    border-radius:50%;
-    object-fit:cover;
+.network-item img {
+    width:52px; height:52px; border-radius:50%; object-fit:cover;
+}
+
+.network-item.selected {
+    outline:3px solid var(--btn);
 }
 </style>
 </head>
 <body>
 
 <div class="theme-toggle" onclick="toggleTheme()">☀️</div>
-
 <h1>Подключение к Wi-Fi</h1>
 
 <div class="container">
 <div class="card">
 
     <label>Выберите сеть:</label>
+    <div class="network-list">
+        <div class="network-item" onclick="selectNet('r2d5', this)">
+            <img src="icons/icon_r2d5_192.png">
+            <div><b>r2d5</b> — 5 GHz</div>
+        </div>
 
-    <div class="net-icons">
-        <img src="icons/icon_r2d5_192.png">
-        <img src="icons/icon_r2d2_192.png">
+        <div class="network-item" onclick="selectNet('r2d2', this)">
+            <img src="icons/icon_r2d2_192.png">
+            <div><b>r2d2</b> — 2.4 GHz</div>
+        </div>
     </div>
-
-    <select id="network">
-        <option value="r2d5">r2d5 — 5 GHz</option>
-        <option value="r2d2">r2d2 — 2.4 GHz</option>
-    </select>
 
     <button onclick="autoConnect()">Подключиться автоматически (Android)</button>
     <button onclick="showQR()">Показать QR-код</button>
@@ -138,22 +106,26 @@ select {
 </div>
 </div>
 
-
 <script>
-/* Смена темы вручную */
+let selectedNetwork = "r2d5";
+
+function selectNet(net, el){
+    selectedNetwork = net;
+    document.querySelectorAll('.network-item').forEach(i=>i.classList.remove('selected'));
+    el.classList.add('selected');
+}
+
 function toggleTheme(){
     document.body.classList.toggle('neon');
     updateThemeIcon();
     localStorage.theme = document.body.classList.contains('neon') ? 'dark' : 'light';
 }
 
-/* Иконка солнца/луны */
 function updateThemeIcon(){
     document.querySelector(".theme-toggle").innerHTML =
         document.body.classList.contains('neon') ? "🌙" : "☀️";
 }
 
-/* Авто-тема по времени */
 function autoDetectTheme(){
     let hour = new Date().getHours();
     let night = hour < 7 || hour >= 19;
@@ -170,24 +142,18 @@ function autoDetectTheme(){
 
 autoDetectTheme();
 
-/* Показ QR */
 function showQR(){
-    let n = document.getElementById("network").value;
-    document.getElementById("qrimg").src = "qr/qr_" + n + ".png";
+    document.getElementById("qrimg").src = "qr/qr_" + selectedNetwork + ".png";
 }
 
-/* Android подключение */
 function autoConnect(){
-    let n = document.getElementById("network").value;
-    window.location.href = "WIFI:T:" + n + ";";
+    window.location.href = "WIFI:T:" + selectedNetwork + ";";
 }
 
-/* Копирование пароля */
 function copyPass(){
     navigator.clipboard.writeText("Jgthfnbdysq1913");
     alert("Пароль скопирован");
 }
-
 </script>
 </body>
 </html>
