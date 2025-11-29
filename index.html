@@ -36,7 +36,15 @@ body{
 h1{
   text-align:center;
   font-size:26px;
-  margin-bottom:24px;
+  margin-bottom:16px;
+}
+
+/* приветствие */
+.welcome{
+  text-align:center;
+  font-size:15px;
+  opacity:.9;
+  margin-bottom:6px;
 }
 
 /* внешняя карточка */
@@ -46,10 +54,7 @@ h1{
   padding:24px 24px 22px;
   box-shadow:0 22px 70px rgba(0,0,0,0.6);
   position:relative;
-  /* внутри карты ловим свайпы, но разрешаем вертикальный скролл,
-     если жест преимущественно по Y */
   touch-action: pan-y;
-  /* отключаем выделение текста/элементов внутри карты */
   user-select:none;
   -webkit-user-select:none;
 }
@@ -74,7 +79,7 @@ h1{
   flex:0 0 100%;
   height:100%;
   display:flex;
-  align-items:center;   /* центровка по вертикали */
+  align-items:center;
   justify-content:center;
 }
 
@@ -94,6 +99,15 @@ h1{
   display:flex;
   flex-direction:column;
   justify-content:space-between;
+  transition:transform .25s ease, box-shadow .25s ease;
+}
+
+/* лёгкий 3D-эффект при свайпе */
+.slide-card.swipe-left{
+  transform:rotateY(-7deg);
+}
+.slide-card.swipe-right{
+  transform:rotateY(7deg);
 }
 
 /* область с иконкой и названием */
@@ -189,7 +203,7 @@ h1{
   font-size:16px;
   background:linear-gradient(135deg,var(--accent),var(--accent2));
   color:white;
-  margin-top:14px;
+  margin-top:12px;
   cursor:pointer;
   box-shadow:0 12px 32px rgba(0,0,0,0.55);
   transition:.12s;
@@ -217,8 +231,51 @@ h1{
 .helper{
   margin-top:10px;
   font-size:13px;
-  opacity:.85;
+  opacity:.9;
   text-align:center;
+}
+
+/* гостевой режим (шуточное имя сети) */
+.guest-tag{
+  margin-top:6px;
+  font-size:13px;
+  text-align:center;
+  opacity:.9;
+}
+
+/* статус интернета */
+.status{
+  margin-top:6px;
+  font-size:12px;
+  text-align:center;
+  opacity:.8;
+}
+
+/* инфо для гостей */
+.guest-info{
+  margin-top:14px;
+  font-size:13px;
+  line-height:1.4;
+  opacity:.9;
+}
+.guest-info-row{
+  display:flex;
+  gap:6px;
+}
+
+/* «инста»-карточка */
+.share-card{
+  margin-top:10px;
+  border-radius:16px;
+  padding:10px 12px;
+  background:rgba(255,255,255,0.03);
+  border:1px dashed rgba(200,170,255,0.5);
+  font-size:12px;
+  text-align:center;
+}
+.share-title{
+  font-weight:600;
+  margin-bottom:4px;
 }
 
 /* переключатель темы */
@@ -237,6 +294,150 @@ h1{
   z-index:40;
 }
 
+/* кнопка админки */
+.admin-toggle{
+  position:fixed;
+  right:16px;
+  bottom:16px;
+  width:34px;
+  height:34px;
+  border-radius:50%;
+  background:rgba(0,0,0,0.55);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:18px;
+  color:#f5e9ff;
+  cursor:pointer;
+  z-index:45;
+  box-shadow:0 6px 18px rgba(0,0,0,0.6);
+}
+
+/* панель админки */
+.admin-panel{
+  position:fixed;
+  left:0;right:0;
+  bottom:-100%;
+  z-index:44;
+  transition:bottom .25s ease-out;
+}
+.admin-panel.open{
+  bottom:0;
+}
+.admin-backdrop{
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,0.4);
+  backdrop-filter:blur(3px);
+}
+.admin-inner{
+  position:relative;
+  max-width:520px;
+  margin:0 auto;
+  background:rgba(16,8,40,0.96);
+  color:#f3ebff;
+  padding:16px 18px 14px;
+  border-radius:22px 22px 0 0;
+  box-shadow:0 -10px 30px rgba(0,0,0,0.7);
+}
+.admin-inner h2{
+  font-size:18px;
+  margin-bottom:8px;
+}
+.admin-row{
+  display:flex;
+  flex-direction:column;
+  margin-bottom:8px;
+}
+.admin-row label{
+  font-size:12px;
+  opacity:.9;
+  margin-bottom:2px;
+}
+.admin-row input,
+.admin-row textarea{
+  border-radius:10px;
+  border:none;
+  padding:7px 9px;
+  font-size:13px;
+  font-family:inherit;
+  background:rgba(255,255,255,0.06);
+  color:#f3ebff;
+}
+.admin-row textarea{
+  resize:vertical;
+  min-height:40px;
+}
+.admin-actions{
+  display:flex;
+  justify-content:space-between;
+  gap:8px;
+  margin-top:6px;
+}
+.admin-btn{
+  flex:1;
+  border-radius:999px;
+  border:none;
+  padding:8px 10px;
+  font-size:13px;
+  cursor:pointer;
+}
+.admin-btn.save{
+  background:linear-gradient(135deg,var(--accent),var(--accent2));
+  color:white;
+}
+.admin-btn.reset{
+  background:rgba(255,255,255,0.08);
+  color:#f3ebff;
+}
+.admin-close{
+  position:absolute;
+  right:10px;top:8px;
+  font-size:18px;
+  cursor:pointer;
+  opacity:.8;
+}
+
+/* светлая тема */
+body.light{
+  background:radial-gradient(circle at top,#f5f2ff,#d9e3ff);
+  color:#1b1035;
+}
+body.light .card{
+  background:rgba(255,255,255,0.96);
+  box-shadow:0 18px 50px rgba(0,0,0,0.18);
+}
+body.light .slide-card{
+  background:radial-gradient(circle at top,#ffffff,#dde3ff);
+  border-color:rgba(110,95,200,0.7);
+  box-shadow:
+    0 0 0 1px rgba(160,150,230,0.7),
+    0 16px 30px rgba(0,0,0,0.12);
+}
+body.light .dots span{
+  background:#b5addd;
+}
+body.light .dots span.active{
+  background:#7a5cff;
+}
+body.light .share-card{
+  background:rgba(255,255,255,0.9);
+  border-color:rgba(140,120,230,0.6);
+}
+body.light .admin-inner{
+  background:rgba(255,255,255,0.98);
+  color:#1a1235;
+}
+body.light .admin-row input,
+body.light .admin-row textarea{
+  background:rgba(10,0,40,0.04);
+  color:#1a1235;
+}
+body.light .admin-btn.reset{
+  background:rgba(10,0,40,0.04);
+}
+
+/* тёмная (неоновая) */
 body.neon{
   background:radial-gradient(circle at top,#060012,#000);
 }
@@ -245,8 +446,10 @@ body.neon{
 <body>
 
 <div class="theme-toggle" onclick="toggleTheme()">☀️</div>
+<div class="admin-toggle" onclick="toggleAdmin()">⚙️</div>
 
 <div class="wrapper">
+  <div class="welcome" id="welcomeText">Добро пожаловать! Чувствуй себя как дома 🧡</div>
   <h1>Подключение к Wi-Fi</h1>
 
   <div class="card">
@@ -254,29 +457,29 @@ body.neon{
     <div class="carousel" id="carousel">
       <div class="track" id="track">
 
-        <!-- r2d5 -->
+        <!-- r2d5 (5 GHz, ID фиксированный) -->
         <div class="slide" data-net="r2d5">
           <div class="slide-card">
             <div class="slide-inner">
               <img src="icons/icon_r2d5.svg" alt="r2d5">
-              <div class="slide-ssid-main">r2d5</div>
-              <div class="slide-ssid-sub">5 GHz</div>
+              <div class="slide-ssid-main ssid-main-5">r2d5</div>
+              <div class="slide-ssid-sub ssid-sub-5">5 GHz</div>
             </div>
-            <div class="slide-caption">
+            <div class="slide-caption ssid-cap-5">
               r2d5 · быстрее, если поддерживается
             </div>
           </div>
         </div>
 
-        <!-- r2d2 -->
+        <!-- r2d2 (2.4 GHz, ID фиксированный) -->
         <div class="slide" data-net="r2d2">
           <div class="slide-card">
             <div class="slide-inner">
               <img src="icons/icon_r2d2.svg" alt="r2d2">
-              <div class="slide-ssid-main">r2d2</div>
-              <div class="slide-ssid-sub">2.4 GHz</div>
+              <div class="slide-ssid-main ssid-main-24">r2d2</div>
+              <div class="slide-ssid-sub ssid-sub-24">2.4 GHz</div>
             </div>
-            <div class="slide-caption">
+            <div class="slide-caption ssid-cap-24">
               r2d2 · стабильнее на расстоянии
             </div>
           </div>
@@ -303,45 +506,209 @@ body.neon{
     <button class="btn" onclick="autoConnect()">Подключиться автоматически (Android)</button>
     <button class="btn" onclick="showQR()">Показать QR-код</button>
     <button class="btn" onclick="copyPass()">Скопировать пароль</button>
+    <button class="btn" onclick="openMaps()">Как добраться 🚕</button>
 
     <!-- QR -->
     <div class="qr" id="qrBox">
       <div id="qrCanvas"></div>
     </div>
 
-    <!-- подпись внизу -->
+    <!-- подписи -->
     <div class="helper" id="helperText"></div>
+    <div class="guest-tag" id="guestMode"></div>
+    <div class="status" id="netStatus"></div>
 
+    <!-- инфо для гостей -->
+    <div class="guest-info" id="guestInfo">
+      <div class="guest-info-row">🍽 <span>Кухня — налево.</span></div>
+      <div class="guest-info-row">🚿 <span>Ванная — направо.</span></div>
+      <div class="guest-info-row">🐾 <span>У нас живёт кот, он дружелюбный.</span></div>
+    </div>
+
+    <!-- «инста»-карточка -->
+    <div class="share-card">
+      <div class="share-title">#WiFiAtR2D2</div>
+      <div class="share-text">
+        Можешь сфоткать этот экран — на нём всё, что нужно для подключения 💫
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- Мини-админка -->
+<div class="admin-panel" id="adminPanel">
+  <div class="admin-backdrop" onclick="toggleAdmin()"></div>
+  <div class="admin-inner">
+    <div class="admin-close" onclick="toggleAdmin()">✕</div>
+    <h2>Настройки для хозяина</h2>
+
+    <div class="admin-row">
+      <label for="admWelcome">Приветствие</label>
+      <input id="admWelcome" type="text" placeholder="Добро пожаловать!">
+    </div>
+
+    <div class="admin-row">
+      <label for="admSsid5">Имя сети 5 GHz</label>
+      <input id="admSsid5" type="text" placeholder="r2d5">
+    </div>
+    <div class="admin-row">
+      <label for="admSsid24">Имя сети 2.4 GHz</label>
+      <input id="admSsid24" type="text" placeholder="r2d2">
+    </div>
+
+    <div class="admin-row">
+      <label for="admPass">Пароль Wi-Fi</label>
+      <input id="admPass" type="text" placeholder="Пароль">
+    </div>
+
+    <div class="admin-row">
+      <label for="admMaps">Ссылка «Как добраться» (Google Maps / др.)</label>
+      <input id="admMaps" type="text" placeholder="https://maps.app.goo.gl/...">
+    </div>
+
+    <div class="admin-row">
+      <label for="admGuest1">Инфо для гостей — строка 1</label>
+      <input id="admGuest1" type="text" placeholder="Кухня — налево.">
+    </div>
+    <div class="admin-row">
+      <label for="admGuest2">Инфо для гостей — строка 2</label>
+      <input id="admGuest2" type="text" placeholder="Ванная — направо.">
+    </div>
+    <div class="admin-row">
+      <label for="admGuest3">Инфо для гостей — строка 3</label>
+      <input id="admGuest3" type="text" placeholder="У нас живёт кот...">
+    </div>
+
+    <div class="admin-actions">
+      <button class="admin-btn reset" onclick="resetConfig()">Сбросить по умолчанию</button>
+      <button class="admin-btn save" onclick="saveConfig()">Сохранить</button>
+    </div>
   </div>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
 
 <script>
-const PASSWORD = "Jgthfnbdysq1913";
+/* ---- Конфиг + локальное хранение ---- */
+const defaultConfig = {
+  ssid5: "r2d5",
+  ssid24: "r2d2",
+  pass: "Jgthfnbdysq1913",
+  welcome: "Добро пожаловать! Чувствуй себя как дома 🧡",
+  guestInfo: [
+    "Кухня — налево.",
+    "Ванная — направо.",
+    "У нас живёт кот, он дружелюбный."
+  ],
+  mapsUrl: "https://maps.app.goo.gl/XXXXXXXX"
+};
 
+let CONFIG = loadConfig();
+
+function loadConfig(){
+  try{
+    const saved = localStorage.getItem("wifiGuestConfig");
+    if(saved){
+      const obj = JSON.parse(saved);
+      return Object.assign({}, defaultConfig, obj);
+    }
+  }catch(e){}
+  return { ...defaultConfig };
+}
+
+function saveConfigToStorage(){
+  try{
+    localStorage.setItem("wifiGuestConfig", JSON.stringify(CONFIG));
+  }catch(e){}
+}
+
+/* ---- DOM-переменные ---- */
 const track       = document.getElementById("track");
 const carousel    = document.getElementById("carousel");
-const card        = document.querySelector(".card");        // область для свайпа
+const card        = document.querySelector(".card");
 const helperText  = document.getElementById("helperText");
+const guestTagEl  = document.getElementById("guestMode");
+const netStatus   = document.getElementById("netStatus");
 const dots        = document.querySelectorAll(".dots span");
+const welcomeEl   = document.getElementById("welcomeText");
 let   slides      = Array.from(document.querySelectorAll(".slide"));
 const REAL_COUNT  = slides.length;
 
 let index         = 1;   // 1 — первый реальный слайд (после клона)
 let qrObj         = null;
 let slideWidth    = 0;
-let isAnimating   = false; // защита от слишком частых свайпов
+let isAnimating   = false;
+let audioCtx      = null;
+
 const transitionValue = "transform 0.7s cubic-bezier(.22,.61,.36,1)";
 
-/* ---- делаем бесконечную ленту: клоны ---- */
+/* детект устройства */
+const ua = navigator.userAgent.toLowerCase();
+const isIOS     = /iphone|ipad|ipod/.test(ua);
+const isAndroid = /android/.test(ua);
+const isDesktop = !isIOS && !isAndroid;
+
+/* ---- бесконечная лента: клоны ---- */
 const firstClone = slides[0].cloneNode(true);
 const lastClone  = slides[REAL_COUNT - 1].cloneNode(true);
 track.appendChild(firstClone);
 track.insertBefore(lastClone, track.firstChild);
 
-// обновляем список слайдов (теперь REAL_COUNT + 2)
+// обновляем список
 slides = Array.from(document.querySelectorAll(".slide"));
+
+/* ---- помощники по конфигу ---- */
+function getCurrentBand(){ // "5" или "24"
+  const logical = (index - 1 + REAL_COUNT) % REAL_COUNT; // 0 или 1
+  return logical === 0 ? "5" : "24";
+}
+function getSsidForBand(band){
+  return band === "5" ? CONFIG.ssid5 : CONFIG.ssid24;
+}
+function getCurrentSsid(){
+  return getSsidForBand(getCurrentBand());
+}
+
+/* ---- применение конфига к UI ---- */
+function applyConfigToUI(){
+  // приветствие
+  if(welcomeEl) welcomeEl.textContent = CONFIG.welcome;
+
+  // имена сетей и подписи
+  document.querySelectorAll(".slide").forEach(slide=>{
+    const band = slide.dataset.net === "r2d5" ? "5" : "24";
+    const ssidMain = slide.querySelector(
+      band === "5" ? ".ssid-main-5" : ".ssid-main-24"
+    );
+    const ssidSub = slide.querySelector(
+      band === "5" ? ".ssid-sub-5" : ".ssid-sub-24"
+    );
+    const cap = slide.querySelector(
+      band === "5" ? ".ssid-cap-5" : ".ssid-cap-24"
+    );
+
+    if(ssidMain) ssidMain.textContent = getSsidForBand(band);
+    if(ssidSub)  ssidSub.textContent  = band === "5" ? "5 GHz" : "2.4 GHz";
+    if(cap){
+      cap.textContent = band === "5"
+        ? `${getSsidForBand("5")} · быстрее, если поддерживается`
+        : `${getSsidForBand("24")} · стабильнее на расстоянии`;
+    }
+  });
+
+  // инфо для гостей (3 строки)
+  const rows = document.querySelectorAll("#guestInfo .guest-info-row span");
+  CONFIG.guestInfo.forEach((txt, i)=>{
+    if(rows[i]) rows[i].textContent = txt;
+  });
+
+  // гостевой режим
+  initGuestMode();
+
+  // помощник/подсказка
+  updateMeta();
+}
 
 /* ---- перерасчёт ширины ---- */
 function recalcWidth(){
@@ -357,22 +724,33 @@ function recalcWidth(){
 
 /* логика точек и подписи */
 function updateMeta(){
-  const logical = (index - 1 + REAL_COUNT) % REAL_COUNT; // 0..REAL_COUNT-1
+  const logical = (index - 1 + REAL_COUNT) % REAL_COUNT;
 
   dots.forEach((d,i)=>d.classList.toggle("active", i === logical));
 
-  const net = slides[index].dataset.net;
-  helperText.textContent =
-    net === "r2d5"
-      ? "Выбрана r2d5 (5 GHz) — быстрее, если устройство поддерживает 5 GHz."
-      : "Выбрана r2d2 (2.4 GHz) — стабильнее на расстоянии.";
+  const band = logical === 0 ? "5" : "24";
+  const ssid = getSsidForBand(band);
 
+  let base =
+    band === "5"
+      ? `Выбрана ${ssid} (5 GHz) — быстрее, если устройство поддерживает 5 GHz.`
+      : `Выбрана ${ssid} (2.4 GHz) — стабильнее на расстоянии.`;
+
+  if(isIOS){
+    base += " На iPhone просто наведи Камеру на QR.";
+  }else if(isAndroid){
+    base += " На Android можно нажать «Подключиться автоматически» или отсканировать QR.";
+  }else{
+    base += " На ноутбуке удобнее всего отсканировать QR с телефона или скопировать пароль.";
+  }
+
+  helperText.textContent = base;
   document.getElementById("qrBox").style.display = "none";
 }
 
 /* переход к индексу */
 function goTo(newIndex){
-  if(isAnimating) return;   // не даём запустить ещё одну анимацию
+  if(isAnimating) return;
   isAnimating = true;
 
   index = newIndex;
@@ -380,25 +758,21 @@ function goTo(newIndex){
   track.style.transform = `translateX(${-index * slideWidth}px)`;
 }
 
-/* навигация: влево / вправо по кругу */
-function nextSlide(){   // свайп влево
-  goTo(index + 1);
-}
-function prevSlide(){   // свайп вправо
-  goTo(index - 1);
-}
+/* навигация */
+function nextSlide(){ goTo(index + 1); }
+function prevSlide(){ goTo(index - 1); }
 
-/* после завершения анимации — “телепорт” с клонов на реальные */
+/* «телепорт» после анимации */
 track.addEventListener("transitionend", (e)=>{
   if(e.propertyName !== "transform") return;
 
-  if(index === 0){ // левый клон
+  if(index === 0){
     track.style.transition = "none";
     index = REAL_COUNT;
     track.style.transform = `translateX(${-index * slideWidth}px)`;
     void track.offsetWidth;
     track.style.transition = transitionValue;
-  }else if(index === slides.length - 1){ // правый клон
+  }else if(index === slides.length - 1){
     track.style.transition = "none";
     index = 1;
     track.style.transform = `translateX(${-index * slideWidth}px)`;
@@ -407,18 +781,22 @@ track.addEventListener("transitionend", (e)=>{
   }
 
   updateMeta();
-  isAnimating = false;  // снова можно листать
+  isAnimating = false;
 });
 
-/* ---- свайп: touch + мышь ---- */
+/* ---- swipe: touch + мышь ---- */
 let startX = null;
 let startY = null;
 let draggingMouse = false;
 
+function currentSlideCard(){
+  const s = slides[index];
+  return s ? s.querySelector(".slide-card") : null;
+}
+
 function swipeStart(e){
-  // не начинаем свайп, если клик по кнопкам или стрелкам
   const target = e.target;
-  if (target.closest('button') || target.closest('.nav-arrow') || target.closest('a')) {
+  if (target.closest('button') || target.closest('.nav-arrow') || target.closest('a') || target.closest('.admin-inner')) {
     return;
   }
 
@@ -434,7 +812,14 @@ function swipeMove(e){
   const dx = p.clientX - startX;
   const dy = p.clientY - startY;
 
-  // когда горизонтальный жест явно сильнее — блокируем скролл страницы
+  const cardEl = currentSlideCard();
+  if(cardEl){
+    cardEl.classList.remove("swipe-left","swipe-right");
+    if(Math.abs(dx) > 15){
+      cardEl.classList.add(dx < 0 ? "swipe-left" : "swipe-right");
+    }
+  }
+
   if(Math.abs(dx) > Math.abs(dy) + 10){
     e.preventDefault();
   }
@@ -446,15 +831,20 @@ function swipeEnd(e){
   const dx = p.clientX - startX;
 
   if(Math.abs(dx) > 40){
-    if(dx < 0) nextSlide();  // свайп влево → листаем влево
-    else       prevSlide();  // свайп вправо → листаем вправо
+    if(dx < 0) nextSlide();
+    else       prevSlide();
+  }
+
+  const cardEl = currentSlideCard();
+  if(cardEl){
+    cardEl.classList.remove("swipe-left","swipe-right");
   }
 
   startX = startY = null;
   draggingMouse = false;
 }
 
-/* вешаем обработчики на всю .card, а не только на .carousel */
+/* обработчики свайпа на всю карточку */
 card.addEventListener("touchstart", swipeStart, {passive:true});
 card.addEventListener("touchmove",  swipeMove,  {passive:false});
 card.addEventListener("touchend",   swipeEnd);
@@ -465,8 +855,8 @@ card.addEventListener("mouseleave", e=>{ if(draggingMouse) swipeEnd(e); });
 
 /* ---- QR ---- */
 function showQR(){
-  const net = slides[index].dataset.net;
-  const payload = `WIFI:T:WPA;S:${net};P:${PASSWORD};;`;
+  const ssid = getCurrentSsid();
+  const payload = `WIFI:T:WPA;S:${ssid};P:${CONFIG.pass};;`;
 
   if(!qrObj){
     qrObj = new QRCode(document.getElementById("qrCanvas"), {
@@ -476,50 +866,165 @@ function showQR(){
   qrObj.clear();
   qrObj.makeCode(payload);
   document.getElementById("qrBox").style.display = "block";
+
+  playClickSound();
 }
 
 /* ---- авто-подключение (Android) ---- */
 function autoConnect(){
-  const net = slides[index].dataset.net;
-  location.href = `WIFI:T:WPA;S:${net};P:${PASSWORD};;`;
+  const ssid = getCurrentSsid();
+  playClickSound();
+  location.href = `WIFI:T:WPA;S:${ssid};P:${CONFIG.pass};;`;
 }
 
 /* ---- копирование ---- */
 function copyPass(){
-  navigator.clipboard.writeText(PASSWORD).then(()=>alert("Пароль скопирован"));
+  navigator.clipboard.writeText(CONFIG.pass).then(()=>{
+    alert("Пароль скопирован");
+    playClickSound();
+  }).catch(()=>{
+    alert("Не удалось скопировать. Попробуй вручную.");
+  });
+}
+
+/* ---- как добраться ---- */
+function openMaps(){
+  window.open(CONFIG.mapsUrl || defaultConfig.mapsUrl, "_blank");
+}
+
+/* ---- простой звук ---- */
+function playClickSound(){
+  try{
+    if(!audioCtx){
+      audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    }
+    const osc = audioCtx.createOscillator();
+    const gain = audioCtx.createGain();
+    osc.type = "sine";
+    osc.frequency.value = 880;
+    gain.gain.value = 0.0008;
+
+    osc.connect(gain);
+    gain.connect(audioCtx.destination);
+
+    const now = audioCtx.currentTime;
+    gain.gain.setValueAtTime(0.05, now);
+    gain.gain.exponentialRampToValueAtTime(0.00001, now + 0.15);
+
+    osc.start(now);
+    osc.stop(now + 0.16);
+  }catch(e){}
 }
 
 /* ---- тема ---- */
 function toggleTheme(){
-  document.body.classList.toggle("neon");
-  localStorage.theme = document.body.classList.contains("neon") ? "dark" : "light";
+  const body = document.body;
+  const isLight = body.classList.contains("light");
+
+  body.classList.toggle("light", !isLight);
+  body.classList.toggle("neon", isLight);
+
+  localStorage.theme = body.classList.contains("light") ? "light" : "dark";
   document.querySelector(".theme-toggle").textContent =
-    document.body.classList.contains("neon") ? "🌙" : "☀️";
+    body.classList.contains("light") ? "🌙" : "☀️";
 }
+
 (function initTheme(){
   const stored = localStorage.theme;
   const prefersDark = window.matchMedia &&
                       window.matchMedia("(prefers-color-scheme: dark)").matches;
-  if(stored==="dark" || (!stored && prefersDark)){
+
+  if(stored === "light"){
+    document.body.classList.add("light");
+  }else if(stored === "dark" || (!stored && prefersDark)){
     document.body.classList.add("neon");
+  }else{
+    document.body.classList.add("light");
   }
+
   document.querySelector(".theme-toggle").textContent =
-    document.body.classList.contains("neon") ? "🌙" : "☀️";
+    document.body.classList.contains("light") ? "🌙" : "☀️";
 })();
+
+/* ---- гостевой режим (шуточное имя сети) ---- */
+function initGuestMode(){
+  if(!guestTagEl) return;
+  const emojis = ["🧸","🤖","🌙","💫","🚀","🦊","🐱"];
+  const suffix = emojis[Math.floor(Math.random()*emojis.length)];
+  guestTagEl.textContent = `Гостевой режим: ${CONFIG.ssid5}-guest-${suffix} (красивое имя, настоящие сети — ${CONFIG.ssid5} / ${CONFIG.ssid24})`;
+}
+
+/* ---- статус интернета ---- */
+function updateOnlineStatus(){
+  if(!netStatus) return;
+  if(navigator.onLine){
+    netStatus.textContent = "Статус интернета: онлайн ✅";
+  }else{
+    netStatus.textContent = "Статус интернета: офлайн ⛔ (проверьте роутер или кабель)";
+  }
+}
+window.addEventListener("online", updateOnlineStatus);
+window.addEventListener("offline", updateOnlineStatus);
 
 /* ---- авто-выбор сети (старые устройства → 2.4) ---- */
 (function autoPick(){
-  const ua = navigator.userAgent;
-  const oldAndroid = /Android\s([0-6]\.|7\.0)/i.test(ua);
-  const oldIOS     = /OS\s(9_|10_)/i.test(ua);
-
-  // логический индекс: 0 = r2d5, 1 = r2d2
-  const logicalIndex = (oldAndroid || oldIOS) ? 1 : 0;
-  index = logicalIndex + 1; // сдвиг из-за левого клона
+  const oldAndroid = /android\s([0-6]\.|7\.0)/i.test(ua);
+  const oldIOS     = /os\s(9_|10_)/i.test(ua);
+  const logicalIndex = (oldAndroid || oldIOS) ? 1 : 0; // 0 = 5 GHz, 1 = 2.4 GHz
+  index = logicalIndex + 1;
 })();
 
-/* старт: ширина + позиция */
-window.addEventListener("load", recalcWidth);
+/* ---- админка ---- */
+const adminPanel = document.getElementById("adminPanel");
+
+function toggleAdmin(){
+  adminPanel.classList.toggle("open");
+  if(adminPanel.classList.contains("open")){
+    fillAdminForm();
+  }
+}
+
+function fillAdminForm(){
+  document.getElementById("admWelcome").value = CONFIG.welcome;
+  document.getElementById("admSsid5").value   = CONFIG.ssid5;
+  document.getElementById("admSsid24").value  = CONFIG.ssid24;
+  document.getElementById("admPass").value    = CONFIG.pass;
+  document.getElementById("admMaps").value    = CONFIG.mapsUrl || "";
+  document.getElementById("admGuest1").value  = CONFIG.guestInfo[0] || "";
+  document.getElementById("admGuest2").value  = CONFIG.guestInfo[1] || "";
+  document.getElementById("admGuest3").value  = CONFIG.guestInfo[2] || "";
+}
+
+function saveConfig(){
+  CONFIG.welcome = document.getElementById("admWelcome").value || defaultConfig.welcome;
+  CONFIG.ssid5   = document.getElementById("admSsid5").value   || defaultConfig.ssid5;
+  CONFIG.ssid24  = document.getElementById("admSsid24").value  || defaultConfig.ssid24;
+  CONFIG.pass    = document.getElementById("admPass").value    || defaultConfig.pass;
+  CONFIG.mapsUrl = document.getElementById("admMaps").value    || defaultConfig.mapsUrl;
+  CONFIG.guestInfo = [
+    document.getElementById("admGuest1").value || defaultConfig.guestInfo[0],
+    document.getElementById("admGuest2").value || defaultConfig.guestInfo[1],
+    document.getElementById("admGuest3").value || defaultConfig.guestInfo[2]
+  ];
+
+  saveConfigToStorage();
+  applyConfigToUI();
+  toggleAdmin();
+}
+
+function resetConfig(){
+  CONFIG = { ...defaultConfig };
+  saveConfigToStorage();
+  applyConfigToUI();
+  toggleAdmin();
+}
+
+/* старт: ширина + позиция + служебные штуки */
+window.addEventListener("load", ()=>{
+  recalcWidth();
+  applyConfigToUI();
+  updateOnlineStatus();
+});
 window.addEventListener("resize", recalcWidth);
 </script>
 </body>
