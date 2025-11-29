@@ -318,12 +318,13 @@ const carousel    = document.getElementById("carousel");
 const card        = document.querySelector(".card");        // область для свайпа
 const helperText  = document.getElementById("helperText");
 const dots        = document.querySelectorAll(".dots span");
-let slides        = Array.from(document.querySelectorAll(".slide"));
+let   slides      = Array.from(document.querySelectorAll(".slide"));
 const REAL_COUNT  = slides.length;
 
-let index      = 1;   // 1 — первый реальный слайд (после клона)
-let qrObj      = null;
-let slideWidth = 0;
+let index         = 1;   // 1 — первый реальный слайд (после клона)
+let qrObj         = null;
+let slideWidth    = 0;
+let isAnimating   = false; // ← защита от слишком частых свайпов
 const transitionValue = "transform 0.7s cubic-bezier(.22,.61,.36,1)";
 
 /* ---- делаем бесконечную ленту: клоны ---- */
@@ -364,6 +365,9 @@ function updateMeta(){
 
 /* переход к индексу */
 function goTo(newIndex){
+  if(isAnimating) return;   // ← не даём запустить ещё одну анимацию
+  isAnimating = true;
+
   index = newIndex;
   track.style.transition = transitionValue;
   track.style.transform = `translateX(${-index * slideWidth}px)`;
@@ -378,7 +382,9 @@ function prevSlide(){   // свайп вправо
 }
 
 /* после завершения анимации — “телепорт” с клонов на реальные */
-track.addEventListener("transitionend", ()=>{
+track.addEventListener("transitionend", (e)=>{
+  if(e.propertyName !== "transform") return;
+
   if(index === 0){ // левый клон
     track.style.transition = "none";
     index = REAL_COUNT;
@@ -392,7 +398,9 @@ track.addEventListener("transitionend", ()=>{
     void track.offsetWidth;
     track.style.transition = transitionValue;
   }
+
   updateMeta();
+  isAnimating = false;  // ← теперь можно листать дальше
 });
 
 /* ---- свайп: touch + мышь ---- */
