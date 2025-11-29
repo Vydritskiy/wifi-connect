@@ -68,7 +68,7 @@ h1{
   flex:0 0 100%;
   height:100%;
   display:flex;
-  align-items:stretch;
+  align-items:center; /* ПОПРАВЛЕНО */
   justify-content:center;
 }
 
@@ -243,6 +243,7 @@ body.neon{
 
     <div class="carousel" id="carousel">
       <div class="track" id="track">
+
         <!-- r2d5 -->
         <div class="slide" data-net="r2d5">
           <div class="slide-card">
@@ -270,6 +271,7 @@ body.neon{
             </div>
           </div>
         </div>
+
       </div>
     </div>
 
@@ -299,6 +301,7 @@ body.neon{
 
     <!-- подпись внизу -->
     <div class="helper" id="helperText"></div>
+
   </div>
 </div>
 
@@ -311,17 +314,19 @@ const track    = document.getElementById("track");
 const carousel = document.getElementById("carousel");
 const slides   = document.querySelectorAll(".slide");
 const dots     = document.querySelectorAll(".dots span");
+const helperText = document.getElementById("helperText"); /* ДОБАВЛЕНО */
+
 let index      = 0;
 let qrObj      = null;
 let slideWidth = 0;
 
-/* пересчёт ширины карусели и обновление позиции трека */
+/* пересчёт ширины */
 function recalcWidth(){
   slideWidth = carousel.offsetWidth;
   updateTrack(true);
 }
 
-/* ---- общий хелпер ---- */
+/* позиция трека */
 function updateTrack(skipAnim){
   if(slideWidth === 0) return;
 
@@ -329,7 +334,6 @@ function updateTrack(skipAnim){
     const old = track.style.transition;
     track.style.transition = "none";
     track.style.transform = `translateX(${-index * slideWidth}px)`;
-    // форсируем перерисовку
     void track.offsetWidth;
     track.style.transition = old || "transform 0.7s cubic-bezier(.22,.61,.36,1)";
   }else{
@@ -341,22 +345,23 @@ function updateTrack(skipAnim){
   const net = slides[index].dataset.net;
   helperText.textContent =
     net === "r2d5"
-      ? "Выбрана r2d5 (5 GHz) — обычно быстрее, если устройство поддерживает 5 GHz."
-      : "Выбрана r2d2 (2.4 GHz) — стабильнее на расстоянии и старых устройствах.";
+      ? "Выбрана r2d5 (5 GHz) — быстрее, если устройство поддерживает 5 GHz."
+      : "Выбрана r2d2 (2.4 GHz) — стабильнее на расстоянии.";
+
   document.getElementById("qrBox").style.display = "none";
 }
 
-/* ---- навигация (стрелки и круговой переход) ---- */
+/* навигация */
 function nextSlide(){
-  index = (index + 1) % slides.length;   // вперёд
+  index = (index + 1) % slides.length;
   updateTrack(false);
 }
 function prevSlide(){
-  index = (index - 1 + slides.length) % slides.length; // назад
+  index = (index - 1 + slides.length) % slides.length;
   updateTrack(false);
 }
 
-/* ---- свайп: touch + мышь ---- */
+/* свайпы */
 let startX = null;
 let startY = null;
 let draggingMouse = false;
@@ -367,24 +372,22 @@ function swipeStart(e){
   startY = p.clientY;
   draggingMouse = !e.touches;
 }
-
 function swipeMove(e){
   if(startX === null) return;
   const p = e.touches ? e.touches[0] : e;
   const dx = p.clientX - startX;
   const dy = p.clientY - startY;
   if(Math.abs(dx) > Math.abs(dy) + 10){
-    e.preventDefault();  // гасим вертикальный скролл, когда свайп по горизонтали
+    e.preventDefault();
   }
 }
-
 function swipeEnd(e){
   if(startX === null) return;
   const p = e.changedTouches ? e.changedTouches[0] : e;
   const dx = p.clientX - startX;
   if(Math.abs(dx) > 40){
-    if(dx < 0) nextSlide();  // свайп влево → следующая карта
-    else       prevSlide();  // свайп вправо → предыдущая
+    if(dx < 0) nextSlide();
+    else       prevSlide();
   }
   startX = startY = null;
   draggingMouse = false;
@@ -398,7 +401,7 @@ carousel.addEventListener("mousemove",  e=>{ if(draggingMouse) swipeMove(e); });
 carousel.addEventListener("mouseup",    swipeEnd);
 carousel.addEventListener("mouseleave", e=>{ if(draggingMouse) swipeEnd(e); });
 
-/* ---- QR ---- */
+/* QR */
 function showQR(){
   const net = slides[index].dataset.net;
   const payload = `WIFI:T:WPA;S:${net};P:${PASSWORD};;`;
@@ -413,18 +416,18 @@ function showQR(){
   document.getElementById("qrBox").style.display = "block";
 }
 
-/* ---- авто-подключение (Android) ---- */
+/* авто подключение */
 function autoConnect(){
   const net = slides[index].dataset.net;
   location.href = `WIFI:T:WPA;S:${net};P:${PASSWORD};;`;
 }
 
-/* ---- копирование ---- */
+/* копирование */
 function copyPass(){
   navigator.clipboard.writeText(PASSWORD).then(()=>alert("Пароль скопирован"));
 }
 
-/* ---- тема ---- */
+/* тема */
 function toggleTheme(){
   document.body.classList.toggle("neon");
   localStorage.theme = document.body.classList.contains("neon") ? "dark" : "light";
@@ -442,7 +445,7 @@ function toggleTheme(){
     document.body.classList.contains("neon") ? "🌙" : "☀️";
 })();
 
-/* ---- авто-выбор сети (старые устройства → 2.4) ---- */
+/* авто выбор сети */
 (function autoPick(){
   const ua = navigator.userAgent;
   const oldAndroid = /Android\s([0-6]\.|7\.0)/i.test(ua);
@@ -450,7 +453,7 @@ function toggleTheme(){
   index = (oldAndroid || oldIOS) ? 1 : 0;
 })();
 
-/* старт: ширина + позиция */
+/* запуск */
 window.addEventListener("load", recalcWidth);
 window.addEventListener("resize", recalcWidth);
 </script>
