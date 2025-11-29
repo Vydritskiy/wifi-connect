@@ -1,362 +1,68 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Guest Wi‑Fi</title>
-  <style>
-    /* 🌈 ГЛОБАЛЬНЫЕ СТИЛИ — НЕОНОВОЕ STEEL/GLASS iOS */
-    body {
-        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-        margin: 0;
-        padding: 0;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        background: linear-gradient(135deg, #0a0f24, #1a1f33);
-        color: white;
-        min-height: 100vh;
-    }
-
-    /* 🔘 Переключатель темы */
-    .theme-toggle {
-        position: fixed;
-        top: 14px;
-        right: 18px;
-        background: rgba(255,255,255,0.15);
-        backdrop-filter: blur(14px);
-        border-radius: 14px;
-        padding: 8px 14px;
-        font-size: 14px;
-        cursor: pointer;
-        user-select: none;
-        transition: 0.3s;
-    }
-
-    .theme-toggle:hover {
-        background: rgba(255,255,255,0.25);
-    }
-
-    /* 📦 ГЛАВНЫЕ КАРТОЧКИ (неон + стекло) */
-    .card {
-        width: 90%;
-        max-width: 420px;
-        background: rgba(255,255,255,0.12);
-        border-radius: 26px;
-        padding: 22px;
-        margin-top: 22px;
-        backdrop-filter: blur(18px);
-        box-shadow: 0 0 22px rgba(0,180,255,0.35);
-        border: 1px solid rgba(255,255,255,0.15);
-        animation: cardFade 0.6s ease;
-        transition: transform 0.35s ease, box-shadow 0.35s ease;
-    }
-
-    .card:hover {
-        transform: translateY(-4px);
-        box-shadow: 0 0 32px rgba(0,200,255,0.55);
-    }
-
-    @keyframes cardFade {
-        from { opacity: 0; transform: translateY(10px); }
-        to { opacity: 1; transform: translateY(0); }
-    }
-
-    /* 🌐 Иконки Wi-Fi */
-    .wifi-logo {
-        width: 60px;
-        display: block;
-        margin: 0 auto 10px;
-    }
-
-    /* ⬇️ Кнопки */
-    button {
-        width: 100%;
-        padding: 16px;
-        margin-top: 12px;
-        font-size: 17px;
-        border-radius: 16px;
-        border: none;
-        cursor: pointer;
-        background: linear-gradient(135deg, #00b7ff, #0066ff);
-        color: white;
-        box-shadow: 0 0 14px rgba(0,180,255,0.35);
-        transition: 0.25s;
-    }
-
-    button:hover {
-        box-shadow: 0 0 22px rgba(0,200,255,0.6);
-    }
-
-    /* 📸 QR-блок */
-    #qrBox {
-        text-align: center;
-        margin-top: 20px;
-        animation: fadeIn 0.6s ease;
-    }
-
-    @keyframes fadeIn {
-        from { opacity: 0; }
-        to { opacity: 1; }
-    }
-
-    /* 🔔 Тост об успешном копировании */
-    #toast {
-        position: fixed;
-        bottom: 20px;
-        left: 50%;
-        transform: translateX(-50%);
-        background: rgba(0,0,0,0.65);
-        color: white;
-        padding: 12px 20px;
-        border-radius: 14px;
-        opacity: 0;
-        pointer-events: none;
-        transition: opacity 0.4s;
-        backdrop-filter: blur(8px);
-    }
-
-    #toast.show {
-        opacity: 1;
-    }
-/* 🌙 Тёмная / светлая тема */
-body.light-mode {
-    background: linear-gradient(135deg, #f1f5ff, #dce4ff);
-    color: #111;
-}
-body.dark-mode {
-    background: linear-gradient(135deg, #0a0f24, #1a1f33);
-}
-
-/* 🌀 iOS Splash */
-#splash {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0,0,0,0.85);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    backdrop-filter: blur(12px);
-    z-index: 9999;
-    opacity: 1;
-    transition: opacity 0.8s;
-}
-
-#splash.hide {
-    opacity: 0;
-}
-
-.spinner {
-    width: 60px;
-    height: 60px;
-    border: 6px solid rgba(255,255,255,0.3);
-    border-top: 6px solid white;
-    border-radius: 50%;
-    animation: spin 0.8s linear infinite;
-}
-
-@keyframes spin {
-    to { transform: rotate(360deg); }
-}
-
-/* ——— iOS SWITCH & SLIDER ——— */
-.ios-switch {
-    position: relative;
-    width: 52px;
-    height: 32px;
-    background: rgba(255,255,255,0.3);
-    border-radius: 20px;
-    transition: 0.3s;
-    cursor: pointer;
-}
-.ios-switch::after {
-    content: "";
-    position: absolute;
-    top: 3px;
-    left: 3px;
-    width: 26px;
-    height: 26px;
-    background: white;
-    border-radius: 50%;
-    transition: 0.3s;
-    box-shadow: 0 2px 6px rgba(0,0,0,0.3);
-}
-.ios-switch.active {
-    background: #34c759;
-}
-.ios-switch.active::after {
-    transform: translateX(20px);
-}
-
-/* ——— iOS SLIDER ——— */
-.ios-slider {
-    width: 100%;
-    -webkit-appearance: none;
-    background: rgba(255,255,255,0.2);
-    height: 6px;
-    border-radius: 3px;
-    outline: none;
-}
-.ios-slider::-webkit-slider-thumb {
-    -webkit-appearance: none;
-    width: 26px;
-    height: 26px;
-    background: white;
-    border-radius: 50%;
-    box-shadow: 0 2px 6px rgba(0,0,0,0.3);
-}
-
-/* ——— Wi-Fi ripple animation ——— */
-.wifi-ripple {
-    position: relative;
-    width: 60px;
-    margin: 0 auto;
-}
-.ripple-circle {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    width: 20px;
-    height: 20px;
-    border: 2px solid rgba(0,200,255,0.6);
-    border-radius: 50%;
-    transform: translate(-50%, -50%);
-    animation: ripple 2.4s infinite;
-}
-.ripple-circle:nth-child(2) {
-    animation-delay: 0.5s;
-}
-.ripple-circle:nth-child(3) {
-    animation-delay: 1.0s;
-}
-@keyframes ripple {
-    0% { transform: translate(-50%, -50%) scale(0.3); opacity: 1; }
-    100% { transform: translate(-50%, -50%) scale(2.6); opacity: 0; }
-}
-
-/* ——— ADMIN PANEL ——— */
-.admin-panel {
-    position: fixed;
-    top: 0; left: 0;
-    width: 100%; height: 100%;
-    padding: 30px;
-    background: rgba(15,15,25,0.92);
-    backdrop-filter: blur(18px);
-    color: white;
-    z-index: 9999;
-    animation: fadeIn 0.4s;
-    overflow-y: auto;
-}
-.hidden { display: none; }
-.admin-panel input {
-    width: 100%; padding: 14px;
-    border-radius: 14px;
-    border: none; margin-top: 8px; margin-bottom: 18px;
-}
-
-/* ——— SIGNAL BARS ——— */
-.signal-bars { display: flex; gap: 4px; }
-.signal-bars div {
-    width: 6px; background: #00e0ff; border-radius: 3px;
-    animation: signalAnim 1.4s infinite ease-in-out;
-}
-.signal-bars div:nth-child(1){height:10px;animation-delay:0s}
-.signal-bars div:nth-child(2){height:16px;animation-delay:0.2s}
-.signal-bars div:nth-child(3){height:22px;animation-delay:0.4s}
-.signal-bars div:nth-child(4){height:28px;animation-delay:0.6s}
-@keyframes signalAnim {
-    0%{opacity:0.3} 50%{opacity:1} 100%{opacity:0.3}
-}
-
-/* ——— THEMES ——— */
-body.theme-neon { background: linear-gradient(135deg,#00111a,#00334f); }
-body.theme-pink { background: linear-gradient(135deg,#3a002b,#a40087); }
-body.theme-ios { background: #f5f5f7; color:#000; }
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Wi-Fi Connect</title>
+<style>
+    body { font-family: -apple-system, BlinkMacSystemFont, sans-serif; background: #0a0a0a; color: #fff; margin:0; padding:20px; }
+    .card { background:#111; padding:20px; border-radius:20px; box-shadow:0 0 25px rgba(0,150,255,.3); }
+    select, button { width:100%; padding:16px; margin-top:15px; border-radius:14px; border:none; font-size:18px; }
+    button { background:#0b84ff; color:white; font-weight:600; }
+    #qrBox { display:none; margin-top:20px; text-align:center; }
+    #toast { display:none; position:fixed; bottom:30px; left:50%; transform:translateX(-50%); background:#0b84ff; padding:14px 22px; border-radius:12px; }
 </style>
-<style>@keyframes fadeIn{0%{opacity:0;transform:translateY(10px);}100%{opacity:1;transform:translateY(0);}}.animate-fade-in{animation:fadeIn .6s ease forwards;} .card-anim{opacity:0;animation:fadeIn .6s ease forwards;} .toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:#333;color:#fff;padding:10px 18px;border-radius:12px;font-size:14px;opacity:0;transition:.4s;} .toast.show{opacity:1;}</style></head>
-<body class="p-6"><div class="w-full flex justify-center mb-4"><img src="https://cdn.jsdelivr.net/gh/simple-icons/simple-icons/icons/wifi.svg" alt="WiFi" class="w-10 h-10 opacity-80 animate-fade-in" /></div>
+</head>
+<body>
 <div class="card">
-  <h2>Гостевой Wi‑Fi</h2>
+    <h2>Подключение к Wi-Fi</h2>
 
-  <p>Выберите сеть:</p>
-  <select id="networkSelect" style="padding:12px; font-size:16px; width:100%; border-radius:12px; margin-bottom:15px;">
-    <option value="r2d5"><img class='wifi-icon'> r2d5 — 5 GHzr2d5 — 5 GHz</option>
-    <option value="r2d2"><img class='wifi-icon'> r2d2 — 2.4 GHzr2d2 — 2.4 GHz</option>
-  </select>
+    <label>Выберите сеть:</label>
+    <select id="networkSelect">
+        <option value="r2d5">r2d5 — 5 GHz</option>
+        <option value="r2d2">r2d2 — 2.4 GHz</option>
+    </select>
 
-  <p>Выберите способ подключения:</p>
+    <button id="qrButton">Показать QR-код</button>
+    <button id="copyButton">Скопировать пароль</button>
+    <button id="androidButton">Подключиться автоматически (Android)</button>
 
-  <button class="android-btn" id="androidButton">Подключиться автоматически (Android)</button>
-  <button class="qr-btn" id="qrButton">Показать QR-код</button>
-  <button class="copy-btn" id="copyButton">Скопировать пароль</button>
-
-  <div id="qrBox">
-    <h3>QR для подключения</h3>
-    <img id="qrImage" src="" alt="WiFi QR" />
-  </div>
+    <div id="qrBox"></div>
 </div>
+
+<div id="toast">Скопировано!</div>
 
 <script>
-// PIN-код входа
-function openAdmin() {
-    const pin = prompt("Введите PIN-код администратора:");
-    if (pin === "2580") {
-        document.getElementById('adminPanel').classList.remove('hidden');
-    } else {
-        showToast("Неверный PIN");
-    }
-}
+const PASSWORD = "May_The_Force_Be_With_You";
 
-// Сохранение пароля
-function saveAdminPassword(){
-    const val = document.getElementById('adminPassInput').value.trim();
-    if(val){ document.getElementById('wifiPassword').textContent = val;
-        showToast("Пароль обновлён"); }
-}
+// === QR ===
+document.getElementById("qrButton").onclick = function() {
+    const ssid = document.getElementById("networkSelect").value;
+    const qr = document.getElementById("qrBox");
 
-// Themes
-function setTheme(t){
-    document.body.classList.remove('theme-neon','theme-pink','theme-ios');
-    if(t==='neon') document.body.classList.add('theme-neon');
-    if(t==='pink') document.body.classList.add('theme-pink');
-    if(t==='ios') document.body.classList.add('theme-ios');
-}
+    const qrURL = `https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=WIFI:T:WPA;S:${ssid};P:${PASSWORD};;`;
 
-// Export config
-function exportConfig(){
-    const cfg = {
-        password: document.getElementById('wifiPassword').textContent,
-        theme: [...document.body.classList].find(c=>c.startsWith('theme-'))||"default"
-    };
-    const blob = new Blob([JSON.stringify(cfg,null,2)],{type:'application/json'});
-    const a = document.createElement('a');
-    a.href = URL.createObjectURL(blob);
-    a.download = "wifi_config.json";
-    a.click();
-}
+    qr.innerHTML = `<img src='${qrURL}' width='260' style='border-radius:14px;'>`;
+    qr.style.display = 'block';
 
-// PWA
-if('serviceWorker' in navigator){ navigator.serviceWorker.register('sw.js'); }
+    setTimeout(() => qr.style.display = 'none', 10000);
+};
+
+// === Copy ===
+document.getElementById("copyButton").onclick = function() {
+    navigator.clipboard.writeText(PASSWORD).then(() => {
+        const t = document.getElementById("toast");
+        t.style.display = 'block';
+        setTimeout(() => t.style.display = 'none', 1500);
+    });
+};
+
+// === Android Auto Connect ===
+document.getElementById("androidButton").onclick = function() {
+    const ssid = document.getElementById("networkSelect").value;
+    const wifiURI = `WIFI:T:WPA;S:${ssid};P:${PASSWORD};;`;
+    window.location.href = wifiURI;
+};
 </script>
-<div id="toast" class="toast">Пароль скопирован</div><script>function copyPassword(){navigator.clipboard.writeText('May_The_Force_Be_With_You');document.getElementById('toast').classList.add('show');setTimeout(()=>document.getElementById('toast').classList.remove('show'),2000);} function showQR(){const qr=document.getElementById('qr-box');qr.style.display='block';setTimeout(()=>{qr.style.display='none';},10000);} document.querySelectorAll('.card-anim').forEach((c,i)=>{c.style.animationDelay=(i*0.1)+'s';});</script><!-- ——— ADMIN PANEL (HIDDEN) ——— -->
-<div id="adminPanel" class="admin-panel hidden">
-    <h2>Admin Panel</h2>
-    <label>Новый пароль Wi-Fi</label>
-    <input id="adminPassInput" type="text" placeholder="Введите пароль" />
-    <button onclick="saveAdminPassword()">Сохранить</button>
-
-    <h3>Темы</h3>
-    <div class="theme-buttons">
-        <button onclick="setTheme('neon')">Neon Blue</button>
-        <button onclick="setTheme('pink')">Pink Cyber</button>
-        <button onclick="setTheme('ios')">Pure iOS White</button>
-    </div>
-
-    <h3>Экспорт настроек</h3>
-    <button onclick="exportConfig()">Скачать config.json</button>
-</div>
 </body>
 </html>
