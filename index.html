@@ -55,7 +55,7 @@ h1{
   overflow:hidden;
 }
 
-/* отдельный слайд */
+/* отдельный слайд: будем анимировать transform + opacity */
 .slide{
   position:absolute;
   inset:0;
@@ -64,16 +64,43 @@ h1{
   align-items:center;
   justify-content:flex-start;
   opacity:0;
+  transform:translateX(40px);      /* базовое положение вне экрана вправо */
   pointer-events:none;
-  transition:opacity .3s ease;
+  transition:transform .35s ease, opacity .35s ease;
+  z-index:0;
 }
 
+/* текущая карточка */
 .slide.active{
   opacity:1;
+  transform:translateX(0);
   pointer-events:auto;
+  z-index:2;
 }
 
-/* внутренняя прямоугольная карточка, как на старом варианте */
+/* входящая карточка перед анимацией */
+.slide.enter-from-right{
+  opacity:0;
+  transform:translateX(60px);
+}
+.slide.enter-from-left{
+  opacity:0;
+  transform:translateX(-60px);
+}
+
+/* исходящая карточка */
+.slide.animating-out-left{
+  opacity:0;
+  transform:translateX(-60px);
+  z-index:1;
+}
+.slide.animating-out-right{
+  opacity:0;
+  transform:translateX(60px);
+  z-index:1;
+}
+
+/* внутренняя прямоугольная карточка, как на «старом» варианте */
 .slide-card{
   width:100%;
   max-width:480px;
@@ -310,24 +337,72 @@ let slides = document.querySelectorAll(".slide");
 let dots   = document.querySelectorAll(".dots span");
 let index  = 0;
 let qrObj  = null;
+let isAnimating = false;
 
-/* -------- обновление UI -------- */
-function updateSlide(){
-  slides.forEach((s,i)=>s.classList.toggle("active", i===index));
+/* -------- вспомогательный UI (точки + текст + скрыть QR) -------- */
+function refreshUI(){
   dots.forEach((d,i)=>d.classList.toggle("active", i===index));
-
   const net = slides[index].dataset.net;
-  updateHelper(net);
+  helperText.textContent =
+    net === "r2d5"
+      ? "Выбрана r2d5 (5 GHz) — обычно быстрее, если устройство поддерживает 5 GHz."
+      : "Выбрана r2d2 (2.4 GHz) — стабильнее на расстоянии и старых устройствах.";
   document.getElementById("qrBox").style.display = "none";
 }
 
+/* -------- плавный переход между карточками -------- */
+function goTo(newIndex, direction){
+  if(isAnimating || newIndex === index) return;
+  isAnimating = true;
+
+  const current = index;
+  const currentSlide = slides[current];
+  const nextSlide = slides[newIndex];
+
+  // сбрасываем всё лишнее
+  slides.forEach(s => s.classList.remove(
+    "enter-from-right","enter-from-left",
+    "animating-out-left","animating-out-right","active"
+  ));
+
+  // текущая видимая
+  currentSlide.classList.add("active");
+
+  // ставим новую карточку чуть сбоку
+  const enterClass = direction === 1 ? "enter-from-right" : "enter-from-left";
+  const exitClass  = direction === 1 ? "animating-out-left" : "animating-out-right";
+
+  nextSlide.classList.add(enterClass, "active");
+
+  // форсируем перерисовку, чтобы transition точно сработал
+  void nextSlide.offsetWidth;
+
+  // запускаем анимацию
+  currentSlide.classList.add(exitClass);
+  nextSlide.classList.remove(enterClass);
+
+  const onEnd = (e)=>{
+    if(e.target !== nextSlide) return;
+    nextSlide.removeEventListener("transitionend", onEnd);
+    currentSlide.classList.remove(
+      "animating-out-left","animating-out-right","active"
+    );
+    nextSlide.classList.add("active");
+    isAnimating = false;
+  };
+  nextSlide.addEventListener("transitionend", onEnd);
+
+  index = newIndex;
+  refreshUI();
+}
+
 function prevSlide(){
-  index = (index - 1 + slides.length) % slides.length;
-  updateSlide();
+  const newIndex = (index - 1 + slides.length) % slides.length;
+  goTo(newIndex, -1);
 }
 function nextSlide(){
-  index = (index + 1) % slides.length;
-  updateSlide();
+  const newIndex = (index + 1) % slides.length;
+  goTo(newIndex, 1);
 }
 
 /* -------- свайп: touch + мышь, без прокрутки страницы -------- */
@@ -372,14 +447,6 @@ carousel.addEventListener("mousedown",  swipeStart);
 carousel.addEventListener("mousemove",  e=>{ if(draggingMouse) swipeMove(e); });
 carousel.addEventListener("mouseup",    swipeEnd);
 carousel.addEventListener("mouseleave", e=>{ if(draggingMouse) swipeEnd(e); });
-
-/* -------- helper -------- */
-function updateHelper(net){
-  helperText.textContent =
-    net === "r2d5"
-      ? "Выбрана r2d5 (5 GHz) — обычно быстрее, если устройство поддерживает 5 GHz."
-      : "Выбрана r2d2 (2.4 GHz) — стабильнее на расстоянии и старых устройствах.";
-}
 
 /* -------- QR -------- */
 function showQR(){
@@ -431,7 +498,16 @@ function toggleTheme(){
   const oldAndroid = /Android\s([0-6]\.|7\.0)/i.test(ua);
   const oldIOS     = /OS\s(9_|10_)/i.test(ua);
   index = (oldAndroid || oldIOS) ? 1 : 0;
-  updateSlide();
+
+  // начальное состояние без анимаций
+  slides.forEach((s,i)=>{
+    s.classList.remove(
+      "enter-from-right","enter-from-left",
+      "animating-out-left","animating-out-right","active"
+    );
+    if(i === index) s.classList.add("active");
+  });
+  refreshUI();
 })();
 </script>
 </body>
