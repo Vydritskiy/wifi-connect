@@ -1,0 +1,90 @@
+
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Wi‑Fi Connect</title>
+<link rel="manifest" href="manifest.json">
+<style>
+body {
+    margin:0;
+    font-family:-apple-system, BlinkMacSystemFont, sans-serif;
+    background:var(--bg);
+    color:var(--fg);
+    transition:0.3s;
+}
+:root {
+    --bg:#ffffff;
+    --fg:#000000;
+}
+body.neon {
+    --bg:#0a0018;
+    --fg:#dcd3ff;
+}
+.container { padding:20px; max-width:480px; margin:auto; }
+.card {
+    background:rgba(255,255,255,0.5);
+    backdrop-filter:blur(20px);
+    border-radius:20px;
+    padding:20px;
+    margin-bottom:20px;
+    transition:0.3s;
+}
+body.neon .card{ background:rgba(60,0,120,0.4); }
+h1 { text-align:center; }
+button {
+    width:100%;
+    padding:15px;
+    border-radius:15px;
+    border:none;
+    font-size:18px;
+    margin-top:10px;
+    background:#6a4dff;
+    color:white;
+}
+.theme-toggle{
+    position:fixed;top:10px;right:10px;
+    padding:10px 14px;
+    border-radius:30px;
+    background:#6a4dff;color:white;
+    cursor:pointer;
+}
+.qr{ text-align:center;margin-top:20px; }
+</style>
+</head>
+<body>
+<div class="theme-toggle" onclick="toggleTheme()">Тема</div>
+<div class="container">
+<h1>Подключение Wi‑Fi</h1>
+
+<div class="card">
+    <label>Выберите сеть:</label>
+    <select id="network">
+        <option value="r2d5">r2d5 — 5 GHz</option>
+        <option value="r2d2">r2d2 — 2.4 GHz</option>
+    </select>
+    <button onclick="showQR()">Показать QR</button>
+    <button onclick="copyPass()">Скопировать пароль</button>
+    <div class="qr"><img id="qrimg" width="200"></div>
+</div>
+
+</div>
+
+<script>
+function toggleTheme(){
+    document.body.classList.toggle('neon');
+}
+
+function showQR(){
+    let n = document.getElementById("network").value;
+    document.getElementById("qrimg").src = "qr/qr_" + n + ".png";
+}
+
+function copyPass(){
+    navigator.clipboard.writeText("Jgthfnbdysq1913");
+    alert("Пароль скопирован");
+}
+</script>
+</body>
+</html>
