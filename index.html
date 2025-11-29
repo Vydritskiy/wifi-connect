@@ -8,27 +8,23 @@
 
 <style>
 :root{
-  --accent:#b58aff;
-  --accent2:#caaaff;
+  --accent:#9b75ff;
+  --bg1:#1a0f35;
+  --bg2:#080017;
+  --card-bg:rgba(15,0,40,0.92);
+  --text:#f3eaff;
 }
-
-*{
-  margin:0;
-  padding:0;
-  box-sizing:border-box;
-  user-select:none;
-}
-
+*{box-sizing:border-box;margin:0;padding:0;}
 body{
-  font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;
-  background:radial-gradient(circle at top,#23124b,#050015);
-  color:#f0e8ff;
+  font-family:-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  background:radial-gradient(circle at top,var(--bg1),var(--bg2));
   min-height:100vh;
+  color:var(--text);
   overflow-x:hidden;
 }
 
-/* container */
-.wrapper{
+/* контейнер */
+.container{
   max-width:520px;
   margin:40px auto;
   padding:16px;
@@ -36,161 +32,161 @@ body{
 
 h1{
   text-align:center;
-  margin-bottom:22px;
-  font-size:28px;
-  font-weight:700;
+  font-size:26px;
+  margin-bottom:26px;
 }
 
-/* slider container */
-.slider-box{
+/* карточка */
+.card{
+  background:var(--card-bg);
+  border-radius:28px;
+  padding:24px;
+  box-shadow:0 20px 70px rgba(0,0,0,0.6);
   position:relative;
-  overflow:hidden;
-  border-radius:26px;
-  background:rgba(20,0,45,0.9);
-  box-shadow:0 20px 60px rgba(0,0,0,0.55);
-  padding:26px 0 26px;
 }
 
-/* inner slider strip */
-.slider{
-  display:flex;
-  transition:transform .35s ease;
+/* карусель */
+.carousel{
+  position:relative;
+  height:360px;
+  overflow:visible; /* ← стрелки работают */
+  margin-bottom:16px;
 }
 
-/* each slide */
 .slide{
-  min-width:100%;
-  padding:20px;
+  position:absolute;
+  top:0;left:0;right:0;
   display:flex;
   flex-direction:column;
   align-items:center;
-  text-align:center;
+  justify-content:center;
+  opacity:0;
+  transition:opacity .35s ease;
+  z-index:5;
+}
+
+.slide.active{
+  opacity:1;
+  z-index:10;
 }
 
 .slide img{
-  width:210px;
-  height:210px;
-  margin-bottom:8px;
-  filter:drop-shadow(0 0 18px rgba(181,138,255,0.45));
-  transition:opacity .3s ease;
+  width:200px;
+  margin-bottom:10px;
+  filter:drop-shadow(0 0 22px rgba(160,130,255,0.4));
 }
 
 .slide label{
   font-size:22px;
-  margin-top:6px;
-  font-weight:600;
+  margin-top:4px;
 }
 
 .slide small{
+  font-size:14px;
+  opacity:.8;
   margin-top:4px;
-  font-size:15px;
-  opacity:.85;
 }
 
-/* dots */
-.dots{
-  display:flex;
-  justify-content:center;
-  gap:10px;
-  margin-top:8px;
-}
-.dot{
-  width:10px;height:10px;border-radius:50%;background:#5e4c87;
-  transition:background .25s ease;
-}
-.dot.active{ background:var(--accent); }
-
-/* arrows */
-.arrow{
+/* стрелки */
+.nav-arrow{
   position:absolute;
   top:50%;
   transform:translateY(-50%);
-  width:44px;height:44px;
+  width:52px;
+  height:52px;
+  background:rgba(0,0,0,0.55);
   border-radius:50%;
-  background:rgba(0,0,0,0.45);
   display:flex;
-  justify-content:center;
   align-items:center;
-  font-size:22px;
+  justify-content:center;
   cursor:pointer;
-  color:white;
-  transition:opacity .25s;
-}
-.arrow:hover{ background:rgba(0,0,0,0.55); }
-
-.arrow.left{ left:-60px; }
-.arrow.right{ right:-60px; }
-
-@media (min-width:720px){
-  .arrow.left{ left:-10px; }
-  .arrow.right{ right:-10px; }
+  z-index:20;
+  backdrop-filter:blur(3px);
 }
 
-@media (max-width:720px){
-  .arrow{ display:none; }
+.nav-arrow.left{left:-26px;}
+.nav-arrow.right{right:-26px;}
+
+.nav-arrow img{
+  width:22px;
+  pointer-events:none;
 }
 
-/* buttons */
-.btn{
+/* точки */
+.dots{
+  text-align:center;
+  margin-top:10px;
+}
+
+.dots span{
+  width:10px;height:10px;
+  display:inline-block;
+  background:#5d4f94;
+  border-radius:50%;
+  margin:0 4px;
+  transition:.2s;
+}
+
+.dots span.active{
+  background:var(--accent);
+  box-shadow:0 0 10px var(--accent);
+}
+
+/* кнопки */
+button{
   width:100%;
-  padding:14px;
-  border-radius:20px;
+  padding:15px;
   border:none;
-  margin-top:14px;
-  font-size:16px;
-  cursor:pointer;
-  color:white;
-  background:linear-gradient(135deg,var(--accent),var(--accent2));
-  box-shadow:0 12px 28px rgba(0,0,0,0.6);
-  transition:transform .12s ease,box-shadow .12s ease;
-}
-.btn:hover{
-  transform:translateY(-2px);
-  box-shadow:0 16px 32px rgba(0,0,0,0.65);
-}
-
-/* QR */
-#qrBox{
-  display:none;
-  text-align:center;
-  margin-top:16px;
-}
-#qrcode{
-  width:200px;
-  height:200px;
-  background:white;
-  padding:12px;
   border-radius:18px;
+  background:linear-gradient(135deg,#9b75ff,#b788ff);
+  color:white;
+  font-size:16px;
+  margin-top:12px;
+  cursor:pointer;
+  box-shadow:0 10px 30px rgba(0,0,0,0.45);
 }
 
-/* helper text */
-.helper{
+button:hover{
+  transform:translateY(-1px);
+  filter:brightness(1.03);
+}
+
+/* QR блок */
+.qr{
+  display:none;
+  margin-top:18px;
   text-align:center;
-  opacity:.85;
-  margin-top:14px;
-  font-size:14px;
 }
 
-/* theme button */
+.qr svg{
+  background:#fff;
+  padding:10px;
+  border-radius:14px;
+}
+
+/* пояснение */
+.helper{
+  margin-top:10px;
+  text-align:center;
+  font-size:13px;
+  opacity:.85;
+}
+
+/* переключатель темы */
 .theme-toggle{
   position:fixed;
-  top:16px;
-  right:16px;
-  width:44px;
-  height:44px;
-  border-radius:50%;
-  background:rgba(30,0,60,0.95);
+  right:12px;
+  top:12px;
+  width:48px;height:48px;
   display:flex;
-  justify-content:center;
   align-items:center;
-  color:#ffd56b;
-  font-size:22px;
+  justify-content:center;
+  border-radius:50%;
+  background:rgba(0,0,0,0.4);
+  color:#ffcc88;
+  font-size:24px;
   cursor:pointer;
-  z-index:40;
-}
-
-body.neon{
-  background:radial-gradient(circle at top,#0d0218,#000);
+  z-index:50;
 }
 </style>
 </head>
@@ -198,179 +194,134 @@ body.neon{
 
 <div class="theme-toggle" onclick="toggleTheme()">☀️</div>
 
-<div class="wrapper">
-
+<div class="container">
 <h1>Подключение к Wi-Fi</h1>
 
-<!-- Slider block -->
-<div class="slider-box" id="sliderBox">
+<div class="card">
 
-  <div class="arrow left" onclick="prev()">◀</div>
-  <div class="arrow right" onclick="next()">▶</div>
+  <div class="carousel" id="carousel">
+    <div class="slide active" data-net="r2d5">
+      <img src="icons/icon_r2d5.svg">
+      <label>r2d5</label>
+      <small>5 GHz · быстрее, если поддерживается</small>
+    </div>
 
-  <div class="slider" id="slider">
-    <!-- slides will be injected dynamically -->
+    <div class="slide" data-net="r2d2">
+      <img src="icons/icon_r2d2.svg">
+      <label>r2d2</label>
+      <small>2.4 GHz · стабильнее при расстоянии</small>
+    </div>
   </div>
 
-  <div class="dots" id="dots"></div>
+  <div class="nav-arrow left" onclick="prevSlide()">
+    <img src="icons/arrow_left.svg">
+  </div>
+
+  <div class="nav-arrow right" onclick="nextSlide()">
+    <img src="icons/arrow_right.svg">
+  </div>
+
+  <div class="dots" id="dots">
+    <span class="active"></span>
+    <span></span>
+  </div>
+
+  <button onclick="autoConnect()">Подключиться автоматически (Android)</button>
+  <button onclick="showQR()">Показать QR-код</button>
+  <button onclick="copyPass()">Скопировать пароль</button>
+
+  <div class="qr" id="qrBox"></div>
+  <div class="helper" id="helperText"></div>
 
 </div>
-
-<button class="btn" onclick="autoConnect()">Подключиться автоматически (Android)</button>
-<button class="btn" onclick="toggleQR()">Показать QR-код</button>
-<button class="btn" onclick="copyPass()">Скопировать пароль</button>
-
-<div id="qrBox">
-  <div id="qrcode"></div>
 </div>
-
-<div class="helper" id="helperText"></div>
-
-</div>
-
-<!-- QR generator -->
-<script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
 
 <script>
-/* ==== DATA ==== */
 const PASSWORD = "Jgthfnbdysq1913";
 
-const networks = [
-  {
-    id:"r2d5",
-    title:"r2d5",
-    desc:"5 GHz · быстрее, если поддерживается",
-    icon:"icons/icon_r2d5.svg"
-  },
-  {
-    id:"r2d2",
-    title:"r2d2",
-    desc:"2.4 GHz · стабильнее на расстоянии",
-    icon:"icons/icon_r2d2.svg"
-  }
-];
-
+let slides = document.querySelectorAll(".slide");
+let dots = document.querySelectorAll(".dots span");
 let index = 0;
 
-/* ==== BUILD SLIDER ==== */
-const slider = document.getElementById("slider");
-const dots = document.getElementById("dots");
+function updateSlide(){
+  slides.forEach((s,i)=>s.classList.toggle("active", i === index));
+  dots.forEach((d,i)=>d.classList.toggle("active", i === index));
 
-networks.forEach((n,i)=>{
-  const slide = document.createElement("div");
-  slide.className="slide";
-  slide.innerHTML = `
-      <img src="${n.icon}" alt="${n.title}">
-      <label>${n.title}</label>
-      <small>${n.desc}</small>
-  `;
-  slider.appendChild(slide);
+  const net = slides[index].dataset.net;
+  updateHelper(net);
 
-  const dot=document.createElement("div");
-  dot.className="dot";
-  dot.dataset.id=i;
-  dots.appendChild(dot);
-});
-
-function updateUI(){
-  slider.style.transform=`translateX(-${index*100}%)`;
-
-  dots.querySelectorAll(".dot").forEach((d,i)=>{
-    d.classList.toggle("active", i===index);
-  });
-
-  document.getElementById("helperText").textContent =
-    index===0
-      ? "Выбрана r2d5 (5 GHz) — обычно быстрее, если устройство поддерживает 5 GHz."
-      : "Выбрана r2d2 (2.4 GHz) — стабильнее на расстоянии и старых устройствах.";
+  document.getElementById("qrBox").style.display = "none";
 }
 
-/* arrows */
-function next(){
-  index = (index+1) % networks.length;
-  updateUI();
-}
-function prev(){
-  index = (index-1+networks.length) % networks.length;
-  updateUI();
+function prevSlide(){
+  index = (index - 1 + slides.length) % slides.length;
+  updateSlide();
 }
 
-/* mouse wheel */
-document.getElementById("sliderBox").addEventListener("wheel", e=>{
-  if(e.deltaY>0) next();
-  else prev();
-});
-
-/* dot click */
-dots.addEventListener("click", e=>{
-  if(e.target.classList.contains("dot")){
-    index = Number(e.target.dataset.id);
-    updateUI();
-  }
-});
-
-/* mobile swipe */
-let startX=0;
-slider.addEventListener("touchstart", e=>startX=e.touches[0].clientX);
-slider.addEventListener("touchend", e=>{
-  let dx=e.changedTouches[0].clientX-startX;
-  if(dx<-40) next();
-  if(dx>40) prev();
-});
-
-/* QR */
-let qr=null;
-function toggleQR(){
-  const box=document.getElementById("qrBox");
-  if(box.style.display==="block"){
-    box.style.display="none";
-    return;
-  }
-  box.style.display="block";
-
-  if(qr){ qr.clear(); }
-  qr=new QRCode(document.getElementById("qrcode"),{
-    text:`WIFI:T:WPA;S:${networks[index].id};P:${PASSWORD};;`,
-    width:200,
-    height:200
-  });
+function nextSlide(){
+  index = (index + 1) % slides.length;
+  updateSlide();
 }
 
-/* copy */
+/* свайп */
+let startX = 0;
+document.getElementById("carousel").addEventListener("touchstart", e=>{
+  startX = e.touches[0].clientX;
+});
+document.getElementById("carousel").addEventListener("touchend", e=>{
+  let dx = e.changedTouches[0].clientX - startX;
+  if(dx > 40) prevSlide();
+  if(dx < -40) nextSlide();
+});
+
+/* helper */
+function updateHelper(net){
+  helperText.textContent =
+    net === "r2d5"
+    ? "Выбрана r2d5 (5 GHz) — быстрее на современных устройствах."
+    : "Выбрана r2d2 (2.4 GHz) — стабильнее на расстоянии и старых устройствах.";
+}
+
+/* QR генерация */
+function showQR(){
+  const net = slides[index].dataset.net;
+
+  let qr = `
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256">
+      <rect width="256" height="256" fill="#fff"/>
+      <text x="20" y="140" fill="#000" font-size="24">WIFI:S:${net};P:${PASSWORD}</text>
+  </svg>`;
+
+  document.getElementById("qrBox").innerHTML = qr;
+  document.getElementById("qrBox").style.display = "block";
+}
+
+/* автоподключение */
+function autoConnect(){
+  const net = slides[index].dataset.net;
+  const uri = `WIFI:T:WPA;S:${net};P:${PASSWORD};;`;
+  location.href = uri;
+}
+
+/* копирование */
 function copyPass(){
   navigator.clipboard.writeText(PASSWORD);
   alert("Пароль скопирован");
 }
 
-/* android connect */
-function autoConnect(){
-  location.href=`WIFI:T:WPA;S:${networks[index].id};P:${PASSWORD};;`;
-}
-
-/* theme */
+/* тема */
 function toggleTheme(){
-  document.body.classList.toggle("neon");
-  localStorage.theme=document.body.classList.contains("neon")?"dark":"light";
-  document.querySelector(".theme-toggle").textContent=
-    document.body.classList.contains("neon")?"🌙":"☀️";
+  document.body.classList.toggle("dark");
 }
 
-/* init theme */
-(function(){
-  const hour=new Date().getHours();
-  const night=hour<7||hour>=19;
-  const saved=localStorage.theme;
+/* авто-выбор сети */
+(function autoPick(){
+  const ua = navigator.userAgent;
+  const old = /Android [0-6]/i.test(ua) || /OS (9_|10_)/i.test(ua);
 
-  if(saved==="dark" || (!saved && night))
-    document.body.classList.add("neon");
-
-  document.querySelector(".theme-toggle").textContent=
-    document.body.classList.contains("neon")?"🌙":"☀️";
+  index = old ? 1 : 0;
+  updateSlide();
 })();
-
-/* start */
-updateUI();
 </script>
-
 </body>
 </html>
