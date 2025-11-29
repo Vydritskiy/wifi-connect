@@ -1,108 +1,222 @@
-
 <!DOCTYPE html>
 <html lang="ru">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Wi‑Fi Connect</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Wi-Fi Connect</title>
 <link rel="manifest" href="manifest.json">
+
+<!-- iOS PWA -->
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<link rel="apple-touch-icon" href="icons/icon_192.png">
+
+<!-- (если сделаешь сплэши) -->
+<link rel="apple-touch-startup-image" href="splash/splash-640x1136.png"
+      media="(device-width: 320px) and (device-height: 568px) and (-webkit-device-pixel-ratio: 2)">
+<link rel="apple-touch-startup-image" href="splash/splash-750x1334.png"
+      media="(device-width: 375px) and (device-height: 667px) and (-webkit-device-pixel-ratio: 2)">
+<link rel="apple-touch-startup-image" href="splash/splash-1125x2436.png"
+      media="(device-width: 375px) and (device-height: 812px) and (-webkit-device-pixel-ratio: 3)">
+
+<!-- QR библиотека (генерация на клиенте) -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrious/4.0.2/qrious.min.js"></script>
+
 <style>
 :root{
   --accent:#8f6bff;
+  --bg:#050015;
+  --card-bg:rgba(10,0,40,0.9);
+  --text:#f9f4ff;
 }
+
+/* светлая тема по системным настройкам */
+@media (prefers-color-scheme: light){
+  :root{
+    --bg:#f3f4ff;
+    --card-bg:rgba(255,255,255,0.9);
+    --text:#050015;
+  }
+}
+
 *{box-sizing:border-box;margin:0;padding:0;}
 body{
   font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;
   min-height:100vh;
+  background:radial-gradient(circle at top,#23124b,var(--bg));
+  color:var(--text);
+}
+body.neon{
   background:radial-gradient(circle at top,#23124b,#050015);
   color:#f9f4ff;
 }
-.container{max-width:520px;margin:40px auto;padding:16px;}
+
+.container{
+  max-width:520px;
+  margin:32px auto 40px;
+  padding:0 14px 20px;
+}
 .card{
-  background:rgba(10,0,40,0.9);
+  background:var(--card-bg);
   border-radius:28px;
-  padding:24px;
+  padding:20px 18px 22px;
   box-shadow:0 20px 60px rgba(0,0,0,0.7);
 }
-h1{text-align:center;margin-bottom:20px;font-size:24px;}
-label.title{display:block;margin-bottom:10px;font-size:16px;}
+h1{
+  text-align:center;
+  margin-bottom:18px;
+  font-size:22px;
+}
+label.title{
+  display:block;
+  margin-bottom:10px;
+  font-size:15px;
+}
+
+/* переключатель темы */
 .theme-toggle{
-  position:fixed;top:14px;right:14px;
-  width:44px;height:44px;border-radius:50%;
+  position:fixed;
+  top:12px;right:12px;
+  width:40px;height:40px;border-radius:50%;
   background:rgba(20,10,60,0.9);
   color:#ffd86b;display:flex;align-items:center;justify-content:center;
-  cursor:pointer;font-size:22px;box-shadow:0 0 18px rgba(0,0,0,0.6);
+  cursor:pointer;font-size:20px;box-shadow:0 0 14px rgba(0,0,0,0.6);
+  z-index:10;
 }
-/* network cards */
-.network-select{display:flex;gap:18px;margin-bottom:24px;}
+
+/* карусель сетей */
+.network-wrapper{
+  overflow:hidden;
+  position:relative;
+  margin-bottom:20px;
+}
+.network-track{
+  display:flex;
+  transition:transform .25s ease-out;
+  will-change:transform;
+}
 .net-card{
-  flex:1;padding:12px 8px 14px;border-radius:22px;
+  flex:0 0 100%;
+  padding:12px 8px 14px;
+  border-radius:22px;
   background:rgba(12,4,40,0.95);
   border:2px solid rgba(140,120,255,0.25);
-  cursor:pointer;text-align:center;
+  cursor:pointer;
+  text-align:center;
   transition:transform .16s ease, box-shadow .16s ease, border .16s ease, background .16s ease;
+  margin-right:12px;
 }
-.net-card img{width:90%;max-width:160px;display:block;margin:0 auto 8px;}
+body:not(.neon) .net-card{
+  background:rgba(255,255,255,0.92);
+  border:2px solid rgba(140,120,255,0.3);
+}
+.net-card img{
+  width:70%;
+  max-width:150px;
+  display:block;
+  margin:0 auto 6px;
+}
 .net-card label{display:block;font-size:18px;}
 .net-card small{display:block;font-size:13px;opacity:.82;margin-top:2px;}
-.net-card:hover{
-  transform:translateY(-2px);
-  box-shadow:0 12px 26px rgba(0,0,0,0.7);
-}
-.net-card.selected{
+.net-card.active{
   border-color:var(--accent);
-  box-shadow:0 0 26px rgba(145,120,255,0.9);
-  background:radial-gradient(circle at top,rgba(150,120,255,0.3),rgba(18,6,50,0.98));
-  animation:pop .16s ease-out;
+  box-shadow:0 0 22px rgba(145,120,255,0.9);
+  background:radial-gradient(circle at top,rgba(150,120,255,0.25),rgba(18,6,50,0.98));
 }
-@keyframes pop{
-  from{transform:scale(.96);}
-  to{transform:scale(1);}
+body:not(.neon) .net-card.active{
+  background:radial-gradient(circle at top,rgba(150,120,255,0.16),#ffffff);
 }
-/* buttons */
+
+/* точки-пейджер */
+.network-dots{
+  text-align:center;
+  margin-top:6px;
+}
+.network-dots .dot{
+  display:inline-block;
+  width:6px;height:6px;
+  border-radius:50%;
+  margin:0 3px;
+  background:rgba(255,255,255,0.3);
+}
+.network-dots .dot.active{
+  background:var(--accent);
+}
+
+/* кнопки */
 button{
-  width:100%;padding:14px;border-radius:18px;border:none;
-  margin-top:14px;font-size:16px;cursor:pointer;
+  width:100%;padding:13px 12px;border-radius:18px;border:none;
+  margin-top:12px;font-size:15px;cursor:pointer;
   background:linear-gradient(135deg,#8f6bff,#b073ff);
-  color:#fff;box-shadow:0 10px 28px rgba(0,0,0,0.6);
+  color:#fff;box-shadow:0 10px 24px rgba(0,0,0,0.6);
   transition:transform .12s ease, box-shadow .12s ease, filter .12s ease;
 }
 button:hover{
   transform:translateY(-1px);
-  box-shadow:0 16px 32px rgba(0,0,0,0.65);
+  box-shadow:0 16px 30px rgba(0,0,0,0.65);
   filter:brightness(1.03);
 }
+
 /* QR */
-.qr{margin-top:18px;text-align:center;display:none;}
-.qr img{border-radius:18px;background:#fff;padding:6px;}
-.helper{margin-top:10px;font-size:13px;opacity:.84;text-align:center;}
+.qr{
+  margin-top:16px;
+  text-align:center;
+  display:none;
+}
+.qr canvas{
+  border-radius:18px;
+  background:#fff;
+  padding:6px;
+}
+.helper{
+  margin-top:8px;
+  font-size:13px;
+  opacity:.84;
+  text-align:center;
+}
+
+/* мобилки */
+@media (max-width:420px){
+  .container{margin-top:22px;}
+  .card{border-radius:24px;padding:18px 14px;}
+  h1{font-size:20px;}
+  .net-card img{width:76%;}
+}
 </style>
 </head>
 <body>
 <div class="theme-toggle" onclick="toggleTheme()">☀️</div>
 <div class="container">
-  <h1>Подключение к Wi‑Fi</h1>
+  <h1>Подключение к Wi-Fi</h1>
   <div class="card">
-    <label class="title">Выберите сеть:</label>
-    <div class="network-select">
-      <div class="net-card" data-net="r2d5" onclick="selectNet('r2d5')">
-        <img src="icons/icon_r2d5.svg" alt="r2d5 5 GHz">
-        <label>r2d5</label>
-        <small>5 GHz · быстрее, если поддерживается</small>
-      </div>
-      <div class="net-card" data-net="r2d2" onclick="selectNet('r2d2')">
-        <img src="icons/icon_r2d2.svg" alt="r2d2 2.4 GHz">
-        <label>r2d2</label>
-        <small>2.4 GHz · стабильнее на старых устройствах</small>
+    <label class="title">Выберите сеть (свайпайте влево/вправо):</label>
+
+    <div class="network-wrapper" id="networkWrapper">
+      <div class="network-track" id="networkTrack">
+        <div class="net-card" data-net="r2d5">
+          <img src="icons/icon_r2d5.svg" alt="r2d5 5 GHz">
+          <label>r2d5</label>
+          <small>5 GHz · быстрее на современных устройствах</small>
+        </div>
+        <div class="net-card" data-net="r2d2">
+          <img src="icons/icon_r2d2.svg" alt="r2d2 2.4 GHz">
+          <label>r2d2</label>
+          <small>2.4 GHz · стабильнее на старых устройствах</small>
+        </div>
       </div>
     </div>
 
+    <div class="network-dots">
+      <span class="dot active"></span>
+      <span class="dot"></span>
+    </div>
+
     <button onclick="autoConnect()">Подключиться автоматически (Android)</button>
-    <button onclick="showQR()">Показать QR‑код</button>
+    <button onclick="showQR()">Показать QR-код</button>
     <button onclick="copyPass()">Скопировать пароль</button>
 
     <div class="qr" id="qrBox">
-      <img id="qrimg" width="200" alt="QR‑код для подключения">
+      <canvas id="qrCanvas" width="200" height="200"></canvas>
     </div>
     <div class="helper" id="helperText"></div>
   </div>
@@ -110,62 +224,122 @@ button:hover{
 
 <script>
 const PASSWORD = "Jgthfnbdysq1913";
-let selected = "r2d5";
+const networks = ["r2d5","r2d2"];
+let selectedIndex = 0;
 
-function selectNet(n){
-  selected = n;
-  document.querySelectorAll(".net-card").forEach(c=>{
-    c.classList.toggle("selected", c.dataset.net === n);
+/* применение выбора (анимация карусели + тексты) */
+function applySelection(){
+  const track = document.getElementById("networkTrack");
+  const width = document.getElementById("networkWrapper").clientWidth;
+  track.style.transform = "translateX(" + (-selectedIndex * width) + "px)";
+
+  document.querySelectorAll(".net-card").forEach((card, idx)=>{
+    card.classList.toggle("active", idx === selectedIndex);
   });
+  document.querySelectorAll(".network-dots .dot").forEach((dot, idx)=>{
+    dot.classList.toggle("active", idx === selectedIndex);
+  });
+
   document.getElementById("qrBox").style.display = "none";
+
   const helper = document.getElementById("helperText");
-  helper.textContent = n === "r2d5"
-    ? "Выбрана сеть r2d5 (5 GHz) — обычно быстрее на современных устройствах."
-    : "Выбрана сеть r2d2 (2.4 GHz) — стабильнее для старых устройств и большего расстояния.";
+  const net = networks[selectedIndex];
+  helper.textContent = net === "r2d5"
+    ? "Выбрана r2d5 (5 GHz) — обычно быстрее, если устройство поддерживает 5 GHz."
+    : "Выбрана r2d2 (2.4 GHz) — лучше для старых устройств и при большем расстоянии.";
 }
 
-/* авто-выбор 5 GHz / 2.4 GHz */
+function selectIndex(idx){
+  if(idx < 0 || idx > 1) return;
+  selectedIndex = idx;
+  applySelection();
+}
+
+/* свайп по карусели */
+(function initSwipe(){
+  const wrapper = document.getElementById("networkWrapper");
+  let startX = null;
+  wrapper.addEventListener("touchstart", e=>{
+    startX = e.touches[0].clientX;
+  }, {passive:true});
+  wrapper.addEventListener("touchend", e=>{
+    if(startX === null) return;
+    const endX = e.changedTouches[0].clientX;
+    const dx = endX - startX;
+    if(Math.abs(dx) > 40){
+      if(dx < 0) selectIndex(selectedIndex + 1);
+      else selectIndex(selectedIndex - 1);
+    }
+    startX = null;
+  });
+})();
+
+/* авто-выбор лучшей сети — navigator.connection + возраст устройства */
 (function autoSelectBest(){
   const ua = navigator.userAgent || "";
   const isOldAndroid = /Android\s([0-6]\.\d|7\.0)/i.test(ua);
   const isOldiOS = /OS\s(9_|10_|11_)/i.test(ua);
-  if(isOldAndroid || isOldiOS){
-    selectNet("r2d2");
-  } else {
-    selectNet("r2d5");
+  let prefer5 = !(isOldAndroid || isOldiOS);
+
+  const conn = navigator.connection || navigator.mozConnection || navigator.webkitConnection;
+  if(conn){
+    if(conn.effectiveType === "wifi" && conn.downlink && conn.downlink > 50 && conn.rtt && conn.rtt < 30){
+      prefer5 = true;
+    }
+    if(conn.downlink && conn.downlink < 10){
+      prefer5 = false;
+    }
   }
+  selectIndex(prefer5 ? 0 : 1);
 })();
 
-/* тема */
+/* тема: системная + ручной переключатель */
 function toggleTheme(){
   document.body.classList.toggle("neon");
-  localStorage.theme = document.body.classList.contains("neon") ? "dark" : "light";
+  localStorage.theme = document.body.classList.contains("neon") ? "dark" : "system";
+  updateThemeIcon();
+}
+function updateThemeIcon(){
   document.querySelector(".theme-toggle").textContent =
     document.body.classList.contains("neon") ? "🌙" : "☀️";
 }
 (function initTheme(){
-  const hour = new Date().getHours();
-  const night = hour < 7 || hour >= 19;
   const stored = localStorage.theme;
-  if(stored){
-    if(stored === "dark") document.body.classList.add("neon");
-  }else if(night){
+  const prefersDark = window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches;
+  if(stored === "dark"){
     document.body.classList.add("neon");
+  } else if(stored === "system"){
+    if(prefersDark) document.body.classList.add("neon");
+  } else {
+    if(prefersDark) document.body.classList.add("neon");
   }
-  document.querySelector(".theme-toggle").textContent =
-    document.body.classList.contains("neon") ? "🌙" : "☀️";
+  updateThemeIcon();
 })();
 
-/* QR код */
+/* QR генерация на клиенте через QRious */
 function showQR(){
-  const img = document.getElementById("qrimg");
-  img.src = "qr/qr_" + selected + ".png?" + Date.now(); // защита от кеша
-  document.getElementById("qrBox").style.display = "block";
+  const net = networks[selectedIndex];
+  const wifiString = "WIFI:T:WPA;S:" + net + ";P:" + PASSWORD + ";;";
+  const canvas = document.getElementById("qrCanvas");
+  if(typeof QRious === "function"){
+    new QRious({
+      element: canvas,
+      value: wifiString,
+      size: 200,
+      level: "H",
+      background: "#ffffff",
+      foreground: "#000000"
+    });
+    document.getElementById("qrBox").style.display = "block";
+  } else {
+    alert("Не удалось загрузить модуль QR. Проверьте подключение к интернету.");
+  }
 }
 
 /* Android авто-подключение */
 function autoConnect(){
-  const uri = "WIFI:T:WPA;S:" + selected + ";P:" + PASSWORD + ";;";
+  const net = networks[selectedIndex];
+  const uri = "WIFI:T:WPA;S:" + net + ";P:" + PASSWORD + ";;";
   window.location.href = uri;
 }
 
@@ -173,6 +347,16 @@ function autoConnect(){
 function copyPass(){
   navigator.clipboard.writeText(PASSWORD).then(()=>alert("Пароль скопирован"));
 }
+
+/* инициализация / адаптация при ресайзе */
+window.addEventListener("load", ()=>{
+  applySelection();
+  window.addEventListener("resize", ()=>applySelection());
+
+  if('serviceWorker' in navigator){
+    navigator.serviceWorker.register('sw.js').catch(()=>{});
+  }
+});
 </script>
 </body>
 </html>
