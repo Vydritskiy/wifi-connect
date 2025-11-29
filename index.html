@@ -55,7 +55,7 @@ h1{
   overflow:hidden;
 }
 
-/* --- СЛАЙДЫ + АНИМАЦИЯ ULTRA SMOOTH --- */
+/* --- СЛАЙДЫ + ULTRA SMOOTH АНИМАЦИЯ --- */
 .slide{
   position:absolute;
   inset:0;
@@ -64,7 +64,7 @@ h1{
   align-items:center;
   justify-content:flex-start;
   opacity:0;
-  transform:translateX(140px); /* базовое положение (вправо) */
+  transform:translateX(140px); /* базовое внекадровое положение */
   pointer-events:none;
   transition:
     transform 0.7s cubic-bezier(.22,.61,.36,1),
@@ -72,7 +72,7 @@ h1{
   z-index:0;
 }
 
-/* текущая карточка в центре */
+/* текущая карточка */
 .slide.active{
   opacity:1;
   transform:translateX(0);
@@ -80,7 +80,7 @@ h1{
   z-index:2;
 }
 
-/* входящие карточки (ставим перед запуском анимации) */
+/* входящие позиции */
 .slide.enter-from-right{
   opacity:0;
   transform:translateX(140px);
@@ -90,7 +90,7 @@ h1{
   transform:translateX(-140px);
 }
 
-/* исходящая карточка уезжает */
+/* исходящая карточка */
 .slide.animating-out-left{
   opacity:0;
   transform:translateX(-140px);
@@ -102,7 +102,7 @@ h1{
   z-index:1;
 }
 
-/* внутренняя прямоугольная карточка, как «экранчик» */
+/* внутренняя прямоугольная карточка */
 .slide-card{
   width:100%;
   max-width:480px;
@@ -120,7 +120,7 @@ h1{
   justify-content:space-between;
 }
 
-/* область с иконкой и основным названием */
+/* область с иконкой и названием */
 .slide-inner{
   display:flex;
   flex-direction:column;
@@ -138,14 +138,14 @@ h1{
   filter:drop-shadow(0 0 18px rgba(170,140,255,0.7));
 }
 
-/* крупный SSID внутри карточки */
+/* крупный SSID */
 .slide-ssid-main{
   font-size:24px;
   font-weight:600;
   margin-top:2px;
 }
 
-/* подпись "5 GHz / 2.4 GHz" внутри карточки */
+/* подпись 5 GHz / 2.4 GHz */
 .slide-ssid-sub{
   font-size:16px;
   opacity:.85;
@@ -353,34 +353,32 @@ function refreshUI(){
 }
 
 /* -------- плавный переход между карточками -------- */
+/* direction:  1 — вперёд (следующая карточка, свайп влево)
+   direction: -1 — назад (предыдущая карточка, свайп вправо) */
 function goTo(newIndex, direction){
   if(isAnimating || newIndex === index) return;
   isAnimating = true;
 
-  const current = index;
-  const currentSlide = slides[current];
-  const nextSlide = slides[newIndex];
+  const currentSlide = slides[index];
+  const nextSlide    = slides[newIndex];
 
-  // сброс всех доп. классов
+  // убрать старые классы
   slides.forEach(s => s.classList.remove(
     "enter-from-right","enter-from-left",
     "animating-out-left","animating-out-right","active"
   ));
 
-  // текущая активная
   currentSlide.classList.add("active");
 
-  // определяем классы в зависимости от направления
+  // ВАЖНО: направление теперь совпадает со свайпом
+  // свайп влево (direction=1): контент едет влево
+  // -> текущая уезжает влево, новая заезжает справа
   const enterClass = direction === 1 ? "enter-from-right" : "enter-from-left";
   const exitClass  = direction === 1 ? "animating-out-left" : "animating-out-right";
 
-  // ставим новую карточку сбоку
   nextSlide.classList.add(enterClass,"active");
+  void nextSlide.offsetWidth; // форсируем reflow
 
-  // форсируем перерисовку, чтобы transition точно сработал
-  void nextSlide.offsetWidth;
-
-  // запускаем анимацию: старую уводим, новой убираем «enter»
   currentSlide.classList.add(exitClass);
   nextSlide.classList.remove(enterClass);
 
@@ -401,11 +399,11 @@ function goTo(newIndex, direction){
 
 function prevSlide(){
   const newIndex = (index - 1 + slides.length) % slides.length;
-  goTo(newIndex, -1);
+  goTo(newIndex, -1);   // стрелка/свайп вправо → назад → анимация вправо
 }
 function nextSlide(){
   const newIndex = (index + 1) % slides.length;
-  goTo(newIndex, 1);
+  goTo(newIndex, 1);    // стрелка/свайп влево → вперёд → анимация влево
 }
 
 /* -------- свайп: touch + мышь, без прокрутки страницы -------- */
@@ -435,8 +433,8 @@ function swipeEnd(e){
   const p = e.changedTouches ? e.changedTouches[0] : e;
   const dx = p.clientX - swipeStartX;
   if(Math.abs(dx) > 40){
-    if(dx < 0) nextSlide();
-    else       prevSlide();
+    if(dx < 0) nextSlide();  // свайп влево → следующая
+    else       prevSlide();  // свайп вправо → предыдущая
   }
   swipeStartX = swipeStartY = null;
   draggingMouse = false;
@@ -502,7 +500,6 @@ function toggleTheme(){
   const oldIOS     = /OS\s(9_|10_)/i.test(ua);
   index = (oldAndroid || oldIOS) ? 1 : 0;
 
-  // начальное состояние без анимаций
   slides.forEach((s,i)=>{
     s.classList.remove(
       "enter-from-right","enter-from-left",
