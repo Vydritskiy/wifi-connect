@@ -1,151 +1,193 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="ru">
 <head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>Гостевой Wi-Fi</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Wi-Fi Connect</title>
 <link rel="manifest" href="manifest.json">
+
 <style>
-:root{
-  --accent: #6a4dff;
-  --bg-light: #f7f7fb;
-  --card-light: rgba(255,255,255,0.95);
-  --text-light: #071225;
-  --bg-neon: linear-gradient(135deg,#0a0018,#001a33);
-  --card-neon: rgba(20,8,40,0.64);
-  --text-neon: #e8e6ff;
+body {
+    margin:0;
+    font-family:-apple-system, BlinkMacSystemFont, sans-serif;
+    background:var(--bg);
+    color:var(--fg);
+    transition:0.3s;
 }
-*{box-sizing:border-box}
-body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Arial,sans-serif;margin:0;min-height:100vh;transition:background .28s,color .28s}
-.container{max-width:520px;margin:40px auto;padding:20px}
-.header{display:flex;justify-content:center;margin-bottom:18px}
-.title{font-size:22px}
-.card{border-radius:18px;padding:18px;box-shadow:0 8px 30px rgba(0,0,0,0.08);transition:background .28s,color .28s}
-.row{display:flex;gap:12px;align-items:center}
-.select{width:100%;padding:12px;border-radius:10px;border:1px solid rgba(0,0,0,0.08);font-size:15px}
-.btn{width:100%;padding:14px;border-radius:12px;border:none;background:var(--accent);color:white;font-size:16px;margin-top:12px;cursor:pointer}
-.btn.ghost{background:transparent;border:1px solid rgba(0,0,0,0.08);color:inherit}
-.logo{width:64px;height:64px;border-radius:12px;object-fit:cover;border:1px solid rgba(0,0,0,0.06)}
-.small{font-size:13px;color:inherit;opacity:0.85;margin-top:10px}
 
-/* light theme */
-body.light{background:var(--bg-light);color:var(--text-light)}
-body.light .card{background:var(--card-light);color:var(--text-light)}
-body.light .select{background:white}
+:root {
+    /* светлая тема */
+    --bg:#f5f6ff;
+    --fg:#000;
+    --card:#ffffffaa;
+    --select-bg:#e7e9ff;
+    --btn:#6a4dff;
+}
 
-/* neon theme */
-body.neon{background:var(--bg-neon);color:var(--text-neon)}
-body.neon .card{background:var(--card-neon);color:var(--text-neon)}
-body.neon .select{background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.04)}
+body.neon {
+    /* тёмная тема */
+    --bg:#070013;
+    --fg:#dcd3ff;
+    --card:#15002baa;
+    --select-bg:#2a1b3f;
+    --btn:#7e5dff;
+}
 
-/* theme toggle */
-.theme-toggle{position:fixed;top:12px;right:12px;padding:8px 12px;border-radius:20px;background:var(--accent);color:#001;font-weight:600;cursor:pointer}
+.container { 
+    padding:20px; 
+    max-width:480px; 
+    margin:auto; 
+}
 
-/* responsive */
-@media (max-width:480px){
-  .container{margin:18px;padding:14px}
-  .title{font-size:18px}
-  .logo{width:52px;height:52px}
+.card {
+    background:var(--card);
+    backdrop-filter:blur(20px);
+    border-radius:20px;
+    padding:25px;
+    margin-top:40px;
+    transition:0.3s;
+}
+
+h1 { text-align:center; margin-top:40px; }
+
+button {
+    width:100%;
+    padding:15px;
+    border-radius:15px;
+    border:none;
+    font-size:18px;
+    margin-top:15px;
+    background:var(--btn);
+    color:white;
+    cursor:pointer;
+}
+
+/* Кнопка переключения темы */
+.theme-toggle{
+    position:fixed;
+    top:10px; right:10px;
+    width:46px;
+    height:46px;
+    border-radius:50%;
+    background:var(--btn);
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    cursor:pointer;
+    font-size:22px;
+    color:white;
+}
+
+/* Селект */
+select {
+    width:100%;
+    padding:14px;
+    border-radius:14px;
+    border:none;
+    background:var(--select-bg);
+    color:var(--fg);
+    font-size:18px;
+    margin-bottom:18px;
+}
+
+/* Иконки сетей */
+.net-icons {
+    display:flex;
+    justify-content:flex-start;
+    gap:20px;
+    margin-bottom:10px;
+}
+
+.net-icons img {
+    width:52px;
+    height:52px;
+    border-radius:50%;
+    object-fit:cover;
 }
 </style>
 </head>
 <body>
-<button class="theme-toggle" id="themeToggle" aria-label="Переключить тему">Тема</button>
+
+<div class="theme-toggle" onclick="toggleTheme()">☀️</div>
+
+<h1>Подключение к Wi-Fi</h1>
 
 <div class="container">
-  <div class="header"><div class="title">Подключение к Wi-Fi</div></div>
+<div class="card">
 
-  <div class="card" id="mainCard">
-    <label class="small">Выберите сеть:</label>
-    <div class="row" style="margin-top:8px">
-      <img id="wifiLogo" class="logo" src="icons/icon_r2d5_192.png" alt="logo">
-      <select id="networkSelect" class="select" aria-label="Выберите сеть">
-        <option value="r2d5" data-icon="icons/icon_r2d5_192.png" data-qr="qr/qr_r2d5.png" data-band="5 GHz">r2d5 — 5 GHz</option>
-        <option value="r2d2" data-icon="icons/icon_r2d2_192.png" data-qr="qr/qr_r2d2.png" data-band="2.4 GHz">r2d2 — 2.4 GHz</option>
-      </select>
+    <label>Выберите сеть:</label>
+
+    <div class="net-icons">
+        <img src="icons/icon_r2d5_192.png">
+        <img src="icons/icon_r2d2_192.png">
     </div>
 
-    <button id="androidBtn" class="btn">Подключиться автоматически (Android)</button>
-    <button id="showQrBtn" class="btn ghost">Показать QR-код</button>
-    <button id="copyBtn" class="btn">Скопировать пароль</button>
+    <select id="network">
+        <option value="r2d5">r2d5 — 5 GHz</option>
+        <option value="r2d2">r2d2 — 2.4 GHz</option>
+    </select>
 
-    <div id="qrBox" style="display:none;text-align:center;margin-top:14px">
-      <img id="qrImg" src="" alt="QR" style="width:220px;border-radius:10px;border:1px solid rgba(0,0,0,0.06)">
+    <button onclick="autoConnect()">Подключиться автоматически (Android)</button>
+    <button onclick="showQR()">Показать QR-код</button>
+    <button onclick="copyPass()">Скопировать пароль</button>
+
+    <div class="qr" style="text-align:center;margin-top:20px;">
+        <img id="qrimg" width="200">
     </div>
 
-    <div class="small" style="margin-top:12px">SSID: <span id="ssidLabel">r2d5</span> · пароль скрыт</div>
-  </div>
+</div>
 </div>
 
+
 <script>
-// CONFIG
-const PASSWORD = "Jgthfnbdysq1913";
-
-// THEME: Variant A — auto by time + manual toggle (manual overrides auto, saved in localStorage)
-function applyTheme(themeName){
-  document.body.classList.remove('light','neon');
-  if(themeName === 'light') document.body.classList.add('light');
-  if(themeName === 'neon') document.body.classList.add('neon');
-  document.getElementById('themeToggle').textContent = themeName === 'light' ? 'Ночь' : 'День';
+/* Смена темы вручную */
+function toggleTheme(){
+    document.body.classList.toggle('neon');
+    updateThemeIcon();
+    localStorage.theme = document.body.classList.contains('neon') ? 'dark' : 'light';
 }
-function themeByTime(){
-  const h = new Date().getHours();
-  return (h >= 7 && h < 19) ? 'light' : 'neon';
+
+/* Иконка солнца/луны */
+function updateThemeIcon(){
+    document.querySelector(".theme-toggle").innerHTML =
+        document.body.classList.contains('neon') ? "🌙" : "☀️";
 }
-// initialize theme
-(function(){
-  const saved = localStorage.getItem('wifi_theme'); // 'light'|'neon' or null
-  const initial = saved || themeByTime();
-  applyTheme(initial);
-})();
 
-document.getElementById('themeToggle').addEventListener('click', ()=>{
-  const isLight = document.body.classList.contains('light');
-  const newTheme = isLight ? 'neon' : 'light';
-  applyTheme(newTheme);
-  localStorage.setItem('wifi_theme', newTheme);
-});
+/* Авто-тема по времени */
+function autoDetectTheme(){
+    let hour = new Date().getHours();
+    let night = hour < 7 || hour >= 19;
 
-// UI logic
-const select = document.getElementById('networkSelect');
-const wifiLogo = document.getElementById('wifiLogo');
-const ssidLabel = document.getElementById('ssidLabel');
+    if(localStorage.theme){  
+        if(localStorage.theme === "dark") document.body.classList.add("neon");
+        updateThemeIcon();
+        return;
+    }
 
-select.addEventListener('change', ()=>{
-  const opt = select.options[select.selectedIndex];
-  wifiLogo.src = opt.dataset.icon;
-  ssidLabel.textContent = opt.value;
-});
+    if(night) document.body.classList.add("neon");
+    updateThemeIcon();
+}
 
-// show QR with auto-hide
-document.getElementById('showQrBtn').addEventListener('click', ()=>{
-  const opt = select.options[select.selectedIndex];
-  const qr = opt.dataset.qr;
-  document.getElementById('qrImg').src = qr;
-  document.getElementById('qrBox').style.display = 'block';
-  clearTimeout(window._qrTimer);
-  window._qrTimer = setTimeout(()=>{ document.getElementById('qrBox').style.display = 'none'; }, 10000);
-});
+autoDetectTheme();
 
-// copy password
-document.getElementById('copyBtn').addEventListener('click', ()=>{
-  navigator.clipboard.writeText(PASSWORD).then(()=>{ alert('Пароль скопирован'); });
-});
+/* Показ QR */
+function showQR(){
+    let n = document.getElementById("network").value;
+    document.getElementById("qrimg").src = "qr/qr_" + n + ".png";
+}
 
-// android auto-connect
-document.getElementById('androidBtn').addEventListener('click', ()=>{
-  const ssid = select.value;
-  const uri = `WIFI:T:WPA;S:${ssid};P:${PASSWORD};;`;
-  window.location.href = uri;
-});
+/* Android подключение */
+function autoConnect(){
+    let n = document.getElementById("network").value;
+    window.location.href = "WIFI:T:" + n + ";";
+}
 
-// auto-select better network pseudo-logic
-(function autoSelect(){
-  const ua = navigator.userAgent || '';
-  const isiOS = /iPhone|iPad|iPod/i.test(ua);
-  if(isiOS) select.value = 'r2d2'; else select.value = 'r2d5';
-  select.dispatchEvent(new Event('change'));
-})();
+/* Копирование пароля */
+function copyPass(){
+    navigator.clipboard.writeText("Jgthfnbdysq1913");
+    alert("Пароль скопирован");
+}
+
 </script>
 </body>
 </html>
