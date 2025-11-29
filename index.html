@@ -1,0 +1,198 @@
+
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Wi‑Fi Connect</title>
+<link rel="manifest" href="manifest.json">
+<style>
+body {
+    margin:0;
+    font-family:-apple-system, BlinkMacSystemFont, sans-serif;
+    background:var(--bg);
+    color:var(--fg);
+    transition:0.3s;
+}
+:root {
+    --bg:#f5f6ff;
+    --fg:#000;
+    --card:#ffffffaa;
+    --btn:#6a4dff;
+}
+body.neon {
+    --bg:#070013;
+    --fg:#dcd3ff;
+    --card:#15002baa;
+    --btn:#7e5dff;
+}
+.container { padding:20px; max-width:480px; margin:auto; }
+.card {
+    background:var(--card);
+    backdrop-filter:blur(20px);
+    border-radius:20px;
+    padding:25px;
+    margin-top:40px;
+    transition:0.3s;
+}
+h1 { text-align:center; margin-top:40px; }
+button {
+    width:100%;
+    padding:15px;
+    border-radius:15px;
+    border:none;
+    font-size:18px;
+    margin-top:15px;
+    background:var(--btn);
+    color:white;
+    cursor:pointer;
+}
+/* Кнопка темы */
+.theme-toggle{
+    position:fixed; top:10px; right:10px;
+    width:46px; height:46px;
+    border-radius:50%;
+    background:var(--btn);
+    display:flex; justify-content:center; align-items:center;
+    cursor:pointer; font-size:22px; color:white;
+}
+/* Блок выбора сети */
+.network-select {
+    display:flex;
+    gap:20px;
+    margin-bottom:20px;
+}
+.net-card {
+    flex:1;
+    text-align:center;
+    padding:15px;
+    border-radius:18px;
+    cursor:pointer;
+    transition:transform 0.18s ease, box-shadow 0.18s ease, border 0.18s ease, background 0.18s ease;
+    border:2px solid transparent;
+    background:rgba(255,255,255,0.04);
+}
+.net-card img { width:120px; }
+.net-card label {
+    display:block;
+    margin-top:10px;
+    font-size:20px;
+}
+.net-card small {
+    display:block;
+    font-size:13px;
+    opacity:0.75;
+    margin-top:2px;
+}
+.net-card:hover {
+    transform:translateY(-2px);
+    box-shadow:0 8px 16px rgba(0,0,0,0.18);
+}
+.net-card.selected {
+    border:2px solid var(--btn);
+    background:rgba(123,97,255,0.14);
+    box-shadow:0 0 20px rgba(123,97,255,0.5);
+    animation:pop 0.16s ease-out;
+}
+@keyframes pop {
+    from { transform:scale(0.96); }
+    to   { transform:scale(1.0); }
+}
+</style>
+</head>
+<body>
+<div class="theme-toggle" onclick="toggleTheme()">☀️</div>
+<h1>Подключение к Wi‑Fi</h1>
+<div class="container">
+  <div class="card">
+    <label>Выберите сеть:</label>
+
+    <div class="network-select">
+        <div class="net-card" data-net="r2d5" onclick="selectNet('r2d5')">
+            <img src="icons/icon_r2d5.png" alt="r2d5 5 GHz">
+            <label>r2d5</label>
+            <small>5 GHz</small>
+        </div>
+        <div class="net-card" data-net="r2d2" onclick="selectNet('r2d2')">
+            <img src="icons/icon_r2d2.png" alt="r2d2 2.4 GHz">
+            <label>r2d2</label>
+            <small>2.4 GHz</small>
+        </div>
+    </div>
+
+    <button onclick="autoConnect()">Подключиться автоматически (Android)</button>
+    <button onclick="showQR()">Показать QR‑код</button>
+    <button onclick="copyPass()">Скопировать пароль</button>
+
+    <div class="qr" style="text-align:center;margin-top:20px;">
+        <img id="qrimg" width="200" alt="">
+    </div>
+  </div>
+</div>
+
+<script>
+const PASSWORD = "Jgthfnbdysq1913";
+let selected = "r2d5";
+
+/* выбор сети с анимацией */
+function selectNet(n){
+    selected = n;
+    document.querySelectorAll(".net-card").forEach(c=>{
+        c.classList.toggle("selected", c.dataset.net===n);
+    });
+}
+
+/* Авто-выбор сети: по умолчанию 5 GHz, но если старое устройство — 2.4 GHz */
+(function autoSelectBest(){
+    const ua = navigator.userAgent || "";
+    const isOldAndroid = /Android\s([0-6]\.|7\.0)/i.test(ua);
+    const isOldiOS = /OS\s(9_|10_|11_)/i.test(ua);
+    if(isOldAndroid || isOldiOS){
+        selectNet("r2d2"); // 2.4 GHz как более совместимая
+    } else {
+        selectNet("r2d5"); // 5 GHz по умолчанию
+    }
+})();
+
+/* Тема: авто по времени + ручной переключатель */
+function toggleTheme(){
+    document.body.classList.toggle('neon');
+    localStorage.theme = document.body.classList.contains('neon') ? "dark" : "light";
+    updateThemeIcon();
+}
+function updateThemeIcon(){
+    document.querySelector(".theme-toggle").textContent =
+        document.body.classList.contains("neon") ? "🌙" : "☀️";
+}
+(function autoDetectTheme(){
+    const hour = new Date().getHours();
+    const night = hour < 7 || hour >= 19;
+    const stored = localStorage.theme;
+    if(stored){
+        if(stored === "dark") document.body.classList.add("neon");
+    } else if(night){
+        document.body.classList.add("neon");
+    }
+    updateThemeIcon();
+})();
+
+/* QR-код для текущей сети */
+function showQR(){
+    document.getElementById("qrimg").src = "qr/qr_" + selected + ".png";
+}
+
+/* Android-автоподключение (URI формата WIFI:...) */
+function autoConnect(){
+    const uri = "WIFI:T:WPA;S:" + selected + ";P:" + PASSWORD + ";;";
+    window.location.href = uri;
+}
+
+/* Копирование пароля */
+function copyPass(){
+    navigator.clipboard.writeText(PASSWORD).then(()=>{
+        alert("Пароль скопирован");
+    });
+}
+</script>
+</body>
+</html>
