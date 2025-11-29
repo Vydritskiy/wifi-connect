@@ -49,6 +49,9 @@ h1{
   /* внутри карты ловим свайпы, но разрешаем вертикальный скролл,
      если жест преимущественно по Y */
   touch-action: pan-y;
+  /* отключаем выделение текста/элементов внутри карты */
+  user-select:none;
+  -webkit-user-select:none;
 }
 
 /* область слайдера */
@@ -109,6 +112,8 @@ h1{
   object-fit:contain;
   margin-bottom:10px;
   filter:drop-shadow(0 0 18px rgba(170,140,255,0.7));
+  -webkit-user-drag:none;
+  user-drag:none;
 }
 
 /* крупный SSID */
@@ -153,6 +158,8 @@ h1{
 .nav-arrow img{
   width:22px;
   pointer-events:none;
+  -webkit-user-drag:none;
+  user-drag:none;
 }
 
 /* точки */
@@ -324,7 +331,7 @@ const REAL_COUNT  = slides.length;
 let index         = 1;   // 1 — первый реальный слайд (после клона)
 let qrObj         = null;
 let slideWidth    = 0;
-let isAnimating   = false; // ← защита от слишком частых свайпов
+let isAnimating   = false; // защита от слишком частых свайпов
 const transitionValue = "transform 0.7s cubic-bezier(.22,.61,.36,1)";
 
 /* ---- делаем бесконечную ленту: клоны ---- */
@@ -365,7 +372,7 @@ function updateMeta(){
 
 /* переход к индексу */
 function goTo(newIndex){
-  if(isAnimating) return;   // ← не даём запустить ещё одну анимацию
+  if(isAnimating) return;   // не даём запустить ещё одну анимацию
   isAnimating = true;
 
   index = newIndex;
@@ -400,7 +407,7 @@ track.addEventListener("transitionend", (e)=>{
   }
 
   updateMeta();
-  isAnimating = false;  // ← теперь можно листать дальше
+  isAnimating = false;  // снова можно листать
 });
 
 /* ---- свайп: touch + мышь ---- */
@@ -409,6 +416,12 @@ let startY = null;
 let draggingMouse = false;
 
 function swipeStart(e){
+  // не начинаем свайп, если клик по кнопкам или стрелкам
+  const target = e.target;
+  if (target.closest('button') || target.closest('.nav-arrow') || target.closest('a')) {
+    return;
+  }
+
   const p = e.touches ? e.touches[0] : e;
   startX = p.clientX;
   startY = p.clientY;
