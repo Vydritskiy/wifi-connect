@@ -55,7 +55,7 @@ h1{
   overflow:hidden;
 }
 
-/* отдельный слайд: будем анимировать transform + opacity */
+/* --- СЛАЙДЫ + АНИМАЦИЯ ULTRA SMOOTH --- */
 .slide{
   position:absolute;
   inset:0;
@@ -64,13 +64,15 @@ h1{
   align-items:center;
   justify-content:flex-start;
   opacity:0;
-  transform:translateX(40px);      /* базовое положение вне экрана вправо */
+  transform:translateX(140px); /* базовое положение (вправо) */
   pointer-events:none;
-  transition:transform .20s ease, opacity .20s ease;
+  transition:
+    transform 0.7s cubic-bezier(.22,.61,.36,1),
+    opacity   0.7s cubic-bezier(.22,.61,.36,1);
   z-index:0;
 }
 
-/* текущая карточка */
+/* текущая карточка в центре */
 .slide.active{
   opacity:1;
   transform:translateX(0);
@@ -78,29 +80,29 @@ h1{
   z-index:2;
 }
 
-/* входящая карточка перед анимацией */
+/* входящие карточки (ставим перед запуском анимации) */
 .slide.enter-from-right{
   opacity:0;
-  transform:translateX(60px);
+  transform:translateX(140px);
 }
 .slide.enter-from-left{
   opacity:0;
-  transform:translateX(-60px);
+  transform:translateX(-140px);
 }
 
-/* исходящая карточка */
+/* исходящая карточка уезжает */
 .slide.animating-out-left{
   opacity:0;
-  transform:translateX(-60px);
+  transform:translateX(-140px);
   z-index:1;
 }
 .slide.animating-out-right{
   opacity:0;
-  transform:translateX(60px);
+  transform:translateX(140px);
   z-index:1;
 }
 
-/* внутренняя прямоугольная карточка, как на «старом» варианте */
+/* внутренняя прямоугольная карточка, как «экранчик» */
 .slide-card{
   width:100%;
   max-width:480px;
@@ -339,7 +341,7 @@ let index  = 0;
 let qrObj  = null;
 let isAnimating = false;
 
-/* -------- вспомогательный UI (точки + текст + скрыть QR) -------- */
+/* -------- обновление точек, текста и QR -------- */
 function refreshUI(){
   dots.forEach((d,i)=>d.classList.toggle("active", i===index));
   const net = slides[index].dataset.net;
@@ -359,25 +361,26 @@ function goTo(newIndex, direction){
   const currentSlide = slides[current];
   const nextSlide = slides[newIndex];
 
-  // сбрасываем всё лишнее
+  // сброс всех доп. классов
   slides.forEach(s => s.classList.remove(
     "enter-from-right","enter-from-left",
     "animating-out-left","animating-out-right","active"
   ));
 
-  // текущая видимая
+  // текущая активная
   currentSlide.classList.add("active");
 
-  // ставим новую карточку чуть сбоку
+  // определяем классы в зависимости от направления
   const enterClass = direction === 1 ? "enter-from-right" : "enter-from-left";
   const exitClass  = direction === 1 ? "animating-out-left" : "animating-out-right";
 
-  nextSlide.classList.add(enterClass, "active");
+  // ставим новую карточку сбоку
+  nextSlide.classList.add(enterClass,"active");
 
   // форсируем перерисовку, чтобы transition точно сработал
   void nextSlide.offsetWidth;
 
-  // запускаем анимацию
+  // запускаем анимацию: старую уводим, новой убираем «enter»
   currentSlide.classList.add(exitClass);
   nextSlide.classList.remove(enterClass);
 
