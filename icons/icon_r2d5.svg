@@ -1,7 +1,0 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200">
-<circle cx="100" cy="60" r="40" fill="#b388ff"/>
-<path d="M40 110 a60 60 0 0 1 120 0" stroke="#b388ff" stroke-width="20" fill="none"/>
-<path d="M60 140 a40 40 0 0 1 80 0" stroke="#b388ff" stroke-width="20" fill="none"/>
-<circle cx="100" cy="165" r="10" fill="#b388ff"/>
-<text x="100" y="190" font-size="28" text-anchor="middle" fill="#b388ff">r2d5</text>
-</svg>
