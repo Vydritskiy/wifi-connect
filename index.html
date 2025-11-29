@@ -46,6 +46,9 @@ h1{
   padding:24px 24px 22px;
   box-shadow:0 22px 70px rgba(0,0,0,0.6);
   position:relative;
+  /* внутри карты ловим свайпы, но разрешаем вертикальный скролл,
+     если жест преимущественно по Y */
+  touch-action: pan-y;
 }
 
 /* область слайдера */
@@ -68,7 +71,7 @@ h1{
   flex:0 0 100%;
   height:100%;
   display:flex;
-  align-items:center; /* ПОПРАВЛЕНО */
+  align-items:center;   /* центровка по вертикали */
   justify-content:center;
 }
 
@@ -310,37 +313,45 @@ body.neon{
 <script>
 const PASSWORD = "Jgthfnbdysq1913";
 
-const track    = document.getElementById("track");
-const carousel = document.getElementById("carousel");
-const slides   = document.querySelectorAll(".slide");
-const dots     = document.querySelectorAll(".dots span");
-const helperText = document.getElementById("helperText"); /* ДОБАВЛЕНО */
+const track       = document.getElementById("track");
+const carousel    = document.getElementById("carousel");
+const card        = document.querySelector(".card");        // область для свайпа
+const helperText  = document.getElementById("helperText");
+const dots        = document.querySelectorAll(".dots span");
+let slides        = Array.from(document.querySelectorAll(".slide"));
+const REAL_COUNT  = slides.length;
 
-let index      = 0;
+let index      = 1;   // 1 — первый реальный слайд (после клона)
 let qrObj      = null;
 let slideWidth = 0;
+const transitionValue = "transform 0.7s cubic-bezier(.22,.61,.36,1)";
 
-/* пересчёт ширины */
+/* ---- делаем бесконечную ленту: клоны ---- */
+const firstClone = slides[0].cloneNode(true);
+const lastClone  = slides[REAL_COUNT - 1].cloneNode(true);
+track.appendChild(firstClone);
+track.insertBefore(lastClone, track.firstChild);
+
+// обновляем список слайдов (теперь REAL_COUNT + 2)
+slides = Array.from(document.querySelectorAll(".slide"));
+
+/* ---- перерасчёт ширины ---- */
 function recalcWidth(){
   slideWidth = carousel.offsetWidth;
-  updateTrack(true);
+
+  track.style.transition = "none";
+  track.style.transform = `translateX(${-index * slideWidth}px)`;
+  void track.offsetWidth;
+  track.style.transition = transitionValue;
+
+  updateMeta();
 }
 
-/* позиция трека */
-function updateTrack(skipAnim){
-  if(slideWidth === 0) return;
+/* логика точек и подписи */
+function updateMeta(){
+  const logical = (index - 1 + REAL_COUNT) % REAL_COUNT; // 0..REAL_COUNT-1
 
-  if(skipAnim){
-    const old = track.style.transition;
-    track.style.transition = "none";
-    track.style.transform = `translateX(${-index * slideWidth}px)`;
-    void track.offsetWidth;
-    track.style.transition = old || "transform 0.7s cubic-bezier(.22,.61,.36,1)";
-  }else{
-    track.style.transform = `translateX(${-index * slideWidth}px)`;
-  }
-
-  dots.forEach((d,i)=>d.classList.toggle("active", i===index));
+  dots.forEach((d,i)=>d.classList.toggle("active", i === logical));
 
   const net = slides[index].dataset.net;
   helperText.textContent =
@@ -351,17 +362,40 @@ function updateTrack(skipAnim){
   document.getElementById("qrBox").style.display = "none";
 }
 
-/* навигация */
-function nextSlide(){
-  index = (index + 1) % slides.length;
-  updateTrack(false);
-}
-function prevSlide(){
-  index = (index - 1 + slides.length) % slides.length;
-  updateTrack(false);
+/* переход к индексу */
+function goTo(newIndex){
+  index = newIndex;
+  track.style.transition = transitionValue;
+  track.style.transform = `translateX(${-index * slideWidth}px)`;
 }
 
-/* свайпы */
+/* навигация: влево / вправо по кругу */
+function nextSlide(){   // свайп влево
+  goTo(index + 1);
+}
+function prevSlide(){   // свайп вправо
+  goTo(index - 1);
+}
+
+/* после завершения анимации — “телепорт” с клонов на реальные */
+track.addEventListener("transitionend", ()=>{
+  if(index === 0){ // левый клон
+    track.style.transition = "none";
+    index = REAL_COUNT;
+    track.style.transform = `translateX(${-index * slideWidth}px)`;
+    void track.offsetWidth;
+    track.style.transition = transitionValue;
+  }else if(index === slides.length - 1){ // правый клон
+    track.style.transition = "none";
+    index = 1;
+    track.style.transform = `translateX(${-index * slideWidth}px)`;
+    void track.offsetWidth;
+    track.style.transition = transitionValue;
+  }
+  updateMeta();
+});
+
+/* ---- свайп: touch + мышь ---- */
 let startX = null;
 let startY = null;
 let draggingMouse = false;
@@ -372,36 +406,43 @@ function swipeStart(e){
   startY = p.clientY;
   draggingMouse = !e.touches;
 }
+
 function swipeMove(e){
   if(startX === null) return;
   const p = e.touches ? e.touches[0] : e;
   const dx = p.clientX - startX;
   const dy = p.clientY - startY;
+
+  // когда горизонтальный жест явно сильнее — блокируем скролл страницы
   if(Math.abs(dx) > Math.abs(dy) + 10){
     e.preventDefault();
   }
 }
+
 function swipeEnd(e){
   if(startX === null) return;
   const p = e.changedTouches ? e.changedTouches[0] : e;
   const dx = p.clientX - startX;
+
   if(Math.abs(dx) > 40){
-    if(dx < 0) nextSlide();
-    else       prevSlide();
+    if(dx < 0) nextSlide();  // свайп влево → листаем влево
+    else       prevSlide();  // свайп вправо → листаем вправо
   }
+
   startX = startY = null;
   draggingMouse = false;
 }
 
-carousel.addEventListener("touchstart", swipeStart, {passive:true});
-carousel.addEventListener("touchmove",  swipeMove,  {passive:false});
-carousel.addEventListener("touchend",   swipeEnd);
-carousel.addEventListener("mousedown",  swipeStart);
-carousel.addEventListener("mousemove",  e=>{ if(draggingMouse) swipeMove(e); });
-carousel.addEventListener("mouseup",    swipeEnd);
-carousel.addEventListener("mouseleave", e=>{ if(draggingMouse) swipeEnd(e); });
+/* вешаем обработчики на всю .card, а не только на .carousel */
+card.addEventListener("touchstart", swipeStart, {passive:true});
+card.addEventListener("touchmove",  swipeMove,  {passive:false});
+card.addEventListener("touchend",   swipeEnd);
+card.addEventListener("mousedown",  swipeStart);
+card.addEventListener("mousemove",  e=>{ if(draggingMouse) swipeMove(e); });
+card.addEventListener("mouseup",    swipeEnd);
+card.addEventListener("mouseleave", e=>{ if(draggingMouse) swipeEnd(e); });
 
-/* QR */
+/* ---- QR ---- */
 function showQR(){
   const net = slides[index].dataset.net;
   const payload = `WIFI:T:WPA;S:${net};P:${PASSWORD};;`;
@@ -416,18 +457,18 @@ function showQR(){
   document.getElementById("qrBox").style.display = "block";
 }
 
-/* авто подключение */
+/* ---- авто-подключение (Android) ---- */
 function autoConnect(){
   const net = slides[index].dataset.net;
   location.href = `WIFI:T:WPA;S:${net};P:${PASSWORD};;`;
 }
 
-/* копирование */
+/* ---- копирование ---- */
 function copyPass(){
   navigator.clipboard.writeText(PASSWORD).then(()=>alert("Пароль скопирован"));
 }
 
-/* тема */
+/* ---- тема ---- */
 function toggleTheme(){
   document.body.classList.toggle("neon");
   localStorage.theme = document.body.classList.contains("neon") ? "dark" : "light";
@@ -445,15 +486,18 @@ function toggleTheme(){
     document.body.classList.contains("neon") ? "🌙" : "☀️";
 })();
 
-/* авто выбор сети */
+/* ---- авто-выбор сети (старые устройства → 2.4) ---- */
 (function autoPick(){
   const ua = navigator.userAgent;
   const oldAndroid = /Android\s([0-6]\.|7\.0)/i.test(ua);
   const oldIOS     = /OS\s(9_|10_)/i.test(ua);
-  index = (oldAndroid || oldIOS) ? 1 : 0;
+
+  // логический индекс: 0 = r2d5, 1 = r2d2
+  const logicalIndex = (oldAndroid || oldIOS) ? 1 : 0;
+  index = logicalIndex + 1; // сдвиг из-за левого клона
 })();
 
-/* запуск */
+/* старт: ширина + позиция */
 window.addEventListener("load", recalcWidth);
 window.addEventListener("resize", recalcWidth);
 </script>
