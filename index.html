@@ -8,22 +8,27 @@
 
 <style>
 :root{
-  --accent:#a982ff;
+  --accent:#b58aff;
+  --accent2:#caaaff;
 }
 
-/* ======================
-   BASE
-====================== */
-*{box-sizing:border-box;margin:0;padding:0;}
+*{
+  margin:0;
+  padding:0;
+  box-sizing:border-box;
+  user-select:none;
+}
+
 body{
   font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;
+  background:radial-gradient(circle at top,#23124b,#050015);
+  color:#f0e8ff;
   min-height:100vh;
-  background:radial-gradient(circle at top,#221247,#050015);
-  color:#f1e9ff;
   overflow-x:hidden;
 }
 
-.container{
+/* container */
+.wrapper{
   max-width:520px;
   margin:40px auto;
   padding:16px;
@@ -31,175 +36,161 @@ body{
 
 h1{
   text-align:center;
-  margin-bottom:28px;
-  font-size:26px;
+  margin-bottom:22px;
+  font-size:28px;
+  font-weight:700;
+}
+
+/* slider container */
+.slider-box{
+  position:relative;
+  overflow:hidden;
+  border-radius:26px;
+  background:rgba(20,0,45,0.9);
+  box-shadow:0 20px 60px rgba(0,0,0,0.55);
+  padding:26px 0 26px;
+}
+
+/* inner slider strip */
+.slider{
+  display:flex;
+  transition:transform .35s ease;
+}
+
+/* each slide */
+.slide{
+  min-width:100%;
+  padding:20px;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  text-align:center;
+}
+
+.slide img{
+  width:210px;
+  height:210px;
+  margin-bottom:8px;
+  filter:drop-shadow(0 0 18px rgba(181,138,255,0.45));
+  transition:opacity .3s ease;
+}
+
+.slide label{
+  font-size:22px;
+  margin-top:6px;
   font-weight:600;
 }
 
-/* ======================
-   THEME TOGGLE
-====================== */
-.theme-toggle{
-  position:fixed;
-  top:14px; right:14px;
-  width:44px; height:44px;
-  border-radius:50%;
-  background:rgba(255,255,255,0.15);
-  backdrop-filter:blur(6px);
-  color:#ffe19f;
-  display:flex; justify-content:center; align-items:center;
-  cursor:pointer;
-  font-size:22px;
-  user-select:none;
-  z-index:50;
-  box-shadow:0 0 14px rgba(0,0,0,0.6);
-}
-
-/* ======================
-   CARD
-====================== */
-.card{
-  background:rgba(10,0,40,0.90);
-  border-radius:28px;
-  padding:24px;
-  box-shadow:0 18px 60px rgba(0,0,0,0.65);
-  position:relative;
-}
-
-/* ======================
-   NETWORK SWIPER
-====================== */
-#nwWrap{
-  width:100%;
-  overflow:hidden;
-  position:relative;
-  border-radius:26px;
-  margin-bottom:18px;
-}
-
-#nwTrack{
-  display:flex;
-  transition:transform .35s cubic-bezier(.3,.7,.25,1);
-  width:200%;
-}
-
-.net-card{
-  min-width:100%;
-  text-align:center;
-  padding:32px 16px;
-  border-radius:24px;
-  background:rgba(30,16,70,0.65);
-  border:2px solid transparent;
-  transition:all .25s ease;
-}
-
-.net-card.active{
-  border-color:var(--accent);
-  background:radial-gradient(circle at top,rgba(150,120,255,0.28),rgba(40,15,90,0.95));
-  box-shadow:0 0 22px rgba(160,120,255,0.6);
-}
-
-.net-card img{
-  width:160px;
-  margin-bottom:12px;
-  user-select:none;
-  -webkit-user-drag:none;
-}
-
-.net-card label{
-  font-size:20px;
-}
-.net-card small{
-  font-size:14px;
+.slide small{
+  margin-top:4px;
+  font-size:15px;
   opacity:.85;
 }
 
-/* ======================
-   DOTS
-====================== */
+/* dots */
 .dots{
-  text-align:center;
-  margin-top:10px;
-  margin-bottom:16px;
+  display:flex;
+  justify-content:center;
+  gap:10px;
+  margin-top:8px;
 }
 .dot{
-  display:inline-block;
-  width:8px; height:8px;
-  margin:0 4px;
-  background:#7d68b8;
-  border-radius:50%;
-  opacity:.45;
-  transition:.2s;
+  width:10px;height:10px;border-radius:50%;background:#5e4c87;
+  transition:background .25s ease;
 }
-.dot.active{
-  opacity:1;
-  background:#c8afff;
-}
+.dot.active{ background:var(--accent); }
 
-/* ======================
-   ARROWS
-====================== */
+/* arrows */
 .arrow{
   position:absolute;
   top:50%;
   transform:translateY(-50%);
-  width:44px; height:44px;
-  background:rgba(255,255,255,0.10);
-  backdrop-filter:blur(6px);
+  width:44px;height:44px;
   border-radius:50%;
-  display:flex; justify-content:center; align-items:center;
-  cursor:pointer;
-  user-select:none;
+  background:rgba(0,0,0,0.45);
+  display:flex;
+  justify-content:center;
+  align-items:center;
   font-size:22px;
+  cursor:pointer;
   color:white;
-  z-index:40;
-  transition:background .2s;
+  transition:opacity .25s;
 }
-.arrow:hover{ background:rgba(255,255,255,0.18); }
+.arrow:hover{ background:rgba(0,0,0,0.55); }
 
-.arrow.left{ left:-22px; }
-.arrow.right{ right:-22px; }
+.arrow.left{ left:-60px; }
+.arrow.right{ right:-60px; }
 
-/* ======================
-   BUTTONS
-====================== */
-button{
+@media (min-width:720px){
+  .arrow.left{ left:-10px; }
+  .arrow.right{ right:-10px; }
+}
+
+@media (max-width:720px){
+  .arrow{ display:none; }
+}
+
+/* buttons */
+.btn{
   width:100%;
   padding:14px;
-  border-radius:18px;
+  border-radius:20px;
   border:none;
   margin-top:14px;
   font-size:16px;
   cursor:pointer;
-  background:linear-gradient(135deg,#956cff,#b27aff);
   color:white;
-  box-shadow:0 10px 28px rgba(0,0,0,0.6);
-  transition:.15s;
+  background:linear-gradient(135deg,var(--accent),var(--accent2));
+  box-shadow:0 12px 28px rgba(0,0,0,0.6);
+  transition:transform .12s ease,box-shadow .12s ease;
 }
-button:hover{
-  transform:translateY(-1px);
-  filter:brightness(1.05);
+.btn:hover{
+  transform:translateY(-2px);
+  box-shadow:0 16px 32px rgba(0,0,0,0.65);
 }
 
-/* ======================
-   QR
-====================== */
+/* QR */
 #qrBox{
-  margin-top:18px;
   display:none;
   text-align:center;
+  margin-top:16px;
 }
-#qrCanvas{
-  border-radius:18px;
+#qrcode{
+  width:200px;
+  height:200px;
   background:white;
-  padding:6px;
+  padding:12px;
+  border-radius:18px;
 }
 
+/* helper text */
 .helper{
-  margin-top:10px;
-  font-size:13px;
-  opacity:.85;
   text-align:center;
+  opacity:.85;
+  margin-top:14px;
+  font-size:14px;
+}
+
+/* theme button */
+.theme-toggle{
+  position:fixed;
+  top:16px;
+  right:16px;
+  width:44px;
+  height:44px;
+  border-radius:50%;
+  background:rgba(30,0,60,0.95);
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  color:#ffd56b;
+  font-size:22px;
+  cursor:pointer;
+  z-index:40;
+}
+
+body.neon{
+  background:radial-gradient(circle at top,#0d0218,#000);
 }
 </style>
 </head>
@@ -207,212 +198,179 @@ button:hover{
 
 <div class="theme-toggle" onclick="toggleTheme()">☀️</div>
 
-<div class="container">
+<div class="wrapper">
+
 <h1>Подключение к Wi-Fi</h1>
 
-<div class="card">
+<!-- Slider block -->
+<div class="slider-box" id="sliderBox">
 
-  <div id="nwWrap">
-    <div class="arrow left" onclick="selectIndex(selectedIndex-1)">◀</div>
-    <div class="arrow right" onclick="selectIndex(selectedIndex+1)">▶</div>
+  <div class="arrow left" onclick="prev()">◀</div>
+  <div class="arrow right" onclick="next()">▶</div>
 
-    <div id="nwTrack">
-      <!-- r2d5 -->
-      <div class="net-card" data-net="r2d5">
-        <img src="icons/icon_r2d5.svg" alt="r2d5">
-        <label>r2d5</label>
-        <small>5 GHz · быстрее, если поддерживается</small>
-      </div>
-
-      <!-- r2d2 -->
-      <div class="net-card" data-net="r2d2">
-        <img src="icons/icon_r2d2.svg" alt="r2d2">
-        <label>r2d2</label>
-        <small>2.4 GHz · стабильнее на расстоянии</small>
-      </div>
-    </div>
+  <div class="slider" id="slider">
+    <!-- slides will be injected dynamically -->
   </div>
 
-  <div class="dots">
-    <div class="dot"></div>
-    <div class="dot"></div>
-  </div>
-
-  <button onclick="autoConnect()">Подключиться автоматически (Android)</button>
-  <button onclick="showQR()">Показать QR-код</button>
-  <button onclick="copyPass()">Скопировать пароль</button>
-
-  <div id="qrBox">
-    <canvas id="qrCanvas" width="200" height="200"></canvas>
-  </div>
-
-  <div class="helper" id="helperText"></div>
+  <div class="dots" id="dots"></div>
 
 </div>
+
+<button class="btn" onclick="autoConnect()">Подключиться автоматически (Android)</button>
+<button class="btn" onclick="toggleQR()">Показать QR-код</button>
+<button class="btn" onclick="copyPass()">Скопировать пароль</button>
+
+<div id="qrBox">
+  <div id="qrcode"></div>
 </div>
 
-<!-- QR Library -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/qrious/4.0.2/qrious.min.js"></script>
+<div class="helper" id="helperText"></div>
+
+</div>
+
+<!-- QR generator -->
+<script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
 
 <script>
+/* ==== DATA ==== */
 const PASSWORD = "Jgthfnbdysq1913";
-const networks = ["r2d5","r2d2"];
-let selectedIndex = 0;
 
-const wrap = document.getElementById("nwWrap");
-const track = document.getElementById("nwTrack");
-
-/* ==========================
-   APPLY SELECTION
-========================== */
-function applySelection(){
-  const width = wrap.clientWidth;
-  track.style.transform = `translateX(${-selectedIndex * width}px)`;
-
-  document.querySelectorAll(".net-card").forEach((c,i)=>{
-    c.classList.toggle("active", i===selectedIndex);
-  });
-
-  document.querySelectorAll(".dot").forEach((d,i)=>{
-    d.classList.toggle("active", i===selectedIndex);
-  });
-
-  document.getElementById("qrBox").style.display="none";
-
-  const net = networks[selectedIndex];
-  document.getElementById("helperText").textContent =
-    net==="r2d5"
-    ? "Выбрана r2d5 (5 GHz) — обычно быстрее, если устройство поддерживает 5 GHz."
-    : "Выбрана r2d2 (2.4 GHz) — стабильнее на расстоянии и старых устройствах.";
-}
-
-/* ==========================
-   LOOP SCROLL
-========================== */
-function selectIndex(i){
-  if(i<0) i = networks.length-1;
-  if(i>=networks.length) i = 0;
-  selectedIndex = i;
-  applySelection();
-}
-
-/* ==========================
-   SWIPE
-========================== */
-let startX=null;
-
-wrap.addEventListener("touchstart",e=>{
-  startX = e.touches[0].clientX;
-},{passive:true});
-
-wrap.addEventListener("touchend",e=>{
-  if(startX===null) return;
-  const dx = e.changedTouches[0].clientX - startX;
-  if(Math.abs(dx)>40){
-    if(dx<0) selectIndex(selectedIndex+1);
-    else selectIndex(selectedIndex-1);
+const networks = [
+  {
+    id:"r2d5",
+    title:"r2d5",
+    desc:"5 GHz · быстрее, если поддерживается",
+    icon:"icons/icon_r2d5.svg"
+  },
+  {
+    id:"r2d2",
+    title:"r2d2",
+    desc:"2.4 GHz · стабильнее на расстоянии",
+    icon:"icons/icon_r2d2.svg"
   }
-  startX=null;
+];
+
+let index = 0;
+
+/* ==== BUILD SLIDER ==== */
+const slider = document.getElementById("slider");
+const dots = document.getElementById("dots");
+
+networks.forEach((n,i)=>{
+  const slide = document.createElement("div");
+  slide.className="slide";
+  slide.innerHTML = `
+      <img src="${n.icon}" alt="${n.title}">
+      <label>${n.title}</label>
+      <small>${n.desc}</small>
+  `;
+  slider.appendChild(slide);
+
+  const dot=document.createElement("div");
+  dot.className="dot";
+  dot.dataset.id=i;
+  dots.appendChild(dot);
 });
 
-/* ==========================
-   WHEEL NAVIGATION (ПК)
-========================== */
-wrap.addEventListener("wheel",e=>{
-  if(e.deltaY>0) selectIndex(selectedIndex+1);
-  else selectIndex(selectedIndex-1);
-});
+function updateUI(){
+  slider.style.transform=`translateX(-${index*100}%)`;
 
-/* ==========================
-   KEYBOARD ARROWS
-========================== */
-document.addEventListener("keydown",e=>{
-  if(e.key==="ArrowRight") selectIndex(selectedIndex+1);
-  if(e.key==="ArrowLeft")  selectIndex(selectedIndex-1);
-});
-
-/* ==========================
-   CLIENT QR GENERATION
-========================== */
-function showQR(){
-  const net = networks[selectedIndex];
-  const value = `WIFI:T:WPA;S:${net};P:${PASSWORD};;`;
-
-  new QRious({
-    element:document.getElementById("qrCanvas"),
-    value:value,
-    size:200,
-    level:"H"
+  dots.querySelectorAll(".dot").forEach((d,i)=>{
+    d.classList.toggle("active", i===index);
   });
 
-  document.getElementById("qrBox").style.display="block";
+  document.getElementById("helperText").textContent =
+    index===0
+      ? "Выбрана r2d5 (5 GHz) — обычно быстрее, если устройство поддерживает 5 GHz."
+      : "Выбрана r2d2 (2.4 GHz) — стабильнее на расстоянии и старых устройствах.";
 }
 
-/* ==========================
-   ANDROID AUTOCONNECT
-========================== */
-function autoConnect(){
-  const net = networks[selectedIndex];
-  window.location.href = `WIFI:T:WPA;S:${net};P:${PASSWORD};;`;
+/* arrows */
+function next(){
+  index = (index+1) % networks.length;
+  updateUI();
+}
+function prev(){
+  index = (index-1+networks.length) % networks.length;
+  updateUI();
 }
 
-/* ==========================
-   COPY PASS
-========================== */
+/* mouse wheel */
+document.getElementById("sliderBox").addEventListener("wheel", e=>{
+  if(e.deltaY>0) next();
+  else prev();
+});
+
+/* dot click */
+dots.addEventListener("click", e=>{
+  if(e.target.classList.contains("dot")){
+    index = Number(e.target.dataset.id);
+    updateUI();
+  }
+});
+
+/* mobile swipe */
+let startX=0;
+slider.addEventListener("touchstart", e=>startX=e.touches[0].clientX);
+slider.addEventListener("touchend", e=>{
+  let dx=e.changedTouches[0].clientX-startX;
+  if(dx<-40) next();
+  if(dx>40) prev();
+});
+
+/* QR */
+let qr=null;
+function toggleQR(){
+  const box=document.getElementById("qrBox");
+  if(box.style.display==="block"){
+    box.style.display="none";
+    return;
+  }
+  box.style.display="block";
+
+  if(qr){ qr.clear(); }
+  qr=new QRCode(document.getElementById("qrcode"),{
+    text:`WIFI:T:WPA;S:${networks[index].id};P:${PASSWORD};;`,
+    width:200,
+    height:200
+  });
+}
+
+/* copy */
 function copyPass(){
-  navigator.clipboard.writeText(PASSWORD)
-    .then(()=>alert("Пароль скопирован"));
+  navigator.clipboard.writeText(PASSWORD);
+  alert("Пароль скопирован");
 }
 
-/* ==========================
-   THEME
-========================== */
+/* android connect */
+function autoConnect(){
+  location.href=`WIFI:T:WPA;S:${networks[index].id};P:${PASSWORD};;`;
+}
+
+/* theme */
 function toggleTheme(){
   document.body.classList.toggle("neon");
-  localStorage.theme = document.body.classList.contains("neon") ? "dark" : "system";
-  updateThemeIcon();
+  localStorage.theme=document.body.classList.contains("neon")?"dark":"light";
+  document.querySelector(".theme-toggle").textContent=
+    document.body.classList.contains("neon")?"🌙":"☀️";
 }
 
-function updateThemeIcon(){
-  document.querySelector(".theme-toggle").textContent =
-    document.body.classList.contains("neon") ? "🌙" : "☀️";
-}
+/* init theme */
+(function(){
+  const hour=new Date().getHours();
+  const night=hour<7||hour>=19;
+  const saved=localStorage.theme;
 
-(function initTheme(){
-  const stored = localStorage.theme;
-  const prefersDark = matchMedia("(prefers-color-scheme:dark)").matches;
+  if(saved==="dark" || (!saved && night))
+    document.body.classList.add("neon");
 
-  if(stored==="dark") document.body.classList.add("neon");
-  else if(stored==="system" && prefersDark) document.body.classList.add("neon");
-  else if(!stored && prefersDark) document.body.classList.add("neon");
-
-  updateThemeIcon();
+  document.querySelector(".theme-toggle").textContent=
+    document.body.classList.contains("neon")?"🌙":"☀️";
 })();
 
-/* ==========================
-   AUTOSELECT BEST NETWORK
-========================== */
-(function autoSelectBest(){
-  const ua=navigator.userAgent;
-
-  const oldAndroid=/Android\s([0-6]\.\d|7\.0)/i.test(ua);
-  const oldIOS=/OS\s(9_|10_|11_)/i.test(ua);
-
-  let prefer5 = !(oldAndroid||oldIOS);
-
-  const conn = navigator.connection;
-  if(conn){
-    if(conn.downlink<10) prefer5=false;
-    if(conn.rtt<30 && conn.downlink>30) prefer5=true;
-  }
-
-  selectIndex(prefer5 ? 0 : 1);
-})();
-
-window.addEventListener("load",()=>{
-  applySelection();
-  window.addEventListener("resize",applySelection);
-});
+/* start */
+updateUI();
 </script>
+
 </body>
 </html>
