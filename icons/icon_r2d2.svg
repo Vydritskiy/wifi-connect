@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 150">
+<defs>
+  <style>
+    .p { fill:#A56CFF; font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif; text-anchor:middle; }
+  </style>
+</defs>
+<rect x="0" y="0" width="120" height="150" fill="none"/>
+<!-- head -->
+<path d="M40 32 a20 20 0 0 1 40 0 v20 h-40z" fill="#A56CFF"/>
+<circle cx="60" cy="20" r="4" fill="#A56CFF"/>
+<circle cx="60" cy="30" r="6" fill="white"/>
+<circle cx="60" cy="30" r="3" fill="#A56CFF"/>
+<!-- wifi arcs -->
+<path d="M30 70 a30 30 0 0 1 60 0" fill="none" stroke="#A56CFF" stroke-width="6" stroke-linecap="round"/>
+<path d="M38 82 a22 22 0 0 1 44 0" fill="none" stroke="#A56CFF" stroke-width="6" stroke-linecap="round"/>
+<path d="M46 94 a14 14 0 0 1 28 0" fill="none" stroke="#A56CFF" stroke-width="6" stroke-linecap="round"/>
+<circle cx="60" cy="108" r="5" fill="#A56CFF"/>
+<!-- text -->
+<text x="60" y="130" font-size="20" class="p">r2d2</text>
+<text x="60" y="145" font-size="12" class="p">2.4 GHz</text>
+</svg>
