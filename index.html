@@ -59,6 +59,11 @@ h1{
   -webkit-user-select:none;
 }
 
+/* обёртка под карусель + стрелки */
+.carousel-shell{
+  position:relative;
+}
+
 /* область слайдера */
 .carousel{
   position:relative;
@@ -143,7 +148,7 @@ h1{
   margin-top:10px;
 }
 
-/* стрелки */
+/* стрелки — теперь центр по высоте карусели */
 .nav-arrow{
   position:absolute;
   top:50%;
@@ -226,12 +231,7 @@ h1{
   opacity:.9;
   text-align:center;
 }
-.guest-tag{
-  margin-top:6px;
-  font-size:13px;
-  text-align:center;
-  opacity:.9;
-}
+
 .status{
   margin-top:6px;
   font-size:12px;
@@ -249,25 +249,6 @@ h1{
 .guest-info-row{
   display:flex;
   gap:6px;
-}
-
-/* идеи имён */
-.fake-names{
-  margin-top:14px;
-  font-size:13px;
-  opacity:.9;
-}
-.fake-title{
-  font-weight:600;
-  margin-bottom:4px;
-}
-.fake-names ul{
-  list-style:none;
-  margin:0;
-  padding:0;
-}
-.fake-names li{
-  margin-bottom:2px;
 }
 
 /* «инста»-карточка */
@@ -472,46 +453,48 @@ body.neon{
 
   <div class="card">
 
-    <div class="carousel" id="carousel">
-      <div class="track" id="track">
+    <div class="carousel-shell">
+      <div class="carousel" id="carousel">
+        <div class="track" id="track">
 
-        <!-- 5 GHz -->
-        <div class="slide" data-net="r2d5">
-          <div class="slide-card">
-            <div class="slide-inner">
-              <img src="icons/icon_r2d5.svg" alt="r2d5">
-              <div class="slide-ssid-main ssid-main-5">r2d5</div>
-              <div class="slide-ssid-sub ssid-sub-5">5 GHz</div>
-            </div>
-            <div class="slide-caption ssid-cap-5">
-              r2d5 · быстрее, если поддерживается
+          <!-- 5 GHz -->
+          <div class="slide" data-net="r2d5">
+            <div class="slide-card">
+              <div class="slide-inner">
+                <img src="icons/icon_r2d5.svg" alt="r2d5">
+                <div class="slide-ssid-main ssid-main-5">r2d5</div>
+                <div class="slide-ssid-sub ssid-sub-5">5 GHz</div>
+              </div>
+              <div class="slide-caption ssid-cap-5">
+                r2d5 · быстрее, если поддерживается
+              </div>
             </div>
           </div>
-        </div>
 
-        <!-- 2.4 GHz -->
-        <div class="slide" data-net="r2d2">
-          <div class="slide-card">
-            <div class="slide-inner">
-              <img src="icons/icon_r2d2.svg" alt="r2d2">
-              <div class="slide-ssid-main ssid-main-24">r2d2</div>
-              <div class="slide-ssid-sub ssid-sub-24">2.4 GHz</div>
-            </div>
-            <div class="slide-caption ssid-cap-24">
-              r2d2 · стабильнее на расстоянии
+          <!-- 2.4 GHz -->
+          <div class="slide" data-net="r2d2">
+            <div class="slide-card">
+              <div class="slide-inner">
+                <img src="icons/icon_r2d2.svg" alt="r2d2">
+                <div class="slide-ssid-main ssid-main-24">r2d2</div>
+                <div class="slide-ssid-sub ssid-sub-24">2.4 GHz</div>
+              </div>
+              <div class="slide-caption ssid-cap-24">
+                r2d2 · стабильнее на расстоянии
+              </div>
             </div>
           </div>
-        </div>
 
+        </div>
       </div>
-    </div>
 
-    <!-- стрелки -->
-    <div class="nav-arrow left" onclick="prevSlide()">
-      <img src="icons/arrow_left.svg" alt="">
-    </div>
-    <div class="nav-arrow right" onclick="nextSlide()">
-      <img src="icons/arrow_right.svg" alt="">
+      <!-- стрелки (внутри оболочки) -->
+      <div class="nav-arrow left" onclick="prevSlide()">
+        <img src="icons/arrow_left.svg" alt="">
+      </div>
+      <div class="nav-arrow right" onclick="nextSlide()">
+        <img src="icons/arrow_right.svg" alt="">
+      </div>
     </div>
 
     <!-- точки -->
@@ -533,7 +516,6 @@ body.neon{
 
     <!-- подписи -->
     <div class="helper" id="helperText"></div>
-    <div class="guest-tag" id="guestMode"></div>
     <div class="status" id="netStatus"></div>
 
     <!-- инфо для гостей -->
@@ -541,12 +523,6 @@ body.neon{
       <div class="guest-info-row">🍽 <span>Кухня — налево.</span></div>
       <div class="guest-info-row">🚿 <span>Ванная — направо.</span></div>
       <div class="guest-info-row">🐾 <span>У нас живёт кот, он дружелюбный.</span></div>
-    </div>
-
-    <!-- идеи имён -->
-    <div class="fake-names">
-      <div class="fake-title">Идеи имён для Wi-Fi:</div>
-      <ul id="fakeList"></ul>
     </div>
 
     <!-- «инста»-карточка -->
@@ -652,11 +628,9 @@ const track       = document.getElementById("track");
 const carousel    = document.getElementById("carousel");
 const card        = document.querySelector(".card");
 const helperText  = document.getElementById("helperText");
-const guestTagEl  = document.getElementById("guestMode");
 const netStatus   = document.getElementById("netStatus");
 const dots        = document.querySelectorAll(".dots span");
 const welcomeEl   = document.getElementById("welcomeText");
-const fakeListEl  = document.getElementById("fakeList");
 let   slides      = Array.from(document.querySelectorAll(".slide"));
 const REAL_COUNT  = slides.length;
 
@@ -723,7 +697,6 @@ function applyConfigToUI(){
     if(rows[i]) rows[i].textContent = txt;
   });
 
-  initGuestMode();
   updateMeta();
 }
 
@@ -795,7 +768,7 @@ track.addEventListener("transitionend", e=>{
   isAnimating = false;
 });
 
-/* ---------- свайп (без анимации карточки) ---------- */
+/* ---------- свайп ---------- */
 let startX = null;
 let startY = null;
 let draggingMouse = false;
@@ -934,15 +907,6 @@ function toggleTheme(){
     document.body.classList.contains("light") ? "🌙" : "☀️";
 })();
 
-/* ---------- гостевой режим ---------- */
-function initGuestMode(){
-  if(!guestTagEl) return;
-  const emojis = ["🧸","🤖","🌙","💫","🚀","🦊","🐱"];
-  const suffix = emojis[Math.floor(Math.random()*emojis.length)];
-  guestTagEl.textContent =
-    `Гостевой режим: ${CONFIG.ssid5}-guest-${suffix} (красивое имя, настоящие сети — ${CONFIG.ssid5} / ${CONFIG.ssid24})`;
-}
-
 /* ---------- статус интернета ---------- */
 function updateOnlineStatus(){
   if(!netStatus) return;
@@ -954,40 +918,6 @@ function updateOnlineStatus(){
 }
 window.addEventListener("online", updateOnlineStatus);
 window.addEventListener("offline", updateOnlineStatus);
-
-/* ---------- генератор фейковых имён ---------- */
-function generateFakeNames(){
-  if(!fakeListEl) return;
-  const adjectives = [
-    "Neon","Cosmic","Lazy","Hyper","Secret","Midnight",
-    "Pixel","Silent","Turbo","Happy","Retro","Rogue",
-    "Galactic","Sleepy","Magic","Hidden"
-  ];
-  const nouns = [
-    "Penguin","Router","Falcon","Coffee","Droid","Fox",
-    "Otter","Unicorn","Knight","Nerd","Panda","Dragon",
-    "Potato","Ninja","Cat","Badger"
-  ];
-  const suffixes = [
-    "5G","2_4G","_guest","_home","_wifi","_lair","_network","_lab"
-  ];
-
-  const used = new Set();
-  const names = [];
-
-  while(names.length < 3){
-    const a = adjectives[Math.floor(Math.random()*adjectives.length)];
-    const n = nouns[Math.floor(Math.random()*nouns.length)];
-    const s = suffixes[Math.floor(Math.random()*suffixes.length)];
-    const name = `${a}${n}${s}`;
-    if(!used.has(name)){
-      used.add(name);
-      names.push(name);
-    }
-  }
-
-  fakeListEl.innerHTML = names.map(n => `<li>${n}</li>`).join("");
-}
 
 /* ---------- авто-выбор сети для старых устройств ---------- */
 (function autoPick(){
@@ -1047,7 +977,6 @@ window.addEventListener("load", ()=>{
   recalcWidth();
   applyConfigToUI();
   updateOnlineStatus();
-  generateFakeNames();
 });
 window.addEventListener("resize", recalcWidth);
 </script>
