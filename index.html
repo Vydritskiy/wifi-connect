@@ -749,7 +749,8 @@ function updateHeroArt(){
   if(!heroArtEl) return;
   const band = getCurrentBand();
   const src = HERO_ART[band] || HERO_ART["5"];
-  if(heroArtEl.src.includes(src)) return;
+  const current = heroArtEl.getAttribute("src") || "";
+  if(current === src) return;
 
   heroArtEl.classList.add("fade-enter");
   setTimeout(()=>{
@@ -803,23 +804,18 @@ function pickTimeBannerConfig(hour){
 }
 
 function getArtForBanner(theme, weatherKind){
-  // всего два героя, но используем их по-разному
   if(weatherKind === "snow"){
-    // снег — пусть будет более "холодный" цилиндрический
     return "icons/hero_r2d2.svg";
   }
   if(weatherKind === "rain"){
-    // дождь — круглый дроид
     return "icons/hero_r2d5.svg";
   }
   if(weatherKind === "clear"){
-    // ясная погода — выбираем по времени дня
     return theme === "night" ? "icons/hero_r2d2.svg" : "icons/hero_r2d5.svg";
   }
   if(weatherKind === "clouds"){
     return theme === "day" ? "icons/hero_r2d2.svg" : "icons/hero_r2d5.svg";
   }
-  // всё остальное
   return theme === "night" ? "icons/hero_r2d2.svg" : "icons/hero_r2d5.svg";
 }
 
@@ -899,14 +895,38 @@ async function fetchWeather(){
     return;
   }
 
-  const url = `${WEATHER_API_URL}?q=${encodeURIComponent(CONFIG.city)}&appid=${CONFIG.weatherApiKey}&units=metric&lang=ru`;
+  const apiKey = (CONFIG.weatherApiKey || "").trim();
+  const url = `${WEATHER_API_URL}?q=${encodeURIComponent(CONFIG.city)}&appid=${apiKey}&units=metric&lang=ru`;
 
   try{
     tempEl.textContent = "Загружаю...";
     metaEl.textContent = "";
 
     const res = await fetch(url);
-    if(!res.ok) throw new Error("bad status");
+
+    if(!res.ok){
+      if(res.status === 401){
+        cityEl.textContent = CONFIG.city;
+        mainEl.textContent = "";
+        tempEl.textContent = "Неверный API-ключ OpenWeather";
+        metaEl.textContent = "Проверь ключ в ⚙️ или подожди активации.";
+      }else if(res.status === 404){
+        cityEl.textContent = CONFIG.city;
+        mainEl.textContent = "";
+        tempEl.textContent = "Город не найден";
+        metaEl.textContent = "Попробуй указать, например, Kyiv,UA.";
+      }else{
+        cityEl.textContent = CONFIG.city;
+        mainEl.textContent = "";
+        tempEl.textContent = "Не удалось загрузить";
+        metaEl.textContent = `Код ошибки: ${res.status}`;
+      }
+      lastWeatherKind = null;
+      updateTimeBanner();
+      console.error("Weather HTTP error", res.status);
+      return;
+    }
+
     const data = await res.json();
 
     const name = data.name || CONFIG.city;
@@ -925,6 +945,7 @@ async function fetchWeather(){
     lastWeatherKind = detectWeatherKind(w.main || "");
     updateTimeBanner();
   }catch(e){
+    console.error("Weather fetch error", e);
     cityEl.textContent = CONFIG.city || "Погода";
     mainEl.textContent = "";
     tempEl.textContent = "Не удалось загрузить";
@@ -975,6 +996,8 @@ function updateMeta(){
   const ssid = getSsidForBand(band);
 
   let base =
+    band === 0 ? "" : ""; // заглушка, перепишем ниже
+  base =
     band === "5"
       ? `Выбрана ${ssid} (5 GHz) — быстрее, если устройство поддерживает 5 GHz.`
       : `Выбрана ${ssid} (2.4 GHz) — стабильнее на расстоянии.`;
@@ -1206,13 +1229,13 @@ function fillAdminForm(){
 }
 
 function saveConfig(){
-  CONFIG.welcome      = document.getElementById("admWelcome").value || defaultConfig.welcome;
-  CONFIG.ssid5        = document.getElementById("admSsid5").value   || defaultConfig.ssid5;
-  CONFIG.ssid24       = document.getElementById("admSsid24").value  || defaultConfig.ssid24;
-  CONFIG.pass         = document.getElementById("admPass").value    || defaultConfig.pass;
-  CONFIG.mapsUrl      = document.getElementById("admMaps").value    || defaultConfig.mapsUrl;
-  CONFIG.city         = document.getElementById("admCity").value    || defaultConfig.city;
-  CONFIG.weatherApiKey= document.getElementById("admWeatherKey").value || "";
+  CONFIG.welcome       = document.getElementById("admWelcome").value || defaultConfig.welcome;
+  CONFIG.ssid5         = document.getElementById("admSsid5").value   || defaultConfig.ssid5;
+  CONFIG.ssid24        = document.getElementById("admSsid24").value  || defaultConfig.ssid24;
+  CONFIG.pass          = document.getElementById("admPass").value    || defaultConfig.pass;
+  CONFIG.mapsUrl       = document.getElementById("admMaps").value    || defaultConfig.mapsUrl;
+  CONFIG.city          = document.getElementById("admCity").value    || defaultConfig.city;
+  CONFIG.weatherApiKey = (document.getElementById("admWeatherKey").value || "").trim();
 
   saveConfigToStorage();
   applyConfigToUI();
