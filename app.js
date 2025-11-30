@@ -7,7 +7,7 @@ const defaultConfig = {
   mapsUrl: "https://www.google.com/maps",
   city: "Kyiv",
   // ВСТАВЬ СВОЙ КЛЮЧ OpenWeather:
-  weatherApiKey: "YOUR_OPENWEATHER_API_KEY_HERE"
+  weatherApiKey: "6530afae9a05d8f6e1c997682469a69d"
 };
 
 let CONFIG = loadConfig();
