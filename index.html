@@ -59,6 +59,20 @@ h1{
   -webkit-user-select:none;
 }
 
+/* арт с дроидом */
+.hero-art{
+  display:flex;
+  justify-content:center;
+  margin-bottom:18px;
+}
+.hero-art img{
+  max-width:100%;
+  height:auto;
+  border-radius:26px;
+  filter:drop-shadow(0 18px 40px rgba(0,0,0,0.7));
+  transition:opacity .3s ease;
+}
+
 /* обёртка под карусель + стрелки */
 .carousel-shell{
   position:relative;
@@ -452,6 +466,11 @@ body.neon{
 
   <div class="card">
 
+    <!-- арт-дроид: меняется по сети -->
+    <div class="hero-art">
+      <img id="heroArt" src="icons/hero_r2d5.svg" alt="Wi-Fi droid art">
+    </div>
+
     <div class="carousel-shell">
       <div class="carousel" id="carousel">
         <div class="track" id="track">
@@ -611,7 +630,7 @@ function loadConfig(){
     if(saved){
       const obj = JSON.parse(saved);
 
-      // вычищаем старый битый плейсхолдер maps.app.goo.gl/XXXXXXXX
+      // чистим старый битый плейсхолдер карты
       if(obj.mapsUrl && /maps\.app\.goo\.gl\/XXXXXXXX/i.test(obj.mapsUrl)){
         delete obj.mapsUrl;
       }
@@ -636,6 +655,7 @@ const helperText  = document.getElementById("helperText");
 const netStatus   = document.getElementById("netStatus");
 const dots        = document.querySelectorAll(".dots span");
 const welcomeEl   = document.getElementById("welcomeText");
+const heroArtEl   = document.getElementById("heroArt");
 let   slides      = Array.from(document.querySelectorAll(".slide"));
 const REAL_COUNT  = slides.length;
 
@@ -660,8 +680,9 @@ track.appendChild(firstClone);
 track.insertBefore(lastClone, track.firstChild);
 slides = Array.from(document.querySelectorAll(".slide"));
 
-/* ---------- конфиг helpers ---------- */
+/* ---------- helpers по сети ---------- */
 function getCurrentBand(){
+  // логический индекс слайдов: 0 = 5 GHz, 1 = 2.4 GHz
   const logical = (index - 1 + REAL_COUNT) % REAL_COUNT;
   return logical === 0 ? "5" : "24";
 }
@@ -670,6 +691,24 @@ function getSsidForBand(band){
 }
 function getCurrentSsid(){
   return getSsidForBand(getCurrentBand());
+}
+
+/* ---------- арт-дроид по сети ---------- */
+const HERO_ART = {
+  "5":  "icons/hero_r2d5.svg", // круглый
+  "24": "icons/hero_r2d2.svg"  // цилиндрический
+};
+
+function updateHeroArt(){
+  if(!heroArtEl) return;
+  const band = getCurrentBand();
+  const src = HERO_ART[band] || HERO_ART["5"];
+  if(heroArtEl.getAttribute("src") === src) return;
+  heroArtEl.style.opacity = 0;
+  setTimeout(()=>{
+    heroArtEl.src = src;
+    heroArtEl.style.opacity = 1;
+  },150);
 }
 
 /* ---------- применяем конфиг к UI ---------- */
@@ -738,6 +777,8 @@ function updateMeta(){
 
   helperText.textContent = base;
   document.getElementById("qrBox").style.display = "none";
+
+  updateHeroArt();
 }
 
 /* ---------- навигация ---------- */
@@ -773,7 +814,7 @@ track.addEventListener("transitionend", e=>{
   isAnimating = false;
 });
 
-/* ---------- свайп ---------- */
+/* ---------- свайп по всей карточке (карусель сетей) ---------- */
 let startX = null;
 let startY = null;
 let draggingMouse = false;
@@ -856,7 +897,6 @@ function copyPass(){
 /* ---------- ссылка на карту ---------- */
 function openMaps(){
   const url = CONFIG.mapsUrl || defaultConfig.mapsUrl;
-  // если по какой-то причине сохранили что-то странное без http — добавим протокол
   const finalUrl = /^https?:\/\//i.test(url) ? url : ("https://" + url);
   window.open(finalUrl, "_blank");
 }
@@ -895,6 +935,8 @@ function toggleTheme(){
   localStorage.theme = body.classList.contains("light") ? "light" : "dark";
   document.querySelector(".theme-toggle").textContent =
     body.classList.contains("light") ? "🌙" : "☀️";
+
+  updateHeroArt();
 }
 
 (function initTheme(){
@@ -984,6 +1026,7 @@ window.addEventListener("load", ()=>{
   recalcWidth();
   applyConfigToUI();
   updateOnlineStatus();
+  updateHeroArt();
 });
 window.addEventListener("resize", recalcWidth);
 </script>
