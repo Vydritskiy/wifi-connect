@@ -7,7 +7,7 @@ const defaultConfig = {
   mapsUrl: "https://www.google.com/maps",
   city: "Kyiv",
   // ВСТАВЬ СВОЙ КЛЮЧ OpenWeather:
-  weatherApiKey: "6530afae9a05d8f6e1c997682469a69d"
+  weatherApiKey: "YOUR_OPENWEATHER_API_KEY_HERE"
 };
 
 let CONFIG = loadConfig();
@@ -18,11 +18,13 @@ function loadConfig(){
     if(saved){
       const obj = JSON.parse(saved);
 
+      // чистим старый шаблонный mapsUrl
       if(obj.mapsUrl && /maps\.app\.goo\.gl\/XXXXXXXX/i.test(obj.mapsUrl)){
         delete obj.mapsUrl;
       }
+      // ключ никогда не берём из localStorage, только из defaultConfig
       if(obj.weatherApiKey){
-        delete obj.weatherApiKey; // ключ только в коде
+        delete obj.weatherApiKey;
       }
 
       return Object.assign({}, defaultConfig, obj);
@@ -33,27 +35,29 @@ function loadConfig(){
 
 function saveConfigToStorage(){
   try{
+    // не сохраняем ключ погоды в localStorage
     const { weatherApiKey, ...rest } = CONFIG;
     localStorage.setItem("wifiGuestConfig", JSON.stringify(rest));
   }catch(e){}
 }
 
 /* ---------- DOM ---------- */
-const track        = document.getElementById("track");
-const carousel     = document.getElementById("carousel");
-const card         = document.querySelector(".card");
-const helperText   = document.getElementById("helperText");
-const netStatus    = document.getElementById("netStatus");
-const dots         = document.querySelectorAll(".dots span");
-const welcomeEl    = document.getElementById("welcomeText");
-const heroArtEl    = document.getElementById("heroArt");
-const adminPanelEl = document.getElementById("adminPanel");
-const weatherBgEl  = document.getElementById("weatherBg");
+const track         = document.getElementById("track");
+const carousel      = document.getElementById("carousel");
+const card          = document.querySelector(".card");
+const helperText    = document.getElementById("helperText");
+const netStatus     = document.getElementById("netStatus");
+const dots          = document.querySelectorAll(".dots span");
+const welcomeEl     = document.getElementById("welcomeText");
+const heroArtEl     = document.getElementById("heroArt");
+const adminPanelEl  = document.getElementById("adminPanel");
+const weatherBgEl   = document.getElementById("weatherBg");
+const weatherIconEl = document.getElementById("weatherIcon");
 
 let slides       = Array.from(document.querySelectorAll(".slide"));
 const REAL_COUNT = slides.length;
 
-let index       = 1;
+let index       = 1;  // с учётом клонов
 let qrObj       = null;
 let slideWidth  = 0;
 let isAnimating = false;
@@ -61,21 +65,19 @@ let audioCtx    = null;
 
 const transitionValue = "transform 0.7s cubic-bezier(.22,.61,.36,1)";
 
-/* погода-состояние */
-let lastWeatherKind      = null; // "clear", "rain-light", "snow-heavy", ...
-let lastWeatherIsNight   = false;
-let lastWeatherTemp      = null;
+/* ---------- состояние погоды ---------- */
+let lastWeatherKind    = null;  // "clear", "rain-light", "snow-heavy", ...
+let lastWeatherIsNight = false;
+let lastWeatherTemp    = null;
 
 /* ---------- детект устройства ---------- */
 const ua        = navigator.userAgent.toLowerCase();
 const isIOS     = /iphone|ipad|ipod/.test(ua);
 const isAndroid = /android/.test(ua);
-// const isDesktop = !isIOS && !isAndroid; // если нужно
-
 const oldAndroid = /android\s([0-6]\.|7\.0)/i.test(ua);
 const oldIOS     = /os\s(9_|10_)/i.test(ua);
 
-/* ---------- бесконечная лента ---------- */
+/* ---------- бесконечная лента карусели ---------- */
 if(REAL_COUNT > 0){
   const firstClone = slides[0].cloneNode(true);
   const lastClone  = slides[REAL_COUNT - 1].cloneNode(true);
@@ -161,10 +163,10 @@ function pickTimeBannerConfig(hour){
 function baseWeatherGroup(kind){
   if (!kind) return null;
   if (kind === "storm") return "rain";
-  if (kind.startsWith("rain")) return "rain";
-  if (kind.startsWith("snow")) return "snow";
-  if (kind.startsWith("clouds")) return "clouds";
-  if (kind === "fog") return "fog";
+  if (kind.startsWith("rain"))  return "rain";
+  if (kind.startsWith("snow"))  return "snow";
+  if (kind.startsWith("cloud")) return "clouds";
+  if (kind === "fog")   return "fog";
   if (kind === "clear") return "clear";
   return null;
 }
@@ -216,10 +218,36 @@ function getArtForBanner(theme, weatherKind){
   return theme === "night" ? "icons/hero_r2d2.svg" : "icons/hero_r2d5.svg";
 }
 
+function updateWeatherIcon(){
+  if (!weatherIconEl) return;
+
+  const kind    = lastWeatherKind || "clear";
+  const isNight = !!lastWeatherIsNight;
+
+  let cls = "";
+  switch (kind){
+    case "storm":           cls = "icon-storm"; break;
+    case "rain-heavy":      cls = "icon-rain-heavy"; break;
+    case "rain-light":      cls = "icon-rain-light"; break;
+    case "snow-heavy":      cls = "icon-snow-heavy"; break;
+    case "snow-light":      cls = "icon-snow-light"; break;
+    case "fog":             cls = "icon-fog"; break;
+    case "clouds-overcast":
+    case "clouds-broken":
+    case "clouds-few":
+      cls = "icon-clouds"; break;
+    case "clear":
+    default:
+      cls = isNight ? "icon-clear-night" : "icon-clear-day";
+  }
+
+  weatherIconEl.className = "weather-icon " + cls;
+}
+
 function updateWeatherBackground(){
   if (!weatherBgEl) return;
 
-  const kind = lastWeatherKind || "clear";
+  const kind    = lastWeatherKind || "clear";
   const isNight = !!lastWeatherIsNight;
 
   let cls;
@@ -247,6 +275,8 @@ function updateWeatherBackground(){
   }
 
   weatherBgEl.className = "weather-bg " + cls + tempMod;
+
+  updateWeatherIcon();
 }
 
 function updateTimeBanner(){
@@ -257,7 +287,7 @@ function updateTimeBanner(){
   if(!bannerEl || !artEl || !titleEl || !subEl) return;
 
   const hour = new Date().getHours();
-  const cfg = pickTimeBannerConfig(hour);
+  const cfg  = pickTimeBannerConfig(hour);
   const text = buildBannerText(cfg.baseTitle, cfg.baseSub, lastWeatherKind);
 
   titleEl.textContent = text.title;
@@ -286,10 +316,10 @@ function detectWeatherKind(w, data){
   // день/ночь по солнцу
   try{
     const tz = data.timezone || 0; // сек
-    const nowUtc = Date.now() / 1000;
+    const nowUtc   = Date.now() / 1000;
     const nowLocal = nowUtc + tz;
-    const sunrise = data.sys && data.sys.sunrise ? data.sys.sunrise : null;
-    const sunset  = data.sys && data.sys.sunset  ? data.sys.sunset  : null;
+    const sunrise  = data.sys && data.sys.sunrise ? data.sys.sunrise : null;
+    const sunset   = data.sys && data.sys.sunset  ? data.sys.sunset  : null;
 
     if (sunrise != null && sunset != null) {
       lastWeatherIsNight = (nowLocal < sunrise || nowLocal > sunset);
@@ -329,20 +359,24 @@ function detectWeatherKind(w, data){
   }
 
   const all = (main + " " + desc);
-  if (all.includes("snow")) return "snow-light";
-  if (all.includes("rain") || all.includes("drizzle")) return "rain-light";
-  if (all.includes("storm") || all.includes("thunder")) return "storm";
-  if (all.includes("cloud")) return "clouds-broken";
-  if (all.includes("mist") || all.includes("fog") || all.includes("haze")) return "fog";
+  if (all.includes("snow"))   return "snow-light";
+  if (all.includes("rain") ||
+      all.includes("drizzle"))return "rain-light";
+  if (all.includes("storm") ||
+      all.includes("thunder"))return "storm";
+  if (all.includes("cloud"))  return "clouds-broken";
+  if (all.includes("mist") ||
+      all.includes("fog") ||
+      all.includes("haze"))   return "fog";
 
   return "clear";
 }
 
 async function fetchWeather(){
-  const cityEl   = document.getElementById("weatherCity");
-  const mainEl   = document.getElementById("weatherMain");
-  const tempEl   = document.getElementById("weatherTemp");
-  const metaEl   = document.getElementById("weatherMeta");
+  const cityEl = document.getElementById("weatherCity");
+  const mainEl = document.getElementById("weatherMain");
+  const tempEl = document.getElementById("weatherTemp");
+  const metaEl = document.getElementById("weatherMeta");
   if(!cityEl || !tempEl) return;
 
   const apiKey = (CONFIG.weatherApiKey || "").trim();
@@ -394,8 +428,8 @@ async function fetchWeather(){
     const w    = (data.weather && data.weather[0]) || {};
     const main = w.description || w.main || "";
 
-    const t  = Math.round(data.main.temp);
-    const tf = Math.round(data.main.feels_like);
+    const t   = Math.round(data.main.temp);
+    const tf  = Math.round(data.main.feels_like);
     const hum = Math.round(data.main.humidity);
 
     cityEl.textContent = name;
@@ -442,7 +476,7 @@ function applyConfigToUI(){
 function recalcWidth(){
   slideWidth = carousel.offsetWidth;
   track.style.transition = "none";
-  track.style.transform = `translateX(${-index * slideWidth}px)`;
+  track.style.transform  = `translateX(${-index * slideWidth}px)`;
   void track.offsetWidth;
   track.style.transition = transitionValue;
   updateMeta();
@@ -481,7 +515,7 @@ function goTo(newIndex){
   isAnimating = true;
   index = newIndex;
   track.style.transition = transitionValue;
-  track.style.transform = `translateX(${-index * slideWidth}px)`;
+  track.style.transform  = `translateX(${-index * slideWidth}px)`;
 }
 
 function nextSlide(){ goTo(index + 1); }
@@ -601,7 +635,7 @@ function playClickSound(){
     if(!audioCtx){
       audioCtx = new (window.AudioContext || window.webkitAudioContext)();
     }
-    const osc = audioCtx.createOscillator();
+    const osc  = audioCtx.createOscillator();
     const gain = audioCtx.createGain();
     osc.type = "sine";
     osc.frequency.value = 880;
@@ -627,7 +661,7 @@ function updateOnlineStatus(){
     netStatus.textContent = "Статус интернета: офлайн ⛔ (проверьте роутер или кабель)";
   }
 }
-window.addEventListener("online", updateOnlineStatus);
+window.addEventListener("online",  updateOnlineStatus);
 window.addEventListener("offline", updateOnlineStatus);
 
 /* ---------- авто-выбор сети для старых устройств ---------- */
