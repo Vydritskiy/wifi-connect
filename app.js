@@ -618,39 +618,6 @@ function playClickSound(){
   }catch(e){}
 }
 
-/* ---------- тема ---------- */
-function toggleTheme(){
-  const body = document.body;
-  const isLight = body.classList.contains("light");
-
-  body.classList.toggle("light", !isLight);
-  body.classList.toggle("neon", isLight);
-
-  localStorage.theme = body.classList.contains("light") ? "light" : "dark";
-  document.querySelector(".theme-toggle").textContent =
-    body.classList.contains("light") ? "🌙" : "☀️";
-
-  updateHeroArt();
-  updateTimeBanner();
-}
-
-(function initTheme(){
-  const stored = localStorage.theme;
-  const prefersDark = window.matchMedia &&
-                      window.matchMedia("(prefers-color-scheme: dark)").matches;
-
-  if(stored === "light"){
-    document.body.classList.add("light");
-  }else if(stored === "dark" || (!stored && prefersDark)){
-    document.body.classList.add("neon");
-  }else{
-    document.body.classList.add("light");
-  }
-
-  document.querySelector(".theme-toggle").textContent =
-    document.body.classList.contains("light") ? "🌙" : "☀️";
-})();
-
 /* ---------- статус интернета ---------- */
 function updateOnlineStatus(){
   if(!netStatus) return;
