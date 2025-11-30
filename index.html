@@ -12,6 +12,7 @@
   <!-- Анимированный фон по погоде -->
   <div class="weather-bg" id="weatherBg"></div>
 
+  <!-- Кнопка мини-админки -->
   <div class="admin-toggle" onclick="toggleAdmin()">⚙️</div>
 
   <div class="wrapper">
@@ -102,23 +103,26 @@
         </div>
 
         <div class="weather-card" id="weatherCard">
-  <div class="weather-row">
-    <span class="weather-city" id="weatherCity"></span>
-    <span class="weather-main" id="weatherMain"></span>
-  </div>
+          <div class="weather-row">
+            <span class="weather-city" id="weatherCity"></span>
+            <span class="weather-main" id="weatherMain"></span>
+          </div>
 
-  <div class="weather-row weather-middle">
-    <div class="weather-temp-block">
-      <div class="weather-temp" id="weatherTemp"></div>
-      <div class="weather-meta" id="weatherMeta"></div>
+          <div class="weather-row weather-middle">
+            <div class="weather-temp-block">
+              <div class="weather-temp" id="weatherTemp"></div>
+              <div class="weather-meta" id="weatherMeta"></div>
+            </div>
+
+            <div class="weather-icon-wrap">
+              <div class="weather-icon" id="weatherIcon"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
     </div>
-
-    <div class="weather-icon-wrap">
-      <div class="weather-icon" id="weatherIcon"></div>
-    </div>
   </div>
-</div>
-
 
   <!-- Мини-админка -->
   <div class="admin-panel" id="adminPanel">
