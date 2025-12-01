@@ -4,7 +4,8 @@ const defaultConfig = {
   ssid24: "r2d2",
   pass: "Jgthfnbdysq1913",
   welcome: "Добро пожаловать! Чувствуй себя как дома 🧡",
-  mapsUrl: "https://www.google.com/maps",
+  mapsUrl: "https://www.google.com/maps/place/%D0%B2%D1%83%D0%BB%D0%B8%D1%86%D1%8F+%D0%90%D0%BD%D0%B4%D1%80%D1%96%D1%8F+%D0%9C%D0%B0%D0%BB%D0%B8%D1%88%D0%BA%D0%B0,+31%D0%90,+%D0%9A%D0%B8%D1%97%D0%B2,+02000/@50.4631864,30.6235148,17z/data=!3m1!4b1!4m6!3m5!1s0x40d4d0013156e90b:0x90979b63d311cbac!8m2!3d50.463183!4d30.6260897!16s%2Fg%2F1tk6666s?entry=ttu",
+
   city: "Kyiv",
   // ВСТАВЬ СВОЙ КЛЮЧ OpenWeather:
   weatherApiKey: "6530afae9a05d8f6e1c997682469a69d"
