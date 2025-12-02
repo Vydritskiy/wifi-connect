@@ -801,39 +801,38 @@ async function checkLocalPing() {
 async function detectAlreadyConnected() {
   const autoBtn = document.querySelector('button[onclick="autoConnect()"]');
   const helper  = document.getElementById("helperText");
-
   if (!autoBtn || !helper) return;
 
-  const localPing = await checkLocalPing();
+  // local ping (может не сработать в HTTPS)
+  let localPing = false;
+  try {
+    localPing = await checkLocalPing();
+  } catch(e){ localPing = false; }
 
+  // измерение скорости (уже выполняется в speedTest)
+  // ЖДЁМ результата speedTest
+  await new Promise(r => setTimeout(r, 2500));
+
+  const downVal = window.__speedDownMbps || 0;
+
+  // считать "подключён" если:
+  // 1) ping сработал
+  // 2) download > 8 Mbps
+  // 3) тип сети = wifi (если доступно)
   const conn = navigator.connection || navigator.webkitConnection || navigator.mozConnection;
   let isWifi = false;
-  let goodQuality = false;
-
   if (conn) {
     isWifi = conn.type === "wifi" || conn.effectiveType === "wifi";
-    goodQuality = conn.downlink >= 10 || conn.effectiveType === "4g";
   }
 
-  const connected = localPing || (isWifi && goodQuality);
+  const connected = localPing || isWifi || downVal >= 8;
 
   if (connected) {
     autoBtn.style.display = "none";
     helper.innerHTML = `Вы уже подключены к <b>${getCurrentSsid()}</b> ✔`;
-
-    const logical = (index - 1 + REAL_COUNT) % REAL_COUNT;
-    const currentSlide = slides[logical + 1];
-    if (currentSlide) {
-      const cardEl = currentSlide.querySelector(".slide-card");
-      if (cardEl){
-        cardEl.style.boxShadow =
-          "0 0 28px rgba(150,255,150,0.8), 0 0 18px rgba(80,255,120,0.6)";
-        cardEl.style.border =
-          "1px solid rgba(120,255,120,0.9)";
-      }
-    }
   }
 }
+
 
 /* ---------- ШАГ 3: Индикатор уровня сигнала ---------- */
 async function measureSignalQuality(){
