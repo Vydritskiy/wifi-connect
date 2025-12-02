@@ -803,35 +803,50 @@ async function detectAlreadyConnected() {
   const helper  = document.getElementById("helperText");
   if (!autoBtn || !helper) return;
 
-  // local ping (может не сработать в HTTPS)
-  let localPing = false;
+  // ---------- TTFB (скорость получения HTML-документа) ----------
+  let ttfbFast = false;
   try {
-    localPing = await checkLocalPing();
-  } catch(e){ localPing = false; }
+    if (performance.timing) {
+      const ttfb =
+        performance.timing.responseStart -
+        performance.timing.requestStart;
 
-  // измерение скорости (уже выполняется в speedTest)
-  // ЖДЁМ результата speedTest
-  await new Promise(r => setTimeout(r, 2500));
+      if (ttfb > 0 && ttfb < 200) {
+        ttfbFast = true;
+      }
+    }
+  } catch(e){}
 
+  // ---------- SpeedTest: ждём пока down загрузится ----------
+  await new Promise(r => setTimeout(r, 3000));
   const downVal = window.__speedDownMbps || 0;
 
-  // считать "подключён" если:
-  // 1) ping сработал
-  // 2) download > 8 Mbps
-  // 3) тип сети = wifi (если доступно)
+  // ---------- Тип сети (если доступно) ----------
   const conn = navigator.connection || navigator.webkitConnection || navigator.mozConnection;
   let isWifi = false;
   if (conn) {
     isWifi = conn.type === "wifi" || conn.effectiveType === "wifi";
   }
 
-  const connected = localPing || isWifi || downVal >= 8;
+  // ---------- Попытка локального пинга (может не сработать) ----------
+  let localPing = false;
+  try {
+    localPing = await checkLocalPing();
+  } catch(e){}
+
+  // ---------- Итоговое супер-условие ----------
+  const connected =
+        ttfbFast            // самый надёжный показатель
+     || downVal >= 8        // хороший интернет → точно Wi-Fi
+     || isWifi              // Android детект
+     || localPing;          // если вдруг доступен
 
   if (connected) {
     autoBtn.style.display = "none";
     helper.innerHTML = `Вы уже подключены к <b>${getCurrentSsid()}</b> ✔`;
   }
 }
+
 
 
 /* ---------- ШАГ 3: Индикатор уровня сигнала ---------- */
