@@ -803,7 +803,7 @@ async function detectAlreadyConnected() {
   const helper  = document.getElementById("helperText");
   if (!autoBtn || !helper) return;
 
-  // ---------- TTFB (скорость получения HTML-документа) ----------
+  // ---------- TTFB (скорость получения HTML) ----------
   let ttfbFast = false;
   try {
     if (performance.timing) {
@@ -815,7 +815,66 @@ async function detectAlreadyConnected() {
         ttfbFast = true;
       }
     }
-  } catch(e){}
+  } catch (e) {}
+
+  // ---------- SpeedTest DOWN (ждём, пока down измерится) ----------
+  await new Promise(r => setTimeout(r, 3000));
+  const downVal = window.__speedDownMbps || 0;
+
+  // ---------- Тип сети ----------
+  const conn = navigator.connection || navigator.webkitConnection || navigator.mozConnection;
+  let isWifi = false;
+  if (conn) {
+    isWifi = conn.type === "wifi" || conn.effectiveType === "wifi";
+  }
+
+  // ---------- Локальный ping (иногда работает) ----------
+  let localPing = false;
+  try {
+    const gateways = [
+      "http://192.168.0.1",
+      "http://192.168.1.1",
+      "http://192.168.100.1"
+    ];
+
+    for (const gw of gateways) {
+      try {
+        const t0 = performance.now();
+        await fetch(gw, { mode: "no-cors" });
+        const t1 = performance.now();
+        if (t1 - t0 < 250) {
+          localPing = true;
+          break;
+        }
+      } catch (e) {}
+    }
+  } catch (e) {}
+
+  // ---------- Финальное решение ----------
+  const connected =
+       ttfbFast      // Быстрый отклик
+    || downVal >= 8  // Нормальный интернет
+    || isWifi        // Детект Android
+    || localPing;    // Локальная сеть определена
+
+  // ---------- Если подключены — показываем баннер ----------
+  if (connected) {
+    const banner = document.getElementById("connectedBanner");
+    if (banner) banner.style.display = "block";
+
+    helper.innerHTML = `Вы уже подключены к <b>${getCurrentSsid()}</b> ✔`;
+
+    // скрываем кнопки
+    const autoBtn = document.querySelector('button[onclick="autoConnect()"]');
+    const qrBtn   = document.querySelector('button[onclick="showQR()"]');
+    const copyBtn = document.querySelector('button[onclick="copyPass()"]');
+
+    if (autoBtn) autoBtn.style.display = "none";
+    if (qrBtn)   qrBtn.style.display = "none";
+    if (copyBtn) copyBtn.style.display = "none";
+  }
+}
+
 
   // ---------- SpeedTest: ждём пока down загрузится ----------
   await new Promise(r => setTimeout(r, 3000));
