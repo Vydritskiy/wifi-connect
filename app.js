@@ -2,7 +2,7 @@
    Wi-Fi Guest Portal — app.js v3.0 (оптимизированная версия)
    ============================================================ */
 
-/* ---------- Конфиг по умолчанию ---------- */
+// Конфиг по умолчанию
 const defaultConfig = {
   ssid5: "r2d5",
   ssid24: "r2d2",
@@ -13,7 +13,7 @@ const defaultConfig = {
   weatherApiKey: "6530afae9a05d8f6e1c997682469a69d"
 };
 
-/* ---------- Автоязык ---------- */
+// Автоязык
 const LANG = (() => {
   const l = navigator.language.toLowerCase();
   if (l.startsWith("uk")) return "ua";
@@ -172,6 +172,16 @@ function loadImage(imageElement, src) {
   img.onload = () => { imageElement.src = src; };
   img.onerror = () => { imageElement.src = 'icons/default_hero.svg'; }; // Запасное изображение
   img.src = src;
+}
+
+/* ---------- Главное автоподключение для мобильных ---------- */
+function autoConnect() {
+  const ssid = getCurrentSsid();
+  if (navigator.userAgent.match(/(iPhone|iPad|iPod)/)) {
+    alert("Для iPhone используйте QR-код или подключитесь вручную.");
+  } else {
+    location.href = `WIFI:T:WPA;S:${ssid};P:${CONFIG.pass};;`;
+  }
 }
 
 /* ---------- Главная функция для инициализации UI ---------- */
