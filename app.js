@@ -888,7 +888,50 @@ async function measureSignalQuality(){
     }
   }
 
-  const barStr = "📶".repeat(bars) + "◽".repeat(4 - bars);
+ let barStr = "";
+
+switch (bars) {
+  case 4:
+    barStr = `
+    <svg class="wifi-icon" viewBox="0 0 24 24">
+      <circle cx="12" cy="18.5" r="2" fill="currentColor" />
+      <path d="M10 16c1.3-1.3 3.7-1.3 5 0" stroke="currentColor" stroke-width="2" stroke-linecap="round" fill="none"/>
+      <path d="M7.5 13.5c3-3 8-3 11 0" stroke="currentColor" stroke-width="2" stroke-linecap="round" fill="none"/>
+      <path d="M5 11c4.7-4.7 12.3-4.7 17 0" stroke="currentColor" stroke-width="2" stroke-linecap="round" fill="none"/>
+    </svg>`;
+    break;
+
+  case 3:
+    barStr = `
+    <svg class="wifi-icon" viewBox="0 0 24 24">
+      <circle cx="12" cy="18.5" r="2" fill="currentColor" />
+      <path d="M10 16c1.3-1.3 3.7-1.3 5 0" stroke="currentColor" stroke-width="2" stroke-linecap="round" fill="none"/>
+      <path d="M7.5 13.5c3-3 8-3 11 0" stroke="currentColor" stroke-width="2" stroke-linecap="round" fill="none"/>
+    </svg>`;
+    break;
+
+  case 2:
+    barStr = `
+    <svg class="wifi-icon" viewBox="0 0 24 24">
+      <circle cx="12" cy="18.5" r="2" fill="currentColor" />
+      <path d="M10 16c1.3-1.3 3.7-1.3 5 0" stroke="currentColor" stroke-width="2" stroke-linecap="round" fill="none"/>
+    </svg>`;
+    break;
+
+  case 1:
+    barStr = `
+    <svg class="wifi-icon" viewBox="0 0 24 24">
+      <circle cx="12" cy="18.5" r="2" fill="currentColor" />
+    </svg>`;
+    break;
+
+  default:
+    barStr = `
+    <svg class="wifi-icon" viewBox="0 0 24 24">
+      <circle cx="12" cy="18.5" r="2" fill="currentColor" />
+    </svg>`;
+    break;
+}
 
   const textMap = {
     good : "Сигнал отличный",
