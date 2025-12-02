@@ -5,9 +5,12 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Wi-Fi Connect</title>
   <link rel="icon" type="image/svg+xml" href="icons/fav/favicon_droid_round_smirk.svg">
+  <link rel="manifest" href="manifest.json">
   <link rel="stylesheet" href="main.css">
 </head>
 <body>
+
+  <!-- Анимированный фон по погоде -->
   <div class="weather-bg" id="weatherBg"></div>
 
   <!-- Кнопка админки -->
@@ -18,18 +21,18 @@
     <h1>Подключение к Wi-Fi</h1>
 
     <div class="card">
+
+      <!-- верхний арт-дроид (по сети) -->
       <div class="hero-art">
         <img id="heroArt" src="icons/hero_r2d5.svg" alt="Wi-Fi droid">
       </div>
 
-      <div class="connected-banner" id="connectedBanner">
-        ✔ Вы уже подключены к Wi-Fi
-      </div>
-
-      <!-- Карусель сетей -->
+      <!-- карусель сетей -->
       <div class="carousel-shell">
         <div class="carousel" id="carousel">
           <div class="track" id="track">
+
+            <!-- 5 GHz -->
             <div class="slide" data-band="5">
               <div class="slide-card">
                 <div class="slide-inner">
@@ -43,6 +46,7 @@
               </div>
             </div>
 
+            <!-- 2.4 GHz -->
             <div class="slide" data-band="24">
               <div class="slide-card">
                 <div class="slide-inner">
@@ -55,9 +59,11 @@
                 </div>
               </div>
             </div>
+
           </div>
         </div>
 
+        <!-- стрелки -->
         <div class="nav-arrow left" onclick="prevSlide()">
           <img src="icons/arrow_left.svg" alt="">
         </div>
@@ -96,6 +102,7 @@
       <div class="bottom-section">
         <div class="weather-card" id="weatherCard">
 
+          <!-- верх: иконка слева, текст справа -->
           <div class="weather-top">
             <div class="weather-icon-wrap">
               <div class="weather-icon" id="weatherIcon"></div>
