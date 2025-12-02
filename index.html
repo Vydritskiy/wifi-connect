@@ -31,7 +31,8 @@
       <div class="carousel-shell">
         <div class="carousel" id="carousel">
           <div class="track" id="track">
-            <!-- Пример слайдов -->
+
+            <!-- 5 GHz -->
             <div class="slide" data-net="r2d5">
               <div class="slide-card">
                 <div class="slide-inner">
@@ -45,9 +46,36 @@
               </div>
             </div>
 
-            <!-- Дополнительные слайды (если есть) -->
+            <!-- 2.4 GHz -->
+            <div class="slide" data-net="r2d2">
+              <div class="slide-card">
+                <div class="slide-inner">
+                  <img src="icons/icon_r2d2.svg" alt="r2d2">
+                  <div class="slide-ssid-main">r2d2</div>
+                  <div class="slide-ssid-sub">2.4 GHz</div>
+                </div>
+                <div class="slide-caption">
+                  r2d2 · стабильнее на расстоянии
+                </div>
+              </div>
+            </div>
+
           </div>
         </div>
+
+        <!-- стрелки -->
+        <div class="nav-arrow left" onclick="prevSlide()">
+          <img src="icons/arrow_left.svg" alt="">
+        </div>
+        <div class="nav-arrow right" onclick="nextSlide()">
+          <img src="icons/arrow_right.svg" alt="">
+        </div>
+      </div>
+
+      <!-- точки -->
+      <div class="dots" id="dots">
+        <span class="active"></span>
+        <span></span>
       </div>
 
       <!-- кнопки -->
@@ -55,6 +83,11 @@
       <button class="btn" onclick="showQR()">Показать QR-код</button>
       <button class="btn" onclick="copyPass()">Скопировать пароль</button>
       <button class="btn" onclick="openMaps()">Как добраться 🚕</button>
+
+      <!-- QR -->
+      <div class="qr" id="qrBox">
+        <div id="qrCanvas"></div>
+      </div>
 
       <!-- подписи и статусы -->
       <div class="helper" id="helperText"></div>
@@ -67,7 +100,23 @@
 
       <!-- нижний блок: баннер + погода -->
       <div class="bottom-section">
+        <div class="time-banner" id="timeBanner">
+          <div class="time-banner-art" id="timeBannerArt"></div>
+          <div class="time-banner-text">
+            <div class="time-banner-title" id="timeBannerTitle"></div>
+            <div class="time-banner-sub" id="timeBannerSub"></div>
+          </div>
+        </div>
+
         <div class="weather-card" id="weatherCard">
+          <div class="speed-card" id="speedCard">
+            <div class="speed-title">Тест скорости…</div>
+            <div class="speed-row" id="speedPing">Ping: —</div>
+            <div class="speed-row" id="speedDown">Download: —</div>
+            <div class="speed-row" id="speedUp">Upload: —</div>
+            <div class="speed-status" id="speedStatus"></div>
+          </div>
+
           <div class="weather-row">
             <span class="weather-city" id="weatherCity"></span>
             <span class="weather-main" id="weatherMain"></span>
@@ -86,6 +135,45 @@
         </div>
       </div>
 
+    </div>
+  </div>
+
+  <!-- Мини-админка -->
+  <div class="admin-panel" id="adminPanel">
+    <div class="admin-backdrop" onclick="toggleAdmin()"></div>
+    <div class="admin-inner">
+      <div class="admin-close" onclick="toggleAdmin()">✕</div>
+      <h2>Настройки для хозяина</h2>
+
+      <div class="admin-row">
+        <label for="admWelcome">Приветствие</label>
+        <input id="admWelcome" type="text" placeholder="Добро пожаловать!">
+      </div>
+
+      <div class="admin-row">
+        <label for="admSsid5">Имя сети 5 GHz</label>
+        <input id="admSsid5" type="text" placeholder="r2d5">
+      </div>
+
+      <div class="admin-row">
+        <label for="admSsid24">Имя сети 2.4 GHz</label>
+        <input id="admSsid24" type="text" placeholder="r2d2">
+      </div>
+
+      <div class="admin-row">
+        <label for="admPass">Пароль Wi-Fi</label>
+        <input id="admPass" type="text" placeholder="Пароль">
+      </div>
+
+      <div class="admin-row">
+        <label for="admCity">Город для погоды</label>
+        <input id="admCity" type="text" placeholder="Kyiv">
+      </div>
+
+      <div class="admin-actions">
+        <button class="admin-btn reset" onclick="resetConfig()">Сбросить по умолчанию</button>
+        <button class="admin-btn save" onclick="saveConfig()">Сохранить</button>
+      </div>
     </div>
   </div>
 
