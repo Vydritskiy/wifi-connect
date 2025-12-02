@@ -905,6 +905,34 @@ h1{
   opacity:0.9;
 }
 
+.wifi-icon {
+  width: 26px;
+  height: 26px;
+  color: #fff;
+  stroke: currentColor;
+  fill: currentColor;
+}
+
+.signal.good  .wifi-icon {
+    color: #8fff9a;
+    filter: drop-shadow(0 0 6px #8fff9a);
+}
+
+.signal.ok  .wifi-icon {
+    color: #fff59d;
+    filter: drop-shadow(0 0 6px #fff59d);
+}
+
+.signal.bad  .wifi-icon {
+    color: #ffb39b;
+    filter: drop-shadow(0 0 6px #ffb39b);
+}
+
+.signal.weak  .wifi-icon {
+    color: #ff7070;
+    filter: drop-shadow(0 0 6px #ff7070);
+}
+
 .signal-bars{
   display:inline-block;
   letter-spacing:2px;
