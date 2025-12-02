@@ -933,18 +933,6 @@ h1{
     filter: drop-shadow(0 0 6px #ff7070);
 }
 
-.signal-bars{
-  display:inline-block;
-  letter-spacing:2px;
-  font-size:18px;
-  margin-bottom:3px;
-}
-
-.signal.good { color:#8fff9a; text-shadow:0 0 8px rgba(140,255,170,0.8); }
-.signal.ok   { color:#fff59d; text-shadow:0 0 8px rgba(255,245,140,0.8); }
-.signal.bad  { color:#ffb39b; text-shadow:0 0 8px rgba(255,140,120,0.8); }
-.signal.weak { color:#ff7070; text-shadow:0 0 8px rgba(255,100,100,0.9); }
-
 /* ---------- SpeedTest карточка ---------- */
 .speed-card{
   border-radius:18px;
