@@ -400,39 +400,3 @@ async function speedTest() {
     statusEl.className = "speed-status bad";
   }
 }
-
-/* ---------- Уже подключены ---------- */
-
-async function detectAlreadyConnected() {
-  const helper = document.getElementById("helperText");
-  const banner = document.getElementById("connectedBanner");
-
-  // ждём окончания первого спидтеста
-  await new Promise(r => setTimeout(r, 4000));
-
-  const conn = navigator.connection || navigator.webkitConnection;
-  const isWifi = conn && (conn.type === "wifi" || conn.effectiveType === "wifi");
-
-  const down = lastDownMbps || 0;
-  const ok = navigator.onLine && down >= 5 && (isWifi || !conn);
-
-  if (ok) {
-    if (banner) {
-      banner.style.display = "block";
-      banner.textContent = t("alreadyConnectedBanner");
-    }
-    if (helper) {
-      const tpl = t("alreadyConnectedTo");
-      helper.innerHTML = tpl.replace("{ssid}", getCurrentSsid());
-    }
-
-    const autoBtn = document.getElementById("btnAuto");
-    const qrBtn = document.getElementById("btnQR");
-    const copyBtn = document.getElementById("btnCopy");
-    if (autoBtn) autoBtn.style.display = "none";
-    if (qrBtn) qrBtn.style.display = "none";
-    if (copyBtn) copyBtn.style.display = "none";
-  }
-}
-
-/* ---------- Online/offline ---------- */
