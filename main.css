@@ -956,4 +956,22 @@ h1{
   text-shadow:0 0 8px rgba(255,120,120,0.8);
 }
 
+/* ============================
+   FIX: поднять SpeedTest вверх
+   ============================ */
+.weather-card {
+    padding-top: 0 !important;
+}
+
+.weather-card .speed-card {
+    margin-top: 0 !important;
+}
+
+/* ============================
+   FIX: убрать лишний разрыв
+   ============================ */
+.weather-row.weather-middle {
+    margin-top: 0 !important;
+}
+
 /* Можно добавить медиазапросы под очень маленькие экраны при желании */
