@@ -97,6 +97,13 @@ h1 {
   opacity: 0.92;
 }
 
+@media (max-width: 768px) {
+  h1 {
+    font-size: 18px; /* Меньше для мобильных устройств */
+  }
+}
+
+
 .welcome {
   font-size: 14px;
   opacity: 0.88;
@@ -143,7 +150,7 @@ h1 {
 }
 .hero-art img {
   width: auto;
-  max-height: 180px; /* Adjusted height for both PC and mobile */
+  max-height: 250px; /* Увеличиваем для более крупной иконки */
   height: 100%;
   margin: 0 auto;
   display: block;
@@ -272,6 +279,22 @@ h1 {
 .btn:last-of-type {
   margin-bottom: 10px;
 }
+@media (min-width: 768px) {
+  .connected-banner {
+    display: block;
+  }
+
+  .connected-banner + .btn {
+    display: none; /* Скроем кнопки на ПК */
+  }
+}
+
+@media (max-width: 768px) {
+  .btn {
+    display: block; /* Для мобильных кнопки остаются видимыми */
+  }
+}
+
 
 /* QR */
 .qr {
