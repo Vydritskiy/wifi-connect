@@ -897,6 +897,34 @@ h1{
   opacity:.8;
 }
 
+.connected-banner{
+  display:none;
+  margin-top:14px;
+  padding:15px;
+  border-radius:18px;
+  text-align:center;
+  font-size:15px;
+  font-weight:600;
+  color:#e9ddff;
+
+  background:rgba(150,110,255,0.15);
+  border:1px solid rgba(200,160,255,0.55);
+
+  box-shadow:
+    0 0 12px rgba(170,130,255,0.6),
+    0 0 22px rgba(210,170,255,0.35),
+    inset 0 0 12px rgba(150,100,255,0.3);
+
+  backdrop-filter:blur(6px);
+  animation:neonPulse 2.7s ease-in-out infinite;
+}
+
+@keyframes neonPulse{
+  0%{ box-shadow:0 0 12px rgba(160,120,255,0.5); }
+  50%{ box-shadow:0 0 20px rgba(210,170,255,0.85); }
+  100%{ box-shadow:0 0 12px rgba(160,120,255,0.5); }
+}
+
 /* ---------- SpeedTest карточка ---------- */
 .speed-card{
   border-radius:18px;
