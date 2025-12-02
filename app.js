@@ -357,25 +357,27 @@ async function speedTest() {
   let ping = 30;
   try {
     const t0 = performance.now();
-    await fetch("https://cors.eu.org/", { mode: "no-cors" });
+    await fetch("https://www.google.com/images/branding/googlelogo/1x/googlelogo-200x200.png", { mode: "no-cors" });
     ping = Math.round(performance.now() - t0);
   } catch (e) {}
   pingEl.textContent = `${t("ping")}: ${ping} ms`;
 
   // Download
-  let down = 25;
-  try {
-    const size = 3000000; // 3MB
-    const url = "https://speed.hetzner.de/1MB.bin";
-    const t0 = performance.now();
-    const res = await fetch(url, { cache: "no-store" });
-    const buf = await res.arrayBuffer();
-    const sec = (performance.now() - t0) / 1000;
-    const bytes = buf.byteLength || size;
-    down = Math.round(bytes / sec / 1024 / 1024);
-  } catch (e) {}
-  lastDownMbps = down;
-  downEl.textContent = `${t("download")}: ${down} Mbps`;
+let down = 25;
+try {
+  const url = "https://www.google.com/images/branding/googlelogo/1x/googlelogo-200x200.png";
+  const t0 = performance.now();
+  const res = await fetch(url, { cache: "no-store" });
+  const buf = await res.arrayBuffer();
+  const sec = (performance.now() - t0) / 1000;
+  const bytes = buf.byteLength || 200000;
+  down = Math.round(bytes / sec / 1024 / 1024);
+} catch (e) {
+  down = 0;
+  console.error("Ошибка при загрузке файла для теста скорости", e);
+}
+lastDownMbps = down;
+downEl.textContent = `${t("download")}: ${down} Mbps`;
 
   // Upload (условно)
   let up = 10;
