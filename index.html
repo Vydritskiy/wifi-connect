@@ -89,12 +89,13 @@
         <div id="qrCanvas"></div>
       </div>
 
-      <!-- подписи -->
+      <!-- подписи и статусы -->
       <div class="helper" id="helperText"></div>
       <div class="status" id="netStatus"></div>
 
+      <!-- НЕОНОВАЯ ПЛАШКА «УЖЕ ПОДКЛЮЧЕНЫ» -->
       <div class="connected-banner" id="connectedBanner">
-      ✔ Вы подключены к Wi-Fi
+        ✔ Вы уже подключены к Wi-Fi
       </div>
 
       <!-- нижний блок: баннер + погода -->
@@ -153,6 +154,7 @@
         <label for="admSsid5">Имя сети 5 GHz</label>
         <input id="admSsid5" type="text" placeholder="r2d5">
       </div>
+
       <div class="admin-row">
         <label for="admSsid24">Имя сети 2.4 GHz</label>
         <input id="admSsid24" type="text" placeholder="r2d2">
@@ -163,10 +165,7 @@
         <input id="admPass" type="text" placeholder="Пароль">
       </div>
 
-      <div class="admin-row">
-        <label for="admMaps">Ссылка «Как добраться»</label>
-        <input id="admMaps" type="text" placeholder="https://www.google.com/maps">
-      </div>
+      <!-- ПОЛЕ MAPS УБРАНО, ТЕПЕРЬ АДРЕС ЗАШИТ В КОДЕ -->
 
       <div class="admin-row">
         <label for="admCity">Город для погоды</label>
