@@ -4,8 +4,9 @@ const defaultConfig = {
   ssid24: "r2d2",
   pass: "Jgthfnbdysq1913",
   welcome: "Добро пожаловать! Чувствуй себя как дома 🧡",
-  mapsUrl: "https://www.google.com/maps/place/вулиця+Андрія+Малишка,+31А,+Київ"
+  mapsUrl: "https://www.google.com/maps/place/вулиця+Андрія+Малишка,+31А,+Київ",
   city: "Kyiv",
+  
   // ВСТАВЬ СВОЙ КЛЮЧ OpenWeather:
   weatherApiKey: "6530afae9a05d8f6e1c997682469a69d"
 };
