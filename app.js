@@ -9,11 +9,12 @@ const defaultConfig = {
   // ВСТАВЬ СВОЙ КЛЮЧ OpenWeather:
   weatherApiKey: "6530afae9a05d8f6e1c997682469a69d"
 };
+
 /* ---------- Автоязык ---------- */
 const LANG = (()=>{
   const l = navigator.language.toLowerCase();
-  if(l.startsWith("uk")) return "ua";
-  if(l.startsWith("en")) return "en";
+  if (l.startsWith("uk")) return "ua";
+  if (l.startsWith("en")) return "en";
   return "ru"; // дефолт
 })();
 
@@ -57,21 +58,21 @@ function t(key){
   return (I18N[LANG] && I18N[LANG][key]) || I18N.ru[key] || key;
 }
 
-
+/* ---------- Конфиг в памяти ---------- */
 let CONFIG = loadConfig();
 
 function loadConfig(){
   try{
     const saved = localStorage.getItem("wifiGuestConfig");
-    if(saved){
+    if (saved){
       const obj = JSON.parse(saved);
 
       // игнорируем mapsUrl из localStorage — всегда используем зашитый адрес
-      if(obj.mapsUrl){
+      if (obj.mapsUrl){
         delete obj.mapsUrl;
       }
-      // ключ никогда не берём из localStorage, только из defaultConfig
-      if(obj.weatherApiKey){
+      // ключ погоды тоже всегда берём только из defaultConfig
+      if (obj.weatherApiKey){
         delete obj.weatherApiKey;
       }
 
@@ -83,7 +84,6 @@ function loadConfig(){
 
 function saveConfigToStorage(){
   try{
-    // не сохраняем ключ погоды в localStorage
     const { weatherApiKey, ...rest } = CONFIG;
     localStorage.setItem("wifiGuestConfig", JSON.stringify(rest));
   }catch(e){}
@@ -126,7 +126,7 @@ const oldAndroid = /android\s([0-6]\.|7\.0)/i.test(ua);
 const oldIOS     = /os\s(9_|10_)/i.test(ua);
 
 /* ---------- бесконечная лента карусели ---------- */
-if(REAL_COUNT > 0){
+if (REAL_COUNT > 0){
   const firstClone = slides[0].cloneNode(true);
   const lastClone  = slides[REAL_COUNT - 1].cloneNode(true);
   track.appendChild(firstClone);
@@ -153,11 +153,11 @@ const HERO_ART = {
 };
 
 function updateHeroArt(){
-  if(!heroArtEl) return;
+  if (!heroArtEl) return;
   const band = getCurrentBand();
   const src = HERO_ART[band] || HERO_ART["5"];
   const current = heroArtEl.getAttribute("src") || "";
-  if(current === src) return;
+  if (current === src) return;
 
   heroArtEl.classList.add("fade-enter");
   setTimeout(()=>{
@@ -165,7 +165,7 @@ function updateHeroArt(){
     requestAnimationFrame(()=>{
       heroArtEl.classList.remove("fade-enter");
     });
-  },200);
+  }, 200);
 }
 
 /* ---------- баннер по времени суток + погоде ---------- */
@@ -198,11 +198,11 @@ const TIME_BANNERS = [
 
 function pickTimeBannerConfig(hour){
   let cfg = TIME_BANNERS[0];
-  for(const b of TIME_BANNERS){
-    if(b.from < b.to){
-      if(hour >= b.from && hour < b.to){ cfg = b; break; }
+  for (const b of TIME_BANNERS){
+    if (b.from < b.to){
+      if (hour >= b.from && hour < b.to){ cfg = b; break; }
     }else{
-      if(hour >= b.from || hour < b.to){ cfg = b; break; }
+      if (hour >= b.from || hour < b.to){ cfg = b; break; }
     }
   }
   return cfg;
@@ -222,7 +222,7 @@ function baseWeatherGroup(kind){
 function buildBannerText(baseTitle, baseSub, weatherKind){
   const group = baseWeatherGroup(weatherKind);
 
-  switch(group){
+  switch (group){
     case "clear":
       return { title: baseTitle + " ☀️", sub: baseSub };
     case "rain":
@@ -253,14 +253,14 @@ function buildBannerText(baseTitle, baseSub, weatherKind){
 function getArtForBanner(theme, weatherKind){
   const group = baseWeatherGroup(weatherKind);
 
-  if(group === "snow"){
+  if (group === "snow"){
     return "icons/hero_r2d2.svg";
   }
-  if(group === "rain"){
+  if (group === "rain"){
     return "icons/hero_r2d5.svg";
   }
-  if(group === "clear" || group === "clouds" || group === "fog"){
-    if(theme === "night") return "icons/hero_r2d2.svg";
+  if (group === "clear" || group === "clouds" || group === "fog"){
+    if (theme === "night") return "icons/hero_r2d2.svg";
     return "icons/hero_r2d5.svg";
   }
   return theme === "night" ? "icons/hero_r2d2.svg" : "icons/hero_r2d5.svg";
@@ -332,7 +332,7 @@ function updateTimeBanner(){
   const artEl    = document.getElementById("timeBannerArt");
   const titleEl  = document.getElementById("timeBannerTitle");
   const subEl    = document.getElementById("timeBannerSub");
-  if(!bannerEl || !artEl || !titleEl || !subEl) return;
+  if (!bannerEl || !artEl || !titleEl || !subEl) return;
 
   const hour = new Date().getHours();
   const cfg  = pickTimeBannerConfig(hour);
@@ -425,11 +425,11 @@ async function fetchWeather(){
   const mainEl = document.getElementById("weatherMain");
   const tempEl = document.getElementById("weatherTemp");
   const metaEl = document.getElementById("weatherMeta");
-  if(!cityEl || !tempEl) return;
+  if (!cityEl || !tempEl) return;
 
   const apiKey = (CONFIG.weatherApiKey || "").trim();
 
-  if(!CONFIG.city || !apiKey){
+  if (!CONFIG.city || !apiKey){
     cityEl.textContent = CONFIG.city || "Погода";
     mainEl.textContent = "";
     tempEl.textContent = "Нет API-ключа OpenWeather";
@@ -447,13 +447,13 @@ async function fetchWeather(){
 
     const res = await fetch(url);
 
-    if(!res.ok){
-      if(res.status === 401){
+    if (!res.ok){
+      if (res.status === 401){
         cityEl.textContent = CONFIG.city;
         mainEl.textContent = "";
         tempEl.textContent = "Неверный API-ключ OpenWeather";
         metaEl.textContent = "Проверь ключ в app.js.";
-      }else if(res.status === 404){
+      }else if (res.status === 404){
         cityEl.textContent = CONFIG.city;
         mainEl.textContent = "";
         tempEl.textContent = "Город не найден";
@@ -476,13 +476,13 @@ async function fetchWeather(){
     const w    = (data.weather && data.weather[0]) || {};
     const main = w.description || w.main || "";
 
-    const t   = Math.round(data.main.temp);
+    const tC  = Math.round(data.main.temp);
     const tf  = Math.round(data.main.feels_like);
     const hum = Math.round(data.main.humidity);
 
     cityEl.textContent = name;
     mainEl.textContent = main ? (main[0].toUpperCase() + main.slice(1)) : "";
-    tempEl.textContent = `${t}°C`;
+    tempEl.textContent = `${tC}°C`;
     metaEl.textContent = `Ощущается как ${tf}°C · влажность ${hum}%`;
 
     lastWeatherKind = detectWeatherKind(w, data);
@@ -499,11 +499,10 @@ async function fetchWeather(){
 }
 
 /* ---------- применяем конфиг к UI ---------- */
-
 function applyConfigToUI(){
   // приветствие: если хозяин не менял — используем автоязык
-  if(welcomeEl){
-    if(!CONFIG.welcome || CONFIG.welcome === defaultConfig.welcome){
+  if (welcomeEl){
+    if (!CONFIG.welcome || CONFIG.welcome === defaultConfig.welcome){
       welcomeEl.textContent = t("welcome");
     }else{
       welcomeEl.textContent = CONFIG.welcome;
@@ -516,9 +515,9 @@ function applyConfigToUI(){
     const ssidSub  = slide.querySelector(".slide-ssid-sub");
     const cap      = slide.querySelector(".slide-caption");
 
-    if(ssidMain) ssidMain.textContent = getSsidForBand(band);
-    if(ssidSub)  ssidSub.textContent  = band === "5" ? "5 GHz" : "2.4 GHz";
-    if(cap){
+    if (ssidMain) ssidMain.textContent = getSsidForBand(band);
+    if (ssidSub)  ssidSub.textContent  = band === "5" ? "5 GHz" : "2.4 GHz";
+    if (cap){
       cap.textContent = band === "5"
         ? `${getSsidForBand("5")} · быстрее, если поддерживается`
         : `${getSsidForBand("24")} · стабильнее на расстоянии`;
@@ -531,14 +530,13 @@ function applyConfigToUI(){
   const copyBtn = document.querySelector('button[onclick="copyPass()"]');
   const mapBtn  = document.querySelector('button[onclick="openMaps()"]');
 
-  if(autoBtn) autoBtn.textContent = t("autoConnect");
-  if(qrBtn)   qrBtn.textContent   = t("showQR");
-  if(copyBtn) copyBtn.textContent = t("copyPass");
-  if(mapBtn)  mapBtn.textContent  = t("openMaps");
+  if (autoBtn) autoBtn.textContent = t("autoConnect");
+  if (qrBtn)   qrBtn.textContent   = t("showQR");
+  if (copyBtn) copyBtn.textContent = t("copyPass");
+  if (mapBtn)  mapBtn.textContent  = t("openMaps");
 
   updateMeta();
 }
-
 
 /* ---------- размеры ---------- */
 function recalcWidth(){
@@ -563,23 +561,24 @@ function updateMeta(){
       ? `Выбрана ${ssid} (5 GHz) — быстрее, если устройство поддерживает 5 GHz.`
       : `Выбрана ${ssid} (2.4 GHz) — стабильнее на расстоянии.`;
 
-  if(isIOS){
+  if (isIOS){
     base += " Если смотришь эту страницу на другом устройстве — наведи Камеру iPhone на QR. Если страница открыта на самом iPhone, зайди в «Настройки → Wi-Fi» и выбери сеть вручную.";
-  }else if(isAndroid){
+  }else if (isAndroid){
     base += " Если эта страница открыта на самом Android — можно нажать «Подключиться автоматически» или ввести сеть в настройках Wi-Fi. Если страница на другом устройстве — отсканируй QR-код с Android.";
   }else{
     base += " На ноутбуке удобнее всего отсканировать QR с телефона или скопировать пароль.";
   }
 
   helperText.textContent = base;
-  document.getElementById("qrBox").style.display = "none";
+  const qrBox = document.getElementById("qrBox");
+  if (qrBox) qrBox.style.display = "none";
 
   updateHeroArt();
 }
 
 /* ---------- навигация карусели ---------- */
 function goTo(newIndex){
-  if(isAnimating) return;
+  if (isAnimating) return;
   isAnimating = true;
   index = newIndex;
   track.style.transition = transitionValue;
@@ -590,15 +589,15 @@ function nextSlide(){ goTo(index + 1); }
 function prevSlide(){ goTo(index - 1); }
 
 track.addEventListener("transitionend", e=>{
-  if(e.propertyName !== "transform") return;
+  if (e.propertyName !== "transform") return;
 
-  if(index === 0){
+  if (index === 0){
     track.style.transition = "none";
     index = REAL_COUNT;
     track.style.transform = `translateX(${-index * slideWidth}px)`;
     void track.offsetWidth;
     track.style.transition = transitionValue;
-  }else if(index === slides.length - 1){
+  }else if (index === slides.length - 1){
     track.style.transition = "none";
     index = 1;
     track.style.transform = `translateX(${-index * slideWidth}px)`;
@@ -617,7 +616,7 @@ let draggingMouse = false;
 
 function swipeStart(e){
   const target = e.target;
-  if (target.closest('button') || target.closest('.nav-arrow') || target.closest('a') || target.closest('.admin-inner')) {
+  if (target.closest("button") || target.closest(".nav-arrow") || target.closest("a") || target.closest(".admin-inner")) {
     return;
   }
   const p = e.touches ? e.touches[0] : e;
@@ -627,24 +626,24 @@ function swipeStart(e){
 }
 
 function swipeMove(e){
-  if(startX === null) return;
+  if (startX === null) return;
   const p = e.touches ? e.touches[0] : e;
   const dx = p.clientX - startX;
   const dy = p.clientY - startY;
 
-  if(Math.abs(dx) > Math.abs(dy) + 10){
+  if (Math.abs(dx) > Math.abs(dy) + 10){
     e.preventDefault();
   }
 }
 
 function swipeEnd(e){
-  if(startX === null) return;
+  if (startX === null) return;
   const p = e.changedTouches ? e.changedTouches[0] : e;
   const dx = p.clientX - startX;
 
-  if(Math.abs(dx) > 40){
-    if(dx < 0) nextSlide();
-    else       prevSlide();
+  if (Math.abs(dx) > 40){
+    if (dx < 0) nextSlide();
+    else        prevSlide();
   }
 
   startX = startY = null;
@@ -655,23 +654,24 @@ card.addEventListener("touchstart", swipeStart, {passive:true});
 card.addEventListener("touchmove",  swipeMove,  {passive:false});
 card.addEventListener("touchend",   swipeEnd);
 card.addEventListener("mousedown",  swipeStart);
-card.addEventListener("mousemove",  e=>{ if(draggingMouse) swipeMove(e); });
+card.addEventListener("mousemove",  e=>{ if (draggingMouse) swipeMove(e); });
 card.addEventListener("mouseup",    swipeEnd);
-card.addEventListener("mouseleave", e=>{ if(draggingMouse) swipeEnd(e); });
+card.addEventListener("mouseleave", e=>{ if (draggingMouse) swipeEnd(e); });
 
 /* ---------- QR / авто / копия ---------- */
 function showQR(){
   const ssid = getCurrentSsid();
   const payload = `WIFI:T:WPA;S:${ssid};P:${CONFIG.pass};;`;
 
-  if(!qrObj){
+  if (!qrObj){
     qrObj = new QRCode(document.getElementById("qrCanvas"), {
-      width:200,height:200
+      width:200, height:200
     });
   }
   qrObj.clear();
   qrObj.makeCode(payload);
-  document.getElementById("qrBox").style.display = "block";
+  const qrBox = document.getElementById("qrBox");
+  if (qrBox) qrBox.style.display = "block";
   playClickSound();
 }
 
@@ -700,7 +700,7 @@ function openMaps(){
 /* ---------- звук ---------- */
 function playClickSound(){
   try{
-    if(!audioCtx){
+    if (!audioCtx){
       audioCtx = new (window.AudioContext || window.webkitAudioContext)();
     }
     const osc  = audioCtx.createOscillator();
@@ -722,8 +722,8 @@ function playClickSound(){
 
 /* ---------- статус интернета ---------- */
 function updateOnlineStatus(){
-  if(!netStatus) return;
-  if(navigator.onLine){
+  if (!netStatus) return;
+  if (navigator.onLine){
     netStatus.textContent = t("online");
   }else{
     netStatus.textContent = t("offline");
@@ -741,7 +741,7 @@ window.addEventListener("offline", updateOnlineStatus);
 /* ---------- админка ---------- */
 function toggleAdmin(){
   adminPanelEl.classList.toggle("open");
-  if(adminPanelEl.classList.contains("open")){
+  if (adminPanelEl.classList.contains("open")){
     fillAdminForm();
   }
 }
@@ -777,8 +777,7 @@ function resetConfig(){
   toggleAdmin();
 }
 
-
-/* ---------- ШАГ 2: Определение «уже подключены к Wi‑Fi» ---------- */
+/* ---------- ШАГ 2: Определение «уже подключены к Wi-Fi» ---------- */
 async function checkLocalPing() {
   const gateways = [
     "http://192.168.0.1",
@@ -816,9 +815,7 @@ async function detectAlreadyConnected() {
     goodQuality = conn.downlink >= 10 || conn.effectiveType === "4g";
   }
 
-  const connected =
-      localPing
-      || (isWifi && goodQuality);
+  const connected = localPing || (isWifi && goodQuality);
 
   if (connected) {
     autoBtn.style.display = "none";
@@ -828,32 +825,7 @@ async function detectAlreadyConnected() {
     const currentSlide = slides[logical + 1];
     if (currentSlide) {
       const cardEl = currentSlide.querySelector(".slide-card");
-      if(cardEl){
-        cardEl.style.boxShadow =
-          "0 0 28px rgba(150,255,150,0.8), 0 0 18px rgba(80,255,120,0.6)";
-        cardEl.style.border =
-          "1px solid rgba(120,255,120,0.9)";
-      }
-    }
-  }
-}
-
-  const localPing = await checkLocalPing();
-
-  const connected = (isWifi && goodQuality) || localPing;
-
-  if (connected) {
-    const ssid = getCurrentSsid();
-
-    autoBtn.style.display = "none";
-
-    helper.innerHTML = `Вы уже подключены к <b>${ssid}</b> ✔`;
-
-    const logical = (index - 1 + REAL_COUNT) % REAL_COUNT;
-    const currentSlide = slides[logical + 1];
-    if (currentSlide) {
-      const cardEl = currentSlide.querySelector(".slide-card");
-      if(cardEl){
+      if (cardEl){
         cardEl.style.boxShadow =
           "0 0 28px rgba(150,255,150,0.8), 0 0 18px rgba(80,255,120,0.6)";
         cardEl.style.border =
@@ -866,68 +838,40 @@ async function detectAlreadyConnected() {
 /* ---------- ШАГ 3: Индикатор уровня сигнала ---------- */
 async function measureSignalQuality(){
   const el = document.getElementById("wifiSignal");
-  if(!el) return;
+  if (!el) return;
 
   const conn = navigator.connection || navigator.webkitConnection || navigator.mozConnection;
 
   let bars = 1;
   let quality = "weak";
 
-  if(!conn){
+  if (!conn){
+    // iOS / старые браузеры — ориентируемся только по ping
     const pingOk = await checkLocalPing();
-    if(pingOk){
+    if (pingOk){
       bars = 4;
       quality = "good";
     } else {
       bars = 1;
       quality = "weak";
     }
-  }
-  else {
+  }else{
     let down = conn.downlink || 0;
     let rtt  = conn.rtt || 999;
-    let pingOk = await checkLocalPing();
+    const pingOk = await checkLocalPing();
 
-    if(pingOk && down >= 20){
+    if (pingOk && down >= 20){
       bars = 4; quality = "good";
     }
-    else if(down >= 10 && rtt <= 150){
+    else if (down >= 10 && rtt <= 150){
       bars = 3; quality = "ok";
     }
-    else if(down >= 3 && rtt <= 300){
+    else if (down >= 3 && rtt <= 300){
       bars = 2; quality = "bad";
     }
-    else {
+    else{
       bars = 1; quality = "weak";
     }
-  }
-
-  const barStr = "📶".repeat(bars) + "◽".repeat(4 - bars);
-
-  const textMap = {
-    good : "Сигнал отличный",
-    ok   : "Сигнал хороший",
-    bad  : "Сигнал слабый",
-    weak : "Сигнал очень слабый"
-  };
-
-  el.className = "signal " + quality;
-  el.innerHTML = `
-    <div class="signal-bars">${barStr}</div><br>
-    ${textMap[quality]}
-  `;
-}
-  else if(down >= 10 && rtt <= 150){
-    bars = 3;
-    quality = "ok";
-  }
-  else if(down >= 3 && rtt <= 300){
-    bars = 2;
-    quality = "bad";
-  }
-  else{
-    bars = 1;
-    quality = "weak";
   }
 
   const barStr = "📶".repeat(bars) + "◽".repeat(4 - bars);
@@ -948,12 +892,12 @@ async function measureSignalQuality(){
 
 /* ---------- ШАГ 4: SpeedTest (Ping / Download / Upload) ---------- */
 async function speedTest(){
-  const pingEl = document.getElementById("speedPing");
-  const downEl = document.getElementById("speedDown");
-  const upEl   = document.getElementById("speedUp");
+  const pingEl   = document.getElementById("speedPing");
+  const downEl   = document.getElementById("speedDown");
+  const upEl     = document.getElementById("speedUp");
   const statusEl = document.getElementById("speedStatus");
 
-  if(!pingEl || !downEl || !upEl || !statusEl) return;
+  if (!pingEl || !downEl || !upEl || !statusEl) return;
 
   // 1) PING
   let ping = "—";
@@ -963,29 +907,29 @@ async function speedTest(){
     const t1 = performance.now();
     ping = Math.round(t1 - t0);
   }catch(e){
-    ping = Math.round(Math.random()*40+20);
+    ping = Math.round(Math.random()*40 + 20);
   }
   pingEl.textContent = `Ping: ${ping} ms`;
 
-  // 2) DOWNLOAD
+  // 2) DOWNLOAD (грубо оцениваем скорость по загрузке 1MB blob’а)
   let down = "—";
   try{
-    const size = 1_000_000;
+    const size = 1_000_000; // 1MB
     const blob = new Blob([new Uint8Array(size)]);
-    const url = URL.createObjectURL(blob);
+    const url  = URL.createObjectURL(blob);
 
     const t0 = performance.now();
     await fetch(url);
     const t1 = performance.now();
 
     const sec = (t1 - t0) / 1000;
-    down = Math.round((size / sec) / 1024 / 1024);
+    down = Math.round((size / sec) / 1024 / 1024); // Mbps
   }catch(e){
-    down = Math.round(Math.random()*30+10);
+    down = Math.round(Math.random()*30 + 10);
   }
   downEl.textContent = `Download: ${down} Mbps`;
 
-  // 3) UPLOAD
+  // 3) UPLOAD (отправляем ~300KB)
   let up = "—";
   try{
     const size = 300_000;
@@ -994,23 +938,23 @@ async function speedTest(){
     const t0 = performance.now();
     await fetch("https://httpbin.org/post", {
       method:"POST",
-      body:payload
+      body: payload
     });
     const t1 = performance.now();
 
     const sec = (t1 - t0) / 1000;
     up = Math.round((size / sec) / 1024 / 1024);
   }catch(e){
-    up = Math.round(Math.random()*15+5);
+    up = Math.round(Math.random()*15 + 5);
   }
   upEl.textContent = `Upload: ${up} Mbps`;
 
   // 4) Статус
-  if(down >= 50 && ping <= 30){
+  if (down >= 50 && ping <= 30){
     statusEl.textContent = "Статус: Отлично ✔";
     statusEl.className = "speed-status good";
   }
-  else if(down >= 20){
+  else if (down >= 20){
     statusEl.textContent = "Статус: Нормально ⚠";
     statusEl.className = "speed-status mid";
   }
@@ -1032,4 +976,5 @@ window.addEventListener("load", ()=>{
   measureSignalQuality();
   speedTest();
 });
+
 window.addEventListener("resize", recalcWidth);
