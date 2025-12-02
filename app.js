@@ -111,7 +111,6 @@ function loadConfig() {
     const raw = localStorage.getItem("wifiGuestConfig");
     if (!raw) return { ...defaultConfig };
     const saved = JSON.parse(raw);
-    // mapsUrl и weatherApiKey фиксированные, не даём перезаписать
     delete saved.mapsUrl;
     delete saved.weatherApiKey;
     return { ...defaultConfig, ...saved };
@@ -159,9 +158,11 @@ function getCurrentBand() {
   const slide = slides[currentIndex];
   return slide?.dataset.band || "5";
 }
+
 function getSsidForBand(band) {
   return band === "5" ? CONFIG.ssid5 : CONFIG.ssid24;
 }
+
 function getCurrentSsid() {
   return getSsidForBand(getCurrentBand());
 }
@@ -211,13 +212,13 @@ function nextSlide() {
   currentIndex = (currentIndex + 1) % slides.length;
   updateCarouselState();
 }
+
 function prevSlide() {
   if (slides.length === 0) return;
   currentIndex = (currentIndex - 1 + slides.length) % slides.length;
   updateCarouselState();
 }
 
-// делаем функции глобальными для onclick в HTML
 window.nextSlide = nextSlide;
 window.prevSlide = prevSlide;
 
