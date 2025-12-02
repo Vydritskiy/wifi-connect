@@ -927,6 +927,7 @@ async function speedTest(){
     down = Math.round(Math.random()*30 + 10);
   }
   downEl.textContent = `Download: ${down} Mbps`;
+  window.__speedDownMbps = down;
 
   // 3) UPLOAD (отправляем ~300KB)
   let up = "—";
