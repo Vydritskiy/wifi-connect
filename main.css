@@ -64,6 +64,13 @@ h1 {
   opacity: 0.95;
 }
 
+@media (max-width: 768px) {
+  h1 {
+    font-size: 18px; /* Меньше для мобильных устройств */
+  }
+}
+
+
 /* Адаптивность текста */
 @media (max-width: 480px) {
   h1 { font-size: 19px; }
@@ -110,10 +117,12 @@ h1 {
 }
 
 .hero-art img {
-  max-height: 260px;
   width: auto;
-  object-fit: contain;
+  max-height: 250px; /* Увеличиваем для более крупной иконки */
+  height: 100%;
+  margin: 0 auto;
   display: block;
+  object-fit: contain;
 }
 
 /* CAROUSEL */
@@ -228,6 +237,22 @@ h1 {
   background: linear-gradient(90deg, var(--accent), var(--accent2));
   cursor: pointer;
   box-shadow: 0 14px 30px rgba(0,0,0,0.6);
+}
+
+@media (min-width: 768px) {
+  .connected-banner {
+    display: block;
+  }
+
+  .connected-banner + .btn {
+    display: none; /* Скроем кнопки на ПК */
+  }
+}
+
+@media (max-width: 768px) {
+  .btn {
+    display: block; /* Для мобильных кнопки остаются видимыми */
+  }
 }
 
 .btn:nth-of-type(2),
