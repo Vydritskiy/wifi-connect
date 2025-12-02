@@ -684,7 +684,6 @@ function fillAdminForm(){
   document.getElementById("admSsid5").value   = CONFIG.ssid5;
   document.getElementById("admSsid24").value  = CONFIG.ssid24;
   document.getElementById("admPass").value    = CONFIG.pass;
-  document.getElementById("admMaps").value    = CONFIG.mapsUrl || "";
   document.getElementById("admCity").value    = CONFIG.city || "";
 }
 
