@@ -21,7 +21,7 @@ html, body {
 body{
   font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
   background:transparent !important;
-  min-height:100vh;
+  min-height:100%;
   color:var(--text);
   overflow-x:hidden;
   position:relative;
@@ -35,7 +35,7 @@ body{
   left:0;
   width:100%;
   min-height:100%;
-  height:auto;
+  height:100%;
   z-index:0;
   pointer-events:none;
   background:radial-gradient(circle at top,#120624,#05000f);
