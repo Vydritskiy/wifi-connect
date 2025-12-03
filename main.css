@@ -896,3 +896,38 @@ h1{
   cursor:pointer;
   opacity:.8;
 }
+
+/* ---------- Speed Test Widget ---------- */
+
+.speed-card{
+  border-radius:18px;
+  padding:12px 14px 14px;
+  background:rgba(255,255,255,0.02);
+  border:1px solid rgba(200,170,255,0.35);
+  backdrop-filter:blur(3px);
+  font-size:13px;
+  display:flex;
+  flex-direction:column;
+  gap:6px;
+}
+
+.speed-title{
+  font-size:15px;
+  font-weight:600;
+  margin-bottom:4px;
+  text-align:left;
+}
+
+.speed-row{
+  display:flex;
+  justify-content:space-between;
+  opacity:0.88;
+}
+
+.speed-status{
+  margin-top:6px;
+  font-size:12px;
+  opacity:0.75;
+  text-align:center;
+}
+
