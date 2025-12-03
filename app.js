@@ -547,19 +547,6 @@ async function checkWifiConnection() {
   }
 }
 
-function showConnectedClock() {
-    document.getElementById("connectedClockBlock").classList.remove("hidden");
-    updateDroidTime();
-    setInterval(updateDroidTime, 1000);
-}
-
-function updateDroidTime() {
-    const now = new Date();
-    const hh = now.getHours().toString().padStart(2, "0");
-    const mm = now.getMinutes().toString().padStart(2, "0");
-    document.getElementById("clockTime").textContent = `${hh}:${mm}`;
-}
-
 /* ---------- Startup ---------- */
 
 (function autoPick(){
