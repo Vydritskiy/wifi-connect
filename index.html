@@ -84,6 +84,28 @@
       <button class="btn" onclick="copyPass()">Скопировать пароль</button>
       <button class="btn" onclick="openMaps()">Как добраться 🚕</button>
 
+      <!-- WIDGET SPEEDTEST -->
+<div class="speed-card" id="speedCard">
+  <div class="speed-title">Скорость интернета</div>
+
+  <div class="speed-row">
+    <span>Пинг</span>
+    <span id="speedPing">–</span>
+  </div>
+
+  <div class="speed-row">
+    <span>Download</span>
+    <span id="speedDown">–</span>
+  </div>
+
+  <div class="speed-row">
+    <span>Upload</span>
+    <span id="speedUp">–</span>
+  </div>
+
+  <div class="speed-status" id="speedStatus">Измерение...</div>
+</div>
+
       <!-- QR -->
       <div class="qr" id="qrBox">
         <div id="qrCanvas"></div>
