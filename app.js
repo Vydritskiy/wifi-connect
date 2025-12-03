@@ -451,6 +451,63 @@ async function fetchWeather(){
   }
 }
 
+/* ---------- Realtime Speed Test Widget ---------- */
+async function runSpeedTest(){
+  const pingEl = document.getElementById("speedPing");
+  const downEl = document.getElementById("speedDown");
+  const upEl   = document.getElementById("speedUp");
+  const statusEl = document.getElementById("speedStatus");
+
+  if(!pingEl || !downEl || !upEl || !statusEl) return;
+
+  try {
+    statusEl.textContent = "Измерение...";
+    
+    // ---------- PING ----------
+    let ping = 30;
+    try{
+      const t0 = performance.now();
+      await fetch("https://cors.eu.org/", { mode: "no-cors" });
+      ping = Math.round(performance.now() - t0);
+    }catch(e){}
+    pingEl.textContent = ping + " ms";
+
+    // ---------- DOWNLOAD ----------
+    let down = 0;
+    try{
+      const size = 1000000; // 1 MB
+      const t0 = performance.now();
+      await fetch("https://speed.hetzner.de/1MB.bin");
+      const t1 = performance.now();
+      down = Math.round((size / ((t1 - t0) / 1000)) / 1024 / 1024);
+    }catch(e){}
+    downEl.textContent = down + " МБ/с";
+
+    // ---------- UPLOAD ----------
+    let up = 0;
+    try{
+      const data = new Uint8Array(200000); // 200 KB
+      const t0 = performance.now();
+      await fetch("https://httpbin.org/post", {
+        method: "POST",
+        body: data
+      });
+      const t1 = performance.now();
+      up = Math.round((200000 / ((t1 - t0) / 1000)) / 1024 / 1024);
+    }catch(e){}
+    upEl.textContent = up + " МБ/с";
+
+    statusEl.textContent = "Обновлено";
+
+  } catch (e){
+    statusEl.textContent = "Ошибка замера";
+    console.error("SpeedTest error:", e);
+  }
+}
+
+/* запуск каждые 2 сек */
+setInterval(runSpeedTest, 2000);
+
 /* ---------- применяем конфиг к UI ---------- */
 function applyConfigToUI(){
   if(welcomeEl) welcomeEl.textContent = CONFIG.welcome;
