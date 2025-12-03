@@ -1,3 +1,8 @@
+html, body {
+  height: 100%;
+  position: relative;
+}
+
 :root{
   --accent:#9b75ff;
   --accent2:#c5a0ff;
@@ -25,8 +30,12 @@ body{
 /* ---------- Анимированный фон по погоде ---------- */
 
 .weather-bg{
-  position:fixed;
-  inset:0;
+  position:absolute;
+  top:0;
+  left:0;
+  width:100%;
+  min-height:100%;
+  height:auto;
   z-index:0;
   pointer-events:none;
   background:radial-gradient(circle at top,#120624,#05000f);
