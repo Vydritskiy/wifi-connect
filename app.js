@@ -219,58 +219,81 @@ function updateTimeBanner(){
 /* ---------- Weather API ---------- */
 async function fetchWeather(){
   const apiKey = CONFIG.weatherApiKey.trim();
-  if(!apiKey || !CONFIG.city){
-    superCity.textContent = CONFIG.city || "Город";
-    superCond.textContent = "нет данных";
+  const city = CONFIG.city.trim();
+
+  if(!apiKey){
+    superCity.textContent = city || "Город";
     superTemp.textContent = "—°C";
+    superCond.textContent = "нет данных";
     superMeta.textContent = "Нет API-ключа";
     return;
   }
 
-  const url = `https://api.openweathermap.org/data/2.5/weather?q=${CONFIG.city}&appid=${apiKey}&units=metric&lang=ru`;
+  if(!city){
+    superCity.textContent = "Город";
+    superTemp.textContent = "—°C";
+    superCond.textContent = "не указан город";
+    superMeta.textContent = "";
+    return;
+  }
+
+  const url = `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${apiKey}&units=metric&lang=ru`;
 
   try {
     const res = await fetch(url);
-    if(!res.ok){
-      superCity.textContent = CONFIG.city;
-      superCond.textContent = "ошибка";
+
+    if(res.status === 401){
+      superCity.textContent = city;
       superTemp.textContent = "—°C";
-      superMeta.textContent = "Проверь город или ключ";
+      superCond.textContent = "ошибка ключа";
+      superMeta.textContent = "Неверный API key";
+      return;
+    }
+
+    if(res.status === 404){
+      superCity.textContent = city;
+      superTemp.textContent = "—°C";
+      superCond.textContent = "город не найден";
+      superMeta.textContent = "";
+      return;
+    }
+
+    if(res.status === 429){
+      superCity.textContent = city;
+      superTemp.textContent = "—°C";
+      superCond.textContent = "лимит API";
+      superMeta.textContent = "Повтори позже";
+      return;
+    }
+
+    if(!res.ok){
+      superCity.textContent = city;
+      superTemp.textContent = "—°C";
+      superCond.textContent = "ошибка";
+      superMeta.textContent = "Проверь ключ/город";
       return;
     }
 
     const data = await res.json();
-    const w = (data.weather && data.weather[0]) || {};
-    const desc = w.description || "";
+    const w = data.weather?.[0] || {};
+    const desc = w.description || "—";
     const temp = Math.round(data.main.temp);
     const feels = Math.round(data.main.feels_like);
     const hum = Math.round(data.main.humidity);
 
-    superCity.textContent = data.name || CONFIG.city;
-    superCond.textContent = desc;
+    superCity.textContent = data.name || city;
     superTemp.textContent = temp + "°C";
+    superCond.textContent = desc;
     superMeta.textContent = `Ощущается как ${feels}° · влажность ${hum}%`;
 
-    lastWeatherTemp = temp;
-
-    /* detect weather kind */
-    lastWeatherKind = detectWeatherKind(w, data);
-
-    /* detect night/day */
-    try {
-      const tz = data.timezone || 0;
-      const nowUtc = Date.now()/1000;
-      const nowLocal = nowUtc + tz;
-      lastWeatherIsNight = (nowLocal < data.sys.sunrise || nowLocal > data.sys.sunset);
-    } catch { lastWeatherIsNight=false; }
-
-    updateTimeBanner();
-  } catch(e){
-    superCond.textContent="нет данных";
-    superTemp.textContent="—°C";
-    superMeta.textContent="Ошибка сети";
+  } catch (e){
+    superCity.textContent = city;
+    superTemp.textContent = "—°C";
+    superCond.textContent = "нет данных";
+    superMeta.textContent = "Ошибка сети";
   }
 }
+
 
 /* ---------- Speed Test ---------- */
 async function runSpeedTest(){
