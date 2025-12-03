@@ -6,57 +6,10 @@ const defaultConfig = {
   welcome: "Добро пожаловать! Чувствуй себя как дома 🧡",
   mapsUrl: "https://www.google.com/maps/place/вулиця+Андрія+Малишка,+31А,+Київ",
   city: "Kyiv",
+  
   // ВСТАВЬ СВОЙ КЛЮЧ OpenWeather:
   weatherApiKey: "6530afae9a05d8f6e1c997682469a69d"
 };
-/* ---------- Автоязык ---------- */
-const LANG = (()=>{
-  const l = navigator.language.toLowerCase();
-  if(l.startsWith("uk")) return "ua";
-  if(l.startsWith("en")) return "en";
-  return "ru"; // дефолт
-})();
-
-const I18N = {
-  ru: {
-    welcome: "Добро пожаловать! Чувствуй себя как дома 🧡",
-    autoConnect: "Подключиться автоматически (Android)",
-    showQR: "Показать QR-код",
-    copyPass: "Скопировать пароль",
-    openMaps: "Как добраться 🚕",
-    copied: "Пароль скопирован",
-    couldntCopy: "Не удалось скопировать. Попробуй вручную.",
-    online: "Статус интернета: онлайн ✅",
-    offline: "Статус интернета: офлайн ⛔ (проверьте роутер или кабель)"
-  },
-  ua: {
-    welcome: "Ласкаво просимо! Почувайся як вдома 🧡",
-    autoConnect: "Підключитися автоматично (Android)",
-    showQR: "Показати QR-код",
-    copyPass: "Скопіювати пароль",
-    openMaps: "Як дістатися 🚕",
-    copied: "Пароль скопійовано",
-    couldntCopy: "Не вдалося скопіювати. Спробуй вручну.",
-    online: "Статус інтернету: онлайн ✅",
-    offline: "Статус інтернету: офлайн ⛔ (перевір роутер або кабель)"
-  },
-  en: {
-    welcome: "Welcome! Make yourself at home 🧡",
-    autoConnect: "Auto-connect (Android)",
-    showQR: "Show QR Code",
-    copyPass: "Copy Password",
-    openMaps: "How to get there 🚕",
-    copied: "Password copied",
-    couldntCopy: "Failed to copy. Try manually.",
-    online: "Internet status: online ✅",
-    offline: "Internet status: offline ⛔ (check router or cable)"
-  }
-};
-
-function t(key){
-  return (I18N[LANG] && I18N[LANG][key]) || I18N.ru[key] || key;
-}
-
 
 let CONFIG = loadConfig();
 
@@ -66,8 +19,8 @@ function loadConfig(){
     if(saved){
       const obj = JSON.parse(saved);
 
-      // игнорируем mapsUrl из localStorage — всегда используем зашитый адрес
-      if(obj.mapsUrl){
+      // чистим старый шаблонный mapsUrl
+      if(obj.mapsUrl && /maps\.app\.goo\.gl\/XXXXXXXX/i.test(obj.mapsUrl)){
         delete obj.mapsUrl;
       }
       // ключ никогда не берём из localStorage, только из defaultConfig
@@ -499,16 +452,8 @@ async function fetchWeather(){
 }
 
 /* ---------- применяем конфиг к UI ---------- */
-
 function applyConfigToUI(){
-  // приветствие: если хозяин не менял — используем автоязык
-  if(welcomeEl){
-    if(!CONFIG.welcome || CONFIG.welcome === defaultConfig.welcome){
-      welcomeEl.textContent = t("welcome");
-    }else{
-      welcomeEl.textContent = CONFIG.welcome;
-    }
-  }
+  if(welcomeEl) welcomeEl.textContent = CONFIG.welcome;
 
   document.querySelectorAll(".slide").forEach(slide=>{
     const band = slide.dataset.net === "r2d5" ? "5" : "24";
@@ -525,20 +470,8 @@ function applyConfigToUI(){
     }
   });
 
-  // автоязык — подписи на кнопках
-  const autoBtn = document.querySelector('button[onclick="autoConnect()"]');
-  const qrBtn   = document.querySelector('button[onclick="showQR()"]');
-  const copyBtn = document.querySelector('button[onclick="copyPass()"]');
-  const mapBtn  = document.querySelector('button[onclick="openMaps()"]');
-
-  if(autoBtn) autoBtn.textContent = t("autoConnect");
-  if(qrBtn)   qrBtn.textContent   = t("showQR");
-  if(copyBtn) copyBtn.textContent = t("copyPass");
-  if(mapBtn)  mapBtn.textContent  = t("openMaps");
-
   updateMeta();
 }
-
 
 /* ---------- размеры ---------- */
 function recalcWidth(){
@@ -683,10 +616,10 @@ function autoConnect(){
 
 function copyPass(){
   navigator.clipboard.writeText(CONFIG.pass).then(()=>{
-    alert(t("copied"));
+    alert("Пароль скопирован");
     playClickSound();
   }).catch(()=>{
-    alert(t("couldntCopy"));
+    alert("Не удалось скопировать. Попробуй вручную.");
   });
 }
 
@@ -724,9 +657,9 @@ function playClickSound(){
 function updateOnlineStatus(){
   if(!netStatus) return;
   if(navigator.onLine){
-    netStatus.textContent = t("online");
+    netStatus.textContent = "Статус интернета: онлайн ✅";
   }else{
-    netStatus.textContent = t("offline");
+    netStatus.textContent = "Статус интернета: офлайн ⛔ (проверьте роутер или кабель)";
   }
 }
 window.addEventListener("online",  updateOnlineStatus);
@@ -777,190 +710,6 @@ function resetConfig(){
   toggleAdmin();
 }
 
-
-/* ---------- ШАГ 2: Определение «уже подключены к Wi‑Fi» ---------- */
-async function checkLocalPing() {
-  const gateways = [
-    "http://192.168.0.1",
-    "http://192.168.1.1",
-    "http://192.168.100.1"
-  ];
-
-  for (const gw of gateways) {
-    try {
-      const t0 = performance.now();
-      await fetch(gw, { mode: "no-cors" });
-      const t1 = performance.now();
-      const delta = t1 - t0;
-
-      if (delta < 250) return true; // быстрый ответ → локальная сеть
-    } catch(e){}
-  }
-  return false;
-}
-
-async function detectAlreadyConnected() {
-  const autoBtn = document.querySelector('button[onclick="autoConnect()"]');
-  const helper  = document.getElementById("helperText");
-
-  if (!autoBtn || !helper) return;
-
-  const conn = navigator.connection || navigator.webkitConnection || navigator.mozConnection;
-
-  let isWifi = false;
-  let goodQuality = false;
-
-  if (conn) {
-    isWifi = conn.type === "wifi" || conn.effectiveType === "wifi";
-    goodQuality = conn.downlink >= 20 || conn.effectiveType === "4g";
-  }
-
-  const localPing = await checkLocalPing();
-
-  const connected = (isWifi && goodQuality) || localPing;
-
-  if (connected) {
-    const ssid = getCurrentSsid();
-
-    autoBtn.style.display = "none";
-
-    helper.innerHTML = `Вы уже подключены к <b>${ssid}</b> ✔`;
-
-    const logical = (index - 1 + REAL_COUNT) % REAL_COUNT;
-    const currentSlide = slides[logical + 1];
-    if (currentSlide) {
-      const cardEl = currentSlide.querySelector(".slide-card");
-      if(cardEl){
-        cardEl.style.boxShadow =
-          "0 0 28px rgba(150,255,150,0.8), 0 0 18px rgba(80,255,120,0.6)";
-        cardEl.style.border =
-          "1px solid rgba(120,255,120,0.9)";
-      }
-    }
-  }
-}
-
-/* ---------- ШАГ 3: Индикатор уровня сигнала ---------- */
-async function measureSignalQuality(){
-  const el = document.getElementById("wifiSignal");
-  if(!el) return;
-
-  const conn = navigator.connection || navigator.webkitConnection || navigator.mozConnection;
-  let bars = 1;
-  let quality = "weak";
-
-  let down = conn ? conn.downlink : 0;
-  let rtt  = conn ? conn.rtt : 999;
-
-  let pingOk = await checkLocalPing();
-
-  if(pingOk && down >= 20){
-    bars = 4;
-    quality = "good";
-  }
-  else if(down >= 10 && rtt <= 150){
-    bars = 3;
-    quality = "ok";
-  }
-  else if(down >= 3 && rtt <= 300){
-    bars = 2;
-    quality = "bad";
-  }
-  else{
-    bars = 1;
-    quality = "weak";
-  }
-
-  const barStr = "📶".repeat(bars) + "◽".repeat(4 - bars);
-
-  const textMap = {
-    good : "Сигнал отличный",
-    ok   : "Сигнал хороший",
-    bad  : "Сигнал слабый",
-    weak : "Сигнал очень слабый"
-  };
-
-  el.className = "signal " + quality;
-  el.innerHTML = `
-    <div class="signal-bars">${barStr}</div><br>
-    ${textMap[quality]}
-  `;
-}
-
-/* ---------- ШАГ 4: SpeedTest (Ping / Download / Upload) ---------- */
-async function speedTest(){
-  const pingEl = document.getElementById("speedPing");
-  const downEl = document.getElementById("speedDown");
-  const upEl   = document.getElementById("speedUp");
-  const statusEl = document.getElementById("speedStatus");
-
-  if(!pingEl || !downEl || !upEl || !statusEl) return;
-
-  // 1) PING
-  let ping = "—";
-  try{
-    const t0 = performance.now();
-    await fetch("https://cors.eu.org/", {mode:"no-cors"});
-    const t1 = performance.now();
-    ping = Math.round(t1 - t0);
-  }catch(e){
-    ping = Math.round(Math.random()*40+20);
-  }
-  pingEl.textContent = `Ping: ${ping} ms`;
-
-  // 2) DOWNLOAD
-  let down = "—";
-  try{
-    const size = 1_000_000;
-    const blob = new Blob([new Uint8Array(size)]);
-    const url = URL.createObjectURL(blob);
-
-    const t0 = performance.now();
-    await fetch(url);
-    const t1 = performance.now();
-
-    const sec = (t1 - t0) / 1000;
-    down = Math.round((size / sec) / 1024 / 1024);
-  }catch(e){
-    down = Math.round(Math.random()*30+10);
-  }
-  downEl.textContent = `Download: ${down} Mbps`;
-
-  // 3) UPLOAD
-  let up = "—";
-  try{
-    const size = 300_000;
-    const payload = new Uint8Array(size);
-
-    const t0 = performance.now();
-    await fetch("https://httpbin.org/post", {
-      method:"POST",
-      body:payload
-    });
-    const t1 = performance.now();
-
-    const sec = (t1 - t0) / 1000;
-    up = Math.round((size / sec) / 1024 / 1024);
-  }catch(e){
-    up = Math.round(Math.random()*15+5);
-  }
-  upEl.textContent = `Upload: ${up} Mbps`;
-
-  // 4) Статус
-  if(down >= 50 && ping <= 30){
-    statusEl.textContent = "Статус: Отлично ✔";
-    statusEl.className = "speed-status good";
-  }
-  else if(down >= 20){
-    statusEl.textContent = "Статус: Нормально ⚠";
-    statusEl.className = "speed-status mid";
-  }
-  else{
-    statusEl.textContent = "Статус: Плохо ⛔";
-    statusEl.className = "speed-status bad";
-  }
-}
-
 /* ---------- старт ---------- */
 window.addEventListener("load", ()=>{
   recalcWidth();
@@ -969,8 +718,5 @@ window.addEventListener("load", ()=>{
   updateHeroArt();
   updateTimeBanner();
   fetchWeather();
-  detectAlreadyConnected();
-  measureSignalQuality();
-  speedTest();
 });
 window.addEventListener("resize", recalcWidth);
