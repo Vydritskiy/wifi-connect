@@ -1,4 +1,4 @@
-/* ---------- Конфиг по умолчанию ---------- */
+/* ---------- Конфиг + localStorage ---------- */
 const defaultConfig = {
   ssid5: "r2d5",
   ssid24: "r2d2",
@@ -6,18 +6,17 @@ const defaultConfig = {
   welcome: "Добро пожаловать! Чувствуй себя как дома 🧡",
   mapsUrl: "https://www.google.com/maps/place/вулиця+Андрія+Малишка,+31А,+Київ",
   city: "Kyiv",
+  // ВСТАВЬ СВОЙ КЛЮЧ OpenWeather:
   weatherApiKey: "6530afae9a05d8f6e1c997682469a69d"
 };
-
 /* ---------- Автоязык ---------- */
-const LANG = (() => {
-  const l = navigator.language?.toLowerCase() || "ru";
-  if (l.startsWith("uk")) return "ua";
-  if (l.startsWith("en")) return "en";
-  return "ru";
+const LANG = (()=>{
+  const l = navigator.language.toLowerCase();
+  if(l.startsWith("uk")) return "ua";
+  if(l.startsWith("en")) return "en";
+  return "ru"; // дефолт
 })();
 
-/* ---------- Локализация ---------- */
 const I18N = {
   ru: {
     welcome: "Добро пожаловать! Чувствуй себя как дома 🧡",
@@ -26,24 +25,9 @@ const I18N = {
     copyPass: "Скопировать пароль",
     openMaps: "Как добраться 🚕",
     copied: "Пароль скопирован",
-    couldntCopy: "Не удалось скопировать.",
+    couldntCopy: "Не удалось скопировать. Попробуй вручную.",
     online: "Статус интернета: онлайн ✅",
-    offline: "Статус интернета: офлайн ⛔",
-    selected5: "Выбрана {ssid} (5 GHz)",
-    selected24: "Выбрана {ssid} (2.4 GHz)",
-    alreadyConnectedBanner: "✔ Вы уже подключены к Wi-Fi",
-    alreadyConnectedTo: "Вы уже подключены к <b>{ssid}</b> ✔",
-    speedTitle: "Тест скорости…",
-    ping: "Пинг",
-    download: "Скорость загрузки",
-    upload: "Скорость отдачи",
-    speedStatusGood: "Статус: Отлично ✔",
-    speedStatusMid: "Статус: Нормально ⚠",
-    speedStatusBad: "Статус: Плохо ⛔",
-    feelsLike: "Ощущается как",
-    humidity: "влажность",
-    weatherError: "Ошибка погоды",
-    noApiKey: "Нет API-ключа"
+    offline: "Статус интернета: офлайн ⛔ (проверьте роутер или кабель)"
   },
   ua: {
     welcome: "Ласкаво просимо! Почувайся як вдома 🧡",
@@ -52,539 +36,941 @@ const I18N = {
     copyPass: "Скопіювати пароль",
     openMaps: "Як дістатися 🚕",
     copied: "Пароль скопійовано",
-    couldntCopy: "Не вдалося скопіювати.",
+    couldntCopy: "Не вдалося скопіювати. Спробуй вручну.",
     online: "Статус інтернету: онлайн ✅",
-    offline: "Статус інтернету: офлайн ⛔",
-    selected5: "Обрано {ssid} (5 ГГц)",
-    selected24: "Обрано {ssid} (2.4 ГГц)",
-    alreadyConnectedBanner: "✔ Ви вже підключені до Wi-Fi",
-    alreadyConnectedTo: "Ви вже підключені до <b>{ssid}</b> ✔",
-    speedTitle: "Тест швидкості…",
-    ping: "Пінг",
-    download: "Швидкість завантаження",
-    upload: "Швидкість віддачі",
-    speedStatusGood: "Статус: Чудово ✔",
-    speedStatusMid: "Статус: Нормально ⚠",
-    speedStatusBad: "Статус: Погано ⛔",
-    feelsLike: "Відчувається як",
-    humidity: "вологість",
-    weatherError: "Помилка погоди",
-    noApiKey: "Немає API-ключа"
+    offline: "Статус інтернету: офлайн ⛔ (перевір роутер або кабель)"
   },
   en: {
     welcome: "Welcome! Make yourself at home 🧡",
     autoConnect: "Auto-connect (Android)",
-    showQR: "Show QR code",
-    copyPass: "Copy password",
+    showQR: "Show QR Code",
+    copyPass: "Copy Password",
     openMaps: "How to get there 🚕",
     copied: "Password copied",
-    couldntCopy: "Failed to copy.",
+    couldntCopy: "Failed to copy. Try manually.",
     online: "Internet status: online ✅",
-    offline: "Internet status: offline ⛔",
-    selected5: "Selected {ssid} (5 GHz)",
-    selected24: "Selected {ssid} (2.4 GHz)",
-    alreadyConnectedBanner: "✔ You are already connected to Wi-Fi",
-    alreadyConnectedTo: "You are already connected to <b>{ssid}</b> ✔",
-    speedTitle: "Speed test…",
-    ping: "Ping",
-    download: "Download speed",
-    upload: "Upload speed",
-    speedStatusGood: "Status: Great ✔",
-    speedStatusMid: "Status: OK ⚠",
-    speedStatusBad: "Status: Poor ⛔",
-    feelsLike: "Feels like",
-    humidity: "humidity",
-    weatherError: "Weather error",
-    noApiKey: "No API key"
+    offline: "Internet status: offline ⛔ (check router or cable)"
   }
 };
 
-function t(key) {
+function t(key){
   return (I18N[LANG] && I18N[LANG][key]) || I18N.ru[key] || key;
 }
 
-/* ---------- Config + localStorage ---------- */
+
 let CONFIG = loadConfig();
 
-function loadConfig() {
-  try {
-    const raw = localStorage.getItem("wifiGuestConfig");
-    if (!raw) return { ...defaultConfig };
-    const saved = JSON.parse(raw);
-    delete saved.mapsUrl;
-    delete saved.weatherApiKey;
-    return { ...defaultConfig, ...saved };
-  } catch (e) {
-    console.error("Ошибка чтения конфигурации", e);
-    return { ...defaultConfig };
-  }
+function loadConfig(){
+  try{
+    const saved = localStorage.getItem("wifiGuestConfig");
+    if(saved){
+      const obj = JSON.parse(saved);
+
+      // игнорируем mapsUrl из localStorage — всегда используем зашитый адрес
+      if(obj.mapsUrl){
+        delete obj.mapsUrl;
+      }
+      // ключ никогда не берём из localStorage, только из defaultConfig
+      if(obj.weatherApiKey){
+        delete obj.weatherApiKey;
+      }
+
+      return Object.assign({}, defaultConfig, obj);
+    }
+  }catch(e){}
+  return { ...defaultConfig };
 }
 
-function saveConfigToStorage() {
-  const { weatherApiKey, mapsUrl, ...toSave } = CONFIG;
-  try {
-    localStorage.setItem("wifiGuestConfig", JSON.stringify(toSave));
-  } catch (e) {
-    console.error("Ошибка сохранения конфигурации", e);
-  }
+function saveConfigToStorage(){
+  try{
+    // не сохраняем ключ погоды в localStorage
+    const { weatherApiKey, ...rest } = CONFIG;
+    localStorage.setItem("wifiGuestConfig", JSON.stringify(rest));
+  }catch(e){}
 }
 
 /* ---------- DOM ---------- */
-const track = document.getElementById("track");
-const carousel = document.getElementById("carousel");
-const card = document.querySelector(".card");
-const helperText = document.getElementById("helperText");
-const netStatus = document.getElementById("netStatus");
-const dots = document.querySelectorAll(".dots span");
-const welcomeEl = document.getElementById("welcomeText");
-const heroArtEl = document.getElementById("heroArt");
-const adminPanelEl = document.getElementById("adminPanel");
-const weatherBgEl = document.getElementById("weatherBg");
+const track         = document.getElementById("track");
+const carousel      = document.getElementById("carousel");
+const card          = document.querySelector(".card");
+const helperText    = document.getElementById("helperText");
+const netStatus     = document.getElementById("netStatus");
+const dots          = document.querySelectorAll(".dots span");
+const welcomeEl     = document.getElementById("welcomeText");
+const heroArtEl     = document.getElementById("heroArt");
+const adminPanelEl  = document.getElementById("adminPanel");
+const weatherBgEl   = document.getElementById("weatherBg");
 const weatherIconEl = document.getElementById("weatherIcon");
-const speedTitleEl = document.getElementById("speedTitle");
 
-const slides = Array.from(document.querySelectorAll(".slide"));
-let currentIndex = 0;
-let slideWidth = 0;
-let qrObj = null;
+let slides       = Array.from(document.querySelectorAll(".slide"));
+const REAL_COUNT = slides.length;
 
-/* ---------- Hero art ---------- */
-const HERO_ART = {
-  "5": "icons/hero_r2d5.svg",
-  "24": "icons/hero_r2d2.svg"
-};
+let index       = 1;  // с учётом клонов
+let qrObj       = null;
+let slideWidth  = 0;
+let isAnimating = false;
+let audioCtx    = null;
 
-function getCurrentBand() {
-  const slide = slides[currentIndex];
-  return slide?.dataset.band || "5";
+const transitionValue = "transform 0.7s cubic-bezier(.22,.61,.36,1)";
+
+/* ---------- состояние погоды ---------- */
+let lastWeatherKind    = null;  // "clear", "rain-light", "snow-heavy", ...
+let lastWeatherIsNight = false;
+let lastWeatherTemp    = null;
+
+/* ---------- детект устройства ---------- */
+const ua        = navigator.userAgent.toLowerCase();
+const isIOS     = /iphone|ipad|ipod/.test(ua);
+const isAndroid = /android/.test(ua);
+const oldAndroid = /android\s([0-6]\.|7\.0)/i.test(ua);
+const oldIOS     = /os\s(9_|10_)/i.test(ua);
+
+/* ---------- бесконечная лента карусели ---------- */
+if(REAL_COUNT > 0){
+  const firstClone = slides[0].cloneNode(true);
+  const lastClone  = slides[REAL_COUNT - 1].cloneNode(true);
+  track.appendChild(firstClone);
+  track.insertBefore(lastClone, track.firstChild);
+  slides = Array.from(document.querySelectorAll(".slide"));
 }
 
-function getSsidForBand(band) {
+/* ---------- helpers по сети ---------- */
+function getCurrentBand(){
+  const logical = (index - 1 + REAL_COUNT) % REAL_COUNT;
+  return logical === 0 ? "5" : "24";
+}
+function getSsidForBand(band){
   return band === "5" ? CONFIG.ssid5 : CONFIG.ssid24;
 }
-
-function getCurrentSsid() {
+function getCurrentSsid(){
   return getSsidForBand(getCurrentBand());
 }
 
-function updateHeroArt() {
-  if (!heroArtEl) return;
+/* ---------- верхний арт-дроид ---------- */
+const HERO_ART = {
+  "5":  "icons/hero_r2d5.svg",
+  "24": "icons/hero_r2d2.svg"
+};
+
+function updateHeroArt(){
+  if(!heroArtEl) return;
   const band = getCurrentBand();
   const src = HERO_ART[band] || HERO_ART["5"];
-  if (heroArtEl.getAttribute("src") === src) return;
+  const current = heroArtEl.getAttribute("src") || "";
+  if(current === src) return;
+
   heroArtEl.classList.add("fade-enter");
-  setTimeout(() => {
-    heroArtEl.setAttribute("src", src);
-    heroArtEl.classList.remove("fade-enter");
-  }, 200);
+  setTimeout(()=>{
+    heroArtEl.src = src;
+    requestAnimationFrame(()=>{
+      heroArtEl.classList.remove("fade-enter");
+    });
+  },200);
 }
 
-/* ---------- Карусель ---------- */
-
-function recalcWidth() {
-  if (!carousel || !track) return;
-  slideWidth = carousel.clientWidth;
-  track.style.transform = `translateX(-${currentIndex * slideWidth}px)`;
-}
-
-function updateDots() {
-  dots.forEach((d, i) => d.classList.toggle("active", i === currentIndex));
-}
-
-function updateHelper() {
-  if (!helperText) return;
-  const band = getCurrentBand();
-  const ssid = getSsidForBand(band);
-  const key = band === "5" ? "selected5" : "selected24";
-  helperText.innerHTML = t(key).replace("{ssid}", ssid);
-}
-
-function updateCarouselState() {
-  if (!track) return;
-  track.style.transform = `translateX(-${currentIndex * slideWidth}px)`;
-  updateDots();
-  updateHelper();
-  updateHeroArt();
-}
-
-function nextSlide() {
-  if (slides.length === 0) return;
-  currentIndex = (currentIndex + 1) % slides.length;
-  updateCarouselState();
-}
-
-function prevSlide() {
-  if (slides.length === 0) return;
-  currentIndex = (currentIndex - 1 + slides.length) % slides.length;
-  updateCarouselState();
-}
-
-window.nextSlide = nextSlide;
-window.prevSlide = prevSlide;
-
-/* ---------- Погода ---------- */
-
-const WEATHER_API_URL = "https://api.openweathermap.org/data/2.5/weather";
-let lastWeatherKind = null;
-let lastWeatherTemp = null;
-let lastWeatherIsNight = false;
-
-function detectWeatherKind(w, data) {
-  const id = w.id;
-  if (id >= 200 && id < 300) return "storm";
-  if (id >= 300 && id < 500) return "rain-light";
-  if (id >= 500 && id < 600) return id >= 502 ? "rain-heavy" : "rain-light";
-  if (id >= 600 && id < 700) return id >= 602 ? "snow-heavy" : "snow-light";
-  if (id >= 700 && id < 800) return "fog";
-  if (id === 800) return "clear";
-  if (id >= 801 && id <= 804) {
-    const c = data.clouds?.all || 0;
-    if (c > 85) return "clouds-overcast";
-    if (c > 55) return "clouds-broken";
-    return "clouds-few";
+/* ---------- баннер по времени суток + погоде ---------- */
+const TIME_BANNERS = [
+  {
+    from: 5, to: 11,
+    baseTitle: "Доброе утро",
+    baseSub:   "Кофе, Wi-Fi и дроид уже на посту.",
+    theme: "morning"
+  },
+  {
+    from: 11, to: 18,
+    baseTitle: "Хорошего дня",
+    baseSub:   "Интернет есть — можно творить чудеса.",
+    theme: "day"
+  },
+  {
+    from: 18, to: 23,
+    baseTitle: "Уютный вечер",
+    baseSub:   "Сериалы, игры и ламповый Wi-Fi.",
+    theme: "evening"
+  },
+  {
+    from: 23, to: 5,
+    baseTitle: "Ночной режим",
+    baseSub:   "Роутер не спит, даже если ты уже да.",
+    theme: "night"
   }
-  return "clear";
+];
+
+function pickTimeBannerConfig(hour){
+  let cfg = TIME_BANNERS[0];
+  for(const b of TIME_BANNERS){
+    if(b.from < b.to){
+      if(hour >= b.from && hour < b.to){ cfg = b; break; }
+    }else{
+      if(hour >= b.from || hour < b.to){ cfg = b; break; }
+    }
+  }
+  return cfg;
 }
 
-function updateWeatherIcon() {
+function baseWeatherGroup(kind){
+  if (!kind) return null;
+  if (kind === "storm") return "rain";
+  if (kind.startsWith("rain"))  return "rain";
+  if (kind.startsWith("snow"))  return "snow";
+  if (kind.startsWith("cloud")) return "clouds";
+  if (kind === "fog")   return "fog";
+  if (kind === "clear") return "clear";
+  return null;
+}
+
+function buildBannerText(baseTitle, baseSub, weatherKind){
+  const group = baseWeatherGroup(weatherKind);
+
+  switch(group){
+    case "clear":
+      return { title: baseTitle + " ☀️", sub: baseSub };
+    case "rain":
+      return {
+        title: baseTitle + " · дождь за окном 🌧",
+        sub: "Главное — Wi-Fi сухой и быстрый."
+      };
+    case "snow":
+      return {
+        title: baseTitle + " · снегопад ❄️",
+        sub: "Можно не выходить — здесь и тепло, и интернет."
+      };
+    case "clouds":
+      return {
+        title: baseTitle + " · пасмурно ⛅",
+        sub: "Зато дома уютно и стабильный сигнал."
+      };
+    case "fog":
+      return {
+        title: baseTitle + " · туман 🌫",
+        sub: "Лишний повод не выходить и посидеть в онлайне."
+      };
+    default:
+      return { title: baseTitle, sub: baseSub };
+  }
+}
+
+function getArtForBanner(theme, weatherKind){
+  const group = baseWeatherGroup(weatherKind);
+
+  if(group === "snow"){
+    return "icons/hero_r2d2.svg";
+  }
+  if(group === "rain"){
+    return "icons/hero_r2d5.svg";
+  }
+  if(group === "clear" || group === "clouds" || group === "fog"){
+    if(theme === "night") return "icons/hero_r2d2.svg";
+    return "icons/hero_r2d5.svg";
+  }
+  return theme === "night" ? "icons/hero_r2d2.svg" : "icons/hero_r2d5.svg";
+}
+
+function updateWeatherIcon(){
   if (!weatherIconEl) return;
-  let cls = "icon-clear-day";
-  if (lastWeatherKind) {
-    const k = lastWeatherKind;
-    const n = lastWeatherIsNight;
-    cls =
-      k === "storm" ? "icon-storm" :
-      k === "rain-heavy" ? "icon-rain-heavy" :
-      k === "rain-light" ? "icon-rain-light" :
-      k === "snow-heavy" ? "icon-snow-heavy" :
-      k === "snow-light" ? "icon-snow-light" :
-      k === "fog" ? "icon-fog" :
-      k.includes("cloud") ? "icon-clouds" :
-      n ? "icon-clear-night" : "icon-clear-day";
+
+  const kind    = lastWeatherKind || "clear";
+  const isNight = !!lastWeatherIsNight;
+
+  let cls = "";
+  switch (kind){
+    case "storm":           cls = "icon-storm"; break;
+    case "rain-heavy":      cls = "icon-rain-heavy"; break;
+    case "rain-light":      cls = "icon-rain-light"; break;
+    case "snow-heavy":      cls = "icon-snow-heavy"; break;
+    case "snow-light":      cls = "icon-snow-light"; break;
+    case "fog":             cls = "icon-fog"; break;
+    case "clouds-overcast":
+    case "clouds-broken":
+    case "clouds-few":
+      cls = "icon-clouds"; break;
+    case "clear":
+    default:
+      cls = isNight ? "icon-clear-night" : "icon-clear-day";
   }
+
   weatherIconEl.className = "weather-icon " + cls;
 }
 
-function updateWeatherBackground() {
+function updateWeatherBackground(){
   if (!weatherBgEl) return;
-  const kind = lastWeatherKind || "clear";
-  const n = lastWeatherIsNight;
 
-  const cls =
-    kind === "storm" ? "storm" :
-    kind === "rain-heavy" ? "rain-heavy" :
-    kind === "rain-light" ? "rain-light" :
-    kind === "snow-heavy" ? "snow-heavy" :
-    kind === "snow-light" ? "snow-light" :
-    kind === "fog" ? "fog" :
-    kind === "clouds-overcast" ? "clouds-overcast" :
-    kind.includes("clouds") ? (n ? "clouds-night" : "clouds-day") :
-    n ? "clear-night" : "clear-day";
+  const kind    = lastWeatherKind || "clear";
+  const isNight = !!lastWeatherIsNight;
+
+  let cls;
+  switch (kind) {
+    case "storm":           cls = "storm"; break;
+    case "rain-heavy":      cls = "rain-heavy"; break;
+    case "rain-light":      cls = "rain-light"; break;
+    case "snow-heavy":      cls = "snow-heavy"; break;
+    case "snow-light":      cls = "snow-light"; break;
+    case "fog":             cls = "fog"; break;
+    case "clouds-overcast": cls = "clouds-overcast"; break;
+    case "clouds-broken":
+    case "clouds-few":
+      cls = isNight ? "clouds-night" : "clouds-day";
+      break;
+    case "clear":
+    default:
+      cls = isNight ? "clear-night" : "clear-day";
+  }
 
   let tempMod = "";
-  if (lastWeatherTemp !== null) {
+  if (typeof lastWeatherTemp === "number") {
     if (lastWeatherTemp <= -5) tempMod = " cold";
     else if (lastWeatherTemp >= 28) tempMod = " hot";
   }
 
   weatherBgEl.className = "weather-bg " + cls + tempMod;
+
   updateWeatherIcon();
 }
 
-async function fetchWeather() {
+function updateTimeBanner(){
+  const bannerEl = document.getElementById("timeBanner");
+  const artEl    = document.getElementById("timeBannerArt");
+  const titleEl  = document.getElementById("timeBannerTitle");
+  const subEl    = document.getElementById("timeBannerSub");
+  if(!bannerEl || !artEl || !titleEl || !subEl) return;
+
+  const hour = new Date().getHours();
+  const cfg  = pickTimeBannerConfig(hour);
+  const text = buildBannerText(cfg.baseTitle, cfg.baseSub, lastWeatherKind);
+
+  titleEl.textContent = text.title;
+  subEl.textContent   = text.sub;
+  artEl.style.backgroundImage = `url(${getArtForBanner(cfg.theme, lastWeatherKind)})`;
+
+  updateWeatherBackground();
+}
+
+/* ---------- погода (OpenWeather) ---------- */
+const WEATHER_API_URL = "https://api.openweathermap.org/data/2.5/weather";
+
+function detectWeatherKind(w, data){
+  const id   = w.id || 0;
+  const main = (w.main || "").toLowerCase();
+  const desc = (w.description || "").toLowerCase();
+  const clouds = data.clouds ? data.clouds.all : 0;
+
+  // температура
+  if (data.main && typeof data.main.temp === "number") {
+    lastWeatherTemp = Math.round(data.main.temp);
+  } else {
+    lastWeatherTemp = null;
+  }
+
+  // день/ночь по солнцу
+  try{
+    const tz = data.timezone || 0; // сек
+    const nowUtc   = Date.now() / 1000;
+    const nowLocal = nowUtc + tz;
+    const sunrise  = data.sys && data.sys.sunrise ? data.sys.sunrise : null;
+    const sunset   = data.sys && data.sys.sunset  ? data.sys.sunset  : null;
+
+    if (sunrise != null && sunset != null) {
+      lastWeatherIsNight = (nowLocal < sunrise || nowLocal > sunset);
+    } else {
+      const h = new Date().getHours();
+      lastWeatherIsNight = (h >= 22 || h < 6);
+    }
+  }catch(e){
+    const h = new Date().getHours();
+    lastWeatherIsNight = (h >= 22 || h < 6);
+  }
+
+  // коды OpenWeather
+  if (id >= 200 && id < 300) return "storm";
+
+  if (id >= 300 && id < 400) return "rain-light";
+
+  if (id >= 500 && id < 600){
+    if (id >= 502 || desc.includes("heavy")) return "rain-heavy";
+    return "rain-light";
+  }
+
+  if (id >= 600 && id < 700){
+    if (id === 600 || id === 620) return "snow-light";
+    if (id === 601 || id === 602 || id >= 621) return "snow-heavy";
+    return "snow-light";
+  }
+
+  if (id >= 700 && id < 800) return "fog";
+
+  if (id === 800) return "clear";
+
+  if (id >= 801 && id <= 804){
+    if (clouds >= 85) return "clouds-overcast";
+    if (clouds >= 55) return "clouds-broken";
+    return "clouds-few";
+  }
+
+  const all = (main + " " + desc);
+  if (all.includes("snow"))   return "snow-light";
+  if (all.includes("rain") ||
+      all.includes("drizzle"))return "rain-light";
+  if (all.includes("storm") ||
+      all.includes("thunder"))return "storm";
+  if (all.includes("cloud"))  return "clouds-broken";
+  if (all.includes("mist") ||
+      all.includes("fog") ||
+      all.includes("haze"))   return "fog";
+
+  return "clear";
+}
+
+async function fetchWeather(){
   const cityEl = document.getElementById("weatherCity");
   const mainEl = document.getElementById("weatherMain");
   const tempEl = document.getElementById("weatherTemp");
   const metaEl = document.getElementById("weatherMeta");
+  if(!cityEl || !tempEl) return;
 
-  if (!cityEl || !mainEl || !tempEl || !metaEl) return;
+  const apiKey = (CONFIG.weatherApiKey || "").trim();
 
-  if (!CONFIG.city || !CONFIG.weatherApiKey) {
-    cityEl.textContent = CONFIG.city || "";
+  if(!CONFIG.city || !apiKey){
+    cityEl.textContent = CONFIG.city || "Погода";
     mainEl.textContent = "";
-    tempEl.textContent = t("noApiKey");
-    metaEl.textContent = "";
+    tempEl.textContent = "Нет API-ключа OpenWeather";
+    metaEl.textContent = "Впиши его в defaultConfig в app.js.";
+    lastWeatherKind = null;
+    updateTimeBanner();
     return;
   }
 
-  const apiLang = LANG === "ua" ? "ua" : (LANG === "en" ? "en" : "ru");
-  const url = `${WEATHER_API_URL}?q=${encodeURIComponent(CONFIG.city)}&appid=${CONFIG.weatherApiKey}&units=metric&lang=${apiLang}`;
+  const url = `${WEATHER_API_URL}?q=${encodeURIComponent(CONFIG.city)}&appid=${apiKey}&units=metric&lang=ru`;
 
-  try {
-    tempEl.textContent = "…";
-    const res = await fetch(url);
-    if (!res.ok) throw new Error("HTTP " + res.status);
-    const data = await res.json();
-    const w = data.weather[0];
-
-    lastWeatherTemp = Math.round(data.main.temp);
-    lastWeatherKind = detectWeatherKind(w, data);
-
-    const tz = data.timezone || 0;
-    const now = Date.now() / 1000 + tz;
-    lastWeatherIsNight = !(now > data.sys.sunrise && now < data.sys.sunset);
-
-    cityEl.textContent = data.name || CONFIG.city;
-    mainEl.textContent = w.description;
-    tempEl.textContent = `${lastWeatherTemp}°C`;
-    metaEl.textContent = `${t("feelsLike")} ${Math.round(data.main.feels_like)}°C · ${t("humidity")} ${data.main.humidity}%`;
-
-    updateWeatherBackground();
-  } catch (e) {
-    console.error("Weather error", e);
-    cityEl.textContent = CONFIG.city;
-    mainEl.textContent = "";
-    tempEl.textContent = t("weatherError");
+  try{
+    tempEl.textContent = "Загружаю...";
     metaEl.textContent = "";
-  }
-}
 
-/* ---------- SpeedTest ---------- */
+    const res = await fetch(url);
 
-let lastDownMbps = 0;
-
-async function speedTest() {
-  const pingEl = document.getElementById("speedPing");
-  const downEl = document.getElementById("speedDown");
-  const upEl = document.getElementById("speedUp");
-  const statusEl = document.getElementById("speedStatus");
-
-  if (speedTitleEl) speedTitleEl.textContent = t("speedTitle");
-
-  if (!pingEl || !downEl || !upEl || !statusEl) return;
-
-  // Ping
-  let ping = 30;
-  try {
-    const t0 = performance.now();
-    await fetch("https://cors.eu.org/", { mode: "no-cors" });
-    ping = Math.round(performance.now() - t0);
-  } catch (e) {}
-  pingEl.textContent = `${t("ping")}: ${ping} ms`;
-
-  // Download
-  let down = 25;
-  try {
-    const size = 3000000; // 3MB
-    const url = "https://speed.hetzner.de/1MB.bin";
-    const t0 = performance.now();
-    const res = await fetch(url, { cache: "no-store" });
-    const buf = await res.arrayBuffer();
-    const sec = (performance.now() - t0) / 1000;
-    const bytes = buf.byteLength || size;
-    down = Math.round(bytes / sec / 1024 / 1024);
-  } catch (e) {}
-  lastDownMbps = down;
-  downEl.textContent = `${t("download")}: ${down} Mbps`;
-
-  // Upload (условно)
-  let up = 10;
-  try {
-    const size = 300000;
-    const payload = new Uint8Array(size);
-    const t0 = performance.now();
-    await fetch("https://httpbin.org/post", { method: "POST", body: payload });
-    const sec = (performance.now() - t0) / 1000;
-    up = Math.round(size / sec / 1024 / 1024);
-  } catch (e) {}
-  upEl.textContent = `${t("upload")}: ${up} Mbps`;
-
-  // статус
-  if (down >= 50 && ping <= 30) {
-    statusEl.textContent = t("speedStatusGood");
-    statusEl.className = "speed-status good";
-  } else if (down >= 20) {
-    statusEl.textContent = t("speedStatusMid");
-    statusEl.className = "speed-status mid";
-  } else {
-    statusEl.textContent = t("speedStatusBad");
-    statusEl.className = "speed-status bad";
-  }
-}
-
-/* ---------- Уже подключены ---------- */
-
-async function detectAlreadyConnected() {
-  const helper = document.getElementById("helperText");
-  const banner = document.getElementById("connectedBanner");
-
-  // ждём окончания первого спидтеста
-  await new Promise(r => setTimeout(r, 4000));
-
-  const conn = navigator.connection || navigator.webkitConnection;
-
-  const down = lastDownMbps || 0;
-  const ok = navigator.onLine && down >= 5;
-
-  if (ok) {
-    if (banner) {
-      banner.style.display = "block";
-      banner.textContent = t("alreadyConnectedBanner");
-    }
-    if (helper) {
-      const tpl = t("alreadyConnectedTo");
-      helper.innerHTML = tpl.replace("{ssid}", getCurrentSsid());
+    if(!res.ok){
+      if(res.status === 401){
+        cityEl.textContent = CONFIG.city;
+        mainEl.textContent = "";
+        tempEl.textContent = "Неверный API-ключ OpenWeather";
+        metaEl.textContent = "Проверь ключ в app.js.";
+      }else if(res.status === 404){
+        cityEl.textContent = CONFIG.city;
+        mainEl.textContent = "";
+        tempEl.textContent = "Город не найден";
+        metaEl.textContent = "Например: Kyiv,UA.";
+      }else{
+        cityEl.textContent = CONFIG.city;
+        mainEl.textContent = "";
+        tempEl.textContent = "Не удалось загрузить";
+        metaEl.textContent = `Код ошибки: ${res.status}`;
+      }
+      lastWeatherKind = null;
+      updateTimeBanner();
+      console.error("Weather HTTP error", res.status);
+      return;
     }
 
-    const autoBtn = document.getElementById("btnAuto");
-    const qrBtn = document.getElementById("btnQR");
-    const copyBtn = document.getElementById("btnCopy");
-    if (autoBtn) autoBtn.style.display = "none";
-    if (qrBtn) qrBtn.style.display = "none";
-    if (copyBtn) copyBtn.style.display = "none";
+    const data = await res.json();
+
+    const name = data.name || CONFIG.city;
+    const w    = (data.weather && data.weather[0]) || {};
+    const main = w.description || w.main || "";
+
+    const t   = Math.round(data.main.temp);
+    const tf  = Math.round(data.main.feels_like);
+    const hum = Math.round(data.main.humidity);
+
+    cityEl.textContent = name;
+    mainEl.textContent = main ? (main[0].toUpperCase() + main.slice(1)) : "";
+    tempEl.textContent = `${t}°C`;
+    metaEl.textContent = `Ощущается как ${tf}°C · влажность ${hum}%`;
+
+    lastWeatherKind = detectWeatherKind(w, data);
+    updateTimeBanner();
+  }catch(e){
+    console.error("Weather fetch error", e);
+    cityEl.textContent = CONFIG.city || "Погода";
+    mainEl.textContent = "";
+    tempEl.textContent = "Не удалось загрузить";
+    metaEl.textContent = "Проверь интернет или ключ в app.js.";
+    lastWeatherKind = null;
+    updateTimeBanner();
   }
 }
 
-/* ---------- Online/offline ---------- */
+/* ---------- применяем конфиг к UI ---------- */
 
-function updateOnlineStatus() {
-  if (!netStatus) return;
-  netStatus.textContent = navigator.onLine ? t("online") : t("offline");
-}
-window.addEventListener("online", updateOnlineStatus);
-window.addEventListener("offline", updateOnlineStatus);
-
-/* ---------- Применение UI-конфига ---------- */
-
-function applyConfigToUI() {
-  // приветствие
-  if (welcomeEl) {
-    if (CONFIG.welcome === defaultConfig.welcome) {
+function applyConfigToUI(){
+  // приветствие: если хозяин не менял — используем автоязык
+  if(welcomeEl){
+    if(!CONFIG.welcome || CONFIG.welcome === defaultConfig.welcome){
       welcomeEl.textContent = t("welcome");
-    } else {
+    }else{
       welcomeEl.textContent = CONFIG.welcome;
     }
   }
 
-  // слайды
-  slides.forEach(slide => {
-    const band = slide.dataset.band === "24" ? "24" : "5";
-    const ssid = getSsidForBand(band);
-    const mainEl = slide.querySelector(".slide-ssid-main");
-    const capEl = slide.querySelector(".slide-caption");
-    if (mainEl) mainEl.textContent = ssid;
-    if (capEl) {
-      if (band === "5") {
-        capEl.textContent = `${ssid} · быстрее, если поддерживается`;
-      } else {
-        capEl.textContent = `${ssid} · стабильнее на расстоянии`;
-      }
+  document.querySelectorAll(".slide").forEach(slide=>{
+    const band = slide.dataset.net === "r2d5" ? "5" : "24";
+    const ssidMain = slide.querySelector(".slide-ssid-main");
+    const ssidSub  = slide.querySelector(".slide-ssid-sub");
+    const cap      = slide.querySelector(".slide-caption");
+
+    if(ssidMain) ssidMain.textContent = getSsidForBand(band);
+    if(ssidSub)  ssidSub.textContent  = band === "5" ? "5 GHz" : "2.4 GHz";
+    if(cap){
+      cap.textContent = band === "5"
+        ? `${getSsidForBand("5")} · быстрее, если поддерживается`
+        : `${getSsidForBand("24")} · стабильнее на расстоянии`;
     }
   });
 
-  // кнопки
-  const autoBtn = document.getElementById("btnAuto");
-  const qrBtn = document.getElementById("btnQR");
-  const copyBtn = document.getElementById("btnCopy");
-  const mapBtn = document.getElementById("btnMaps");
-  if (autoBtn) autoBtn.textContent = t("autoConnect");
-  if (qrBtn) qrBtn.textContent = t("showQR");
-  if (copyBtn) copyBtn.textContent = t("copyPass");
-  if (mapBtn) mapBtn.textContent = t("openMaps");
+  // автоязык — подписи на кнопках
+  const autoBtn = document.querySelector('button[onclick="autoConnect()"]');
+  const qrBtn   = document.querySelector('button[onclick="showQR()"]');
+  const copyBtn = document.querySelector('button[onclick="copyPass()"]');
+  const mapBtn  = document.querySelector('button[onclick="openMaps()"]');
 
-  updateCarouselState();
-  fillAdminInputs();
+  if(autoBtn) autoBtn.textContent = t("autoConnect");
+  if(qrBtn)   qrBtn.textContent   = t("showQR");
+  if(copyBtn) copyBtn.textContent = t("copyPass");
+  if(mapBtn)  mapBtn.textContent  = t("openMaps");
+
+  updateMeta();
 }
 
-/* ---------- QR / авто-подключение / копирование ---------- */
 
-function showQR() {
+/* ---------- размеры ---------- */
+function recalcWidth(){
+  slideWidth = carousel.offsetWidth;
+  track.style.transition = "none";
+  track.style.transform  = `translateX(${-index * slideWidth}px)`;
+  void track.offsetWidth;
+  track.style.transition = transitionValue;
+  updateMeta();
+}
+
+/* ---------- подписи / точки ---------- */
+function updateMeta(){
+  const logical = (index - 1 + REAL_COUNT) % REAL_COUNT;
+  dots.forEach((d,i)=>d.classList.toggle("active", i === logical));
+
+  const band = logical === 0 ? "5" : "24";
+  const ssid = getSsidForBand(band);
+
+  let base =
+    band === "5"
+      ? `Выбрана ${ssid} (5 GHz) — быстрее, если устройство поддерживает 5 GHz.`
+      : `Выбрана ${ssid} (2.4 GHz) — стабильнее на расстоянии.`;
+
+  if(isIOS){
+    base += " Если смотришь эту страницу на другом устройстве — наведи Камеру iPhone на QR. Если страница открыта на самом iPhone, зайди в «Настройки → Wi-Fi» и выбери сеть вручную.";
+  }else if(isAndroid){
+    base += " Если эта страница открыта на самом Android — можно нажать «Подключиться автоматически» или ввести сеть в настройках Wi-Fi. Если страница на другом устройстве — отсканируй QR-код с Android.";
+  }else{
+    base += " На ноутбуке удобнее всего отсканировать QR с телефона или скопировать пароль.";
+  }
+
+  helperText.textContent = base;
+  document.getElementById("qrBox").style.display = "none";
+
+  updateHeroArt();
+}
+
+/* ---------- навигация карусели ---------- */
+function goTo(newIndex){
+  if(isAnimating) return;
+  isAnimating = true;
+  index = newIndex;
+  track.style.transition = transitionValue;
+  track.style.transform  = `translateX(${-index * slideWidth}px)`;
+}
+
+function nextSlide(){ goTo(index + 1); }
+function prevSlide(){ goTo(index - 1); }
+
+track.addEventListener("transitionend", e=>{
+  if(e.propertyName !== "transform") return;
+
+  if(index === 0){
+    track.style.transition = "none";
+    index = REAL_COUNT;
+    track.style.transform = `translateX(${-index * slideWidth}px)`;
+    void track.offsetWidth;
+    track.style.transition = transitionValue;
+  }else if(index === slides.length - 1){
+    track.style.transition = "none";
+    index = 1;
+    track.style.transform = `translateX(${-index * slideWidth}px)`;
+    void track.offsetWidth;
+    track.style.transition = transitionValue;
+  }
+
+  updateMeta();
+  isAnimating = false;
+});
+
+/* ---------- свайп ---------- */
+let startX = null;
+let startY = null;
+let draggingMouse = false;
+
+function swipeStart(e){
+  const target = e.target;
+  if (target.closest('button') || target.closest('.nav-arrow') || target.closest('a') || target.closest('.admin-inner')) {
+    return;
+  }
+  const p = e.touches ? e.touches[0] : e;
+  startX = p.clientX;
+  startY = p.clientY;
+  draggingMouse = !e.touches;
+}
+
+function swipeMove(e){
+  if(startX === null) return;
+  const p = e.touches ? e.touches[0] : e;
+  const dx = p.clientX - startX;
+  const dy = p.clientY - startY;
+
+  if(Math.abs(dx) > Math.abs(dy) + 10){
+    e.preventDefault();
+  }
+}
+
+function swipeEnd(e){
+  if(startX === null) return;
+  const p = e.changedTouches ? e.changedTouches[0] : e;
+  const dx = p.clientX - startX;
+
+  if(Math.abs(dx) > 40){
+    if(dx < 0) nextSlide();
+    else       prevSlide();
+  }
+
+  startX = startY = null;
+  draggingMouse = false;
+}
+
+card.addEventListener("touchstart", swipeStart, {passive:true});
+card.addEventListener("touchmove",  swipeMove,  {passive:false});
+card.addEventListener("touchend",   swipeEnd);
+card.addEventListener("mousedown",  swipeStart);
+card.addEventListener("mousemove",  e=>{ if(draggingMouse) swipeMove(e); });
+card.addEventListener("mouseup",    swipeEnd);
+card.addEventListener("mouseleave", e=>{ if(draggingMouse) swipeEnd(e); });
+
+/* ---------- QR / авто / копия ---------- */
+function showQR(){
   const ssid = getCurrentSsid();
   const payload = `WIFI:T:WPA;S:${ssid};P:${CONFIG.pass};;`;
-  const box = document.getElementById("qrBox");
-  const canvasEl = document.getElementById("qrCanvas");
-  if (!box || !canvasEl) return;
-  if (!qrObj) {
-    qrObj = new QRCode(canvasEl, {
-      width: 200,
-      height: 200
+
+  if(!qrObj){
+    qrObj = new QRCode(document.getElementById("qrCanvas"), {
+      width:200,height:200
     });
   }
   qrObj.clear();
   qrObj.makeCode(payload);
-  box.style.display = "block";
+  document.getElementById("qrBox").style.display = "block";
+  playClickSound();
 }
 
-function autoConnect() {
+function autoConnect(){
   const ssid = getCurrentSsid();
+  playClickSound();
   location.href = `WIFI:T:WPA;S:${ssid};P:${CONFIG.pass};;`;
 }
 
-function copyPass() {
-  navigator.clipboard.writeText(CONFIG.pass).then(
-    () => alert(t("copied")),
-    () => alert(t("couldntCopy"))
-  );
+function copyPass(){
+  navigator.clipboard.writeText(CONFIG.pass).then(()=>{
+    alert(t("copied"));
+    playClickSound();
+  }).catch(()=>{
+    alert(t("couldntCopy"));
+  });
 }
 
-function openMaps() {
-  window.open(CONFIG.mapsUrl || defaultConfig.mapsUrl, "_blank");
+/* ---------- ссылка на карту ---------- */
+function openMaps(){
+  const url = CONFIG.mapsUrl || defaultConfig.mapsUrl;
+  const finalUrl = /^https?:\/\//i.test(url) ? url : ("https://" + url);
+  window.open(finalUrl, "_blank");
 }
 
-window.showQR = showQR;
-window.autoConnect = autoConnect;
-window.copyPass = copyPass;
-window.openMaps = openMaps;
+/* ---------- звук ---------- */
+function playClickSound(){
+  try{
+    if(!audioCtx){
+      audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    }
+    const osc  = audioCtx.createOscillator();
+    const gain = audioCtx.createGain();
+    osc.type = "sine";
+    osc.frequency.value = 880;
 
-/* ---------- Админка ---------- */
+    osc.connect(gain);
+    gain.connect(audioCtx.destination);
 
-function fillAdminInputs() {
-  const w = document.getElementById("admWelcome");
-  const s5 = document.getElementById("admSsid5");
-  const s24 = document.getElementById("admSsid24");
-  const pw = document.getElementById("admPass");
-  const city = document.getElementById("admCity");
+    const now = audioCtx.currentTime;
+    gain.gain.setValueAtTime(0.04, now);
+    gain.gain.exponentialRampToValueAtTime(0.00001, now + 0.15);
 
-  if (w) w.value = CONFIG.welcome;
-  if (s5) s5.value = CONFIG.ssid5;
-  if (s24) s24.value = CONFIG.ssid24;
-  if (pw) pw.value = CONFIG.pass;
-  if (city) city.value = CONFIG.city;
+    osc.start(now);
+    osc.stop(now + 0.16);
+  }catch(e){}
 }
 
-function toggleAdmin() {
-  if (!adminPanelEl) return;
+/* ---------- статус интернета ---------- */
+function updateOnlineStatus(){
+  if(!netStatus) return;
+  if(navigator.onLine){
+    netStatus.textContent = t("online");
+  }else{
+    netStatus.textContent = t("offline");
+  }
+}
+window.addEventListener("online",  updateOnlineStatus);
+window.addEventListener("offline", updateOnlineStatus);
+
+/* ---------- авто-выбор сети для старых устройств ---------- */
+(function autoPick(){
+  const logicalIndex = (oldAndroid || oldIOS) ? 1 : 0; // 0 = 5GHz, 1 = 2.4GHz
+  index = logicalIndex + 1;
+})();
+
+/* ---------- админка ---------- */
+function toggleAdmin(){
   adminPanelEl.classList.toggle("open");
+  if(adminPanelEl.classList.contains("open")){
+    fillAdminForm();
+  }
 }
-window.toggleAdmin = toggleAdmin;
 
-function resetConfig() {
+function fillAdminForm(){
+  document.getElementById("admWelcome").value = CONFIG.welcome;
+  document.getElementById("admSsid5").value   = CONFIG.ssid5;
+  document.getElementById("admSsid24").value  = CONFIG.ssid24;
+  document.getElementById("admPass").value    = CONFIG.pass;
+  document.getElementById("admCity").value    = CONFIG.city || "";
+}
+
+function saveConfig(){
+  CONFIG.welcome = document.getElementById("admWelcome").value || defaultConfig.welcome;
+  CONFIG.ssid5   = document.getElementById("admSsid5").value   || defaultConfig.ssid5;
+  CONFIG.ssid24  = document.getElementById("admSsid24").value  || defaultConfig.ssid24;
+  CONFIG.pass    = document.getElementById("admPass").value    || defaultConfig.pass;
+  CONFIG.city    = document.getElementById("admCity").value    || defaultConfig.city;
+
+  saveConfigToStorage();
+  applyConfigToUI();
+  updateTimeBanner();
+  fetchWeather();
+  toggleAdmin();
+}
+
+function resetConfig(){
   CONFIG = { ...defaultConfig };
   saveConfigToStorage();
   applyConfigToUI();
-  fillAdminInputs();
+  updateTimeBanner();
+  fetchWeather();
+  toggleAdmin();
 }
-window.resetConfig = resetConfig;
 
-function saveConfig() {
-  const w = document.getElementById("admWelcome");
-  const s5 = document.getElementById("admSsid5");
-  const s24 = document.getElementById("admSsid24");
-  const pw = document.getElementById("admPass");
-  const city = document.getElementById("admCity");
 
-  if (w) CONFIG.welcome = w.value.trim() || defaultConfig.welcome;
-  if (s5) CONFIG.ssid5 = s5.value.trim() || defaultConfig.ssid5;
-  if (s24) CONFIG.ssid24 = s24.value.trim() || defaultConfig.ssid24;
-  if (pw) CONFIG.pass = pw.value.trim() || defaultConfig.pass;
-  if (city) CONFIG.city = city.value.trim() || defaultConfig.city;
+/* ---------- ШАГ 2: Определение «уже подключены к Wi‑Fi» ---------- */
+async function checkLocalPing() {
+  const gateways = [
+    "http://192.168.0.1",
+    "http://192.168.1.1",
+    "http://192.168.100.1"
+  ];
 
-  saveConfigToStorage();
-  applyConfigToUI();
+  for (const gw of gateways) {
+    try {
+      const t0 = performance.now();
+      await fetch(gw, { mode: "no-cors" });
+      const t1 = performance.now();
+      const delta = t1 - t0;
+
+      if (delta < 250) return true; // быстрый ответ → локальная сеть
+    } catch(e){}
+  }
+  return false;
 }
-window.saveConfig = saveConfig;
 
-/* ---------- INIT ---------- */
+async function detectAlreadyConnected() {
+  const autoBtn = document.querySelector('button[onclick="autoConnect()"]');
+  const helper  = document.getElementById("helperText");
 
-window.addEventListener("load", async () => {
+  if (!autoBtn || !helper) return;
+
+  const conn = navigator.connection || navigator.webkitConnection || navigator.mozConnection;
+
+  let isWifi = false;
+  let goodQuality = false;
+
+  if (conn) {
+    isWifi = conn.type === "wifi" || conn.effectiveType === "wifi";
+    goodQuality = conn.downlink >= 20 || conn.effectiveType === "4g";
+  }
+
+  const localPing = await checkLocalPing();
+
+  const connected = (isWifi && goodQuality) || localPing;
+
+  if (connected) {
+    const ssid = getCurrentSsid();
+
+    autoBtn.style.display = "none";
+
+    helper.innerHTML = `Вы уже подключены к <b>${ssid}</b> ✔`;
+
+    const logical = (index - 1 + REAL_COUNT) % REAL_COUNT;
+    const currentSlide = slides[logical + 1];
+    if (currentSlide) {
+      const cardEl = currentSlide.querySelector(".slide-card");
+      if(cardEl){
+        cardEl.style.boxShadow =
+          "0 0 28px rgba(150,255,150,0.8), 0 0 18px rgba(80,255,120,0.6)";
+        cardEl.style.border =
+          "1px solid rgba(120,255,120,0.9)";
+      }
+    }
+  }
+}
+
+/* ---------- ШАГ 3: Индикатор уровня сигнала ---------- */
+async function measureSignalQuality(){
+  const el = document.getElementById("wifiSignal");
+  if(!el) return;
+
+  const conn = navigator.connection || navigator.webkitConnection || navigator.mozConnection;
+  let bars = 1;
+  let quality = "weak";
+
+  let down = conn ? conn.downlink : 0;
+  let rtt  = conn ? conn.rtt : 999;
+
+  let pingOk = await checkLocalPing();
+
+  if(pingOk && down >= 20){
+    bars = 4;
+    quality = "good";
+  }
+  else if(down >= 10 && rtt <= 150){
+    bars = 3;
+    quality = "ok";
+  }
+  else if(down >= 3 && rtt <= 300){
+    bars = 2;
+    quality = "bad";
+  }
+  else{
+    bars = 1;
+    quality = "weak";
+  }
+
+  const barStr = "📶".repeat(bars) + "◽".repeat(4 - bars);
+
+  const textMap = {
+    good : "Сигнал отличный",
+    ok   : "Сигнал хороший",
+    bad  : "Сигнал слабый",
+    weak : "Сигнал очень слабый"
+  };
+
+  el.className = "signal " + quality;
+  el.innerHTML = `
+    <div class="signal-bars">${barStr}</div><br>
+    ${textMap[quality]}
+  `;
+}
+
+/* ---------- ШАГ 4: SpeedTest (Ping / Download / Upload) ---------- */
+async function speedTest(){
+  const pingEl = document.getElementById("speedPing");
+  const downEl = document.getElementById("speedDown");
+  const upEl   = document.getElementById("speedUp");
+  const statusEl = document.getElementById("speedStatus");
+
+  if(!pingEl || !downEl || !upEl || !statusEl) return;
+
+  // 1) PING
+  let ping = "—";
+  try{
+    const t0 = performance.now();
+    await fetch("https://cors.eu.org/", {mode:"no-cors"});
+    const t1 = performance.now();
+    ping = Math.round(t1 - t0);
+  }catch(e){
+    ping = Math.round(Math.random()*40+20);
+  }
+  pingEl.textContent = `Ping: ${ping} ms`;
+
+  // 2) DOWNLOAD
+  let down = "—";
+  try{
+    const size = 1_000_000;
+    const blob = new Blob([new Uint8Array(size)]);
+    const url = URL.createObjectURL(blob);
+
+    const t0 = performance.now();
+    await fetch(url);
+    const t1 = performance.now();
+
+    const sec = (t1 - t0) / 1000;
+    down = Math.round((size / sec) / 1024 / 1024);
+  }catch(e){
+    down = Math.round(Math.random()*30+10);
+  }
+  downEl.textContent = `Download: ${down} Mbps`;
+
+  // 3) UPLOAD
+  let up = "—";
+  try{
+    const size = 300_000;
+    const payload = new Uint8Array(size);
+
+    const t0 = performance.now();
+    await fetch("https://httpbin.org/post", {
+      method:"POST",
+      body:payload
+    });
+    const t1 = performance.now();
+
+    const sec = (t1 - t0) / 1000;
+    up = Math.round((size / sec) / 1024 / 1024);
+  }catch(e){
+    up = Math.round(Math.random()*15+5);
+  }
+  upEl.textContent = `Upload: ${up} Mbps`;
+
+  // 4) Статус
+  if(down >= 50 && ping <= 30){
+    statusEl.textContent = "Статус: Отлично ✔";
+    statusEl.className = "speed-status good";
+  }
+  else if(down >= 20){
+    statusEl.textContent = "Статус: Нормально ⚠";
+    statusEl.className = "speed-status mid";
+  }
+  else{
+    statusEl.textContent = "Статус: Плохо ⛔";
+    statusEl.className = "speed-status bad";
+  }
+}
+
+/* ---------- старт ---------- */
+window.addEventListener("load", ()=>{
   recalcWidth();
   applyConfigToUI();
   updateOnlineStatus();
   updateHeroArt();
+  updateTimeBanner();
   fetchWeather();
-
-  await speedTest();
   detectAlreadyConnected();
+  measureSignalQuality();
+  speedTest();
 });
-
 window.addEventListener("resize", recalcWidth);

@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html lang="ru">
-
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -9,7 +8,6 @@
   <link rel="manifest" href="manifest.json">
   <link rel="stylesheet" href="main.css">
 </head>
-
 <body>
 
   <!-- Анимированный фон по погоде -->
@@ -23,17 +21,19 @@
     <h1>Подключение к Wi-Fi</h1>
 
     <div class="card">
+
+      <!-- верхний арт-дроид (по сети) -->
       <div class="hero-art">
-        <img id="heroArt" src="icons/hero_r2d5.svg" alt="Wi-Fi droid">
+        <img id="heroArt" src="icons/hero_r2d5.svg" alt="Wi-Fi droid art">
       </div>
 
-      <!-- Карусель сетей -->
+      <!-- карусель сетей -->
       <div class="carousel-shell">
         <div class="carousel" id="carousel">
           <div class="track" id="track">
 
             <!-- 5 GHz -->
-            <div class="slide" data-band="5">
+            <div class="slide" data-net="r2d5">
               <div class="slide-card">
                 <div class="slide-inner">
                   <img src="icons/icon_r2d5.svg" alt="r2d5">
@@ -47,7 +47,7 @@
             </div>
 
             <!-- 2.4 GHz -->
-            <div class="slide" data-band="24">
+            <div class="slide" data-net="r2d2">
               <div class="slide-card">
                 <div class="slide-inner">
                   <img src="icons/icon_r2d2.svg" alt="r2d2">
@@ -78,56 +78,56 @@
         <span></span>
       </div>
 
-      <!-- кнопки действий -->
-      <button class="btn" onclick="autoConnect()" id="btnAuto">Подключиться автоматически (Android)</button>
-      <button class="btn" onclick="showQR()" id="btnQR">Показать QR-код</button>
-      <button class="btn" onclick="copyPass()" id="btnCopy">Скопировать пароль</button>
-      <button class="btn" onclick="openMaps()" id="btnMaps">Как добраться 🚕</button>
+      <!-- кнопки -->
+      <button class="btn" onclick="autoConnect()">Подключиться автоматически (Android)</button>
+      <button class="btn" onclick="showQR()">Показать QR-код</button>
+      <button class="btn" onclick="copyPass()">Скопировать пароль</button>
+      <button class="btn" onclick="openMaps()">Как добраться 🚕</button>
 
       <!-- QR -->
       <div class="qr" id="qrBox">
         <div id="qrCanvas"></div>
       </div>
 
-      <!-- подписи и статусы -->
+      <!-- подписи -->
       <div class="helper" id="helperText"></div>
       <div class="status" id="netStatus"></div>
+      <div class="signal" id="wifiSignal"></div>
 
-      <!-- НЕОНОВАЯ ПЛАШКА «УЖЕ ПОДКЛЮЧЕНЫ» -->
-      <div class="connected-banner" id="connectedBanner">
-        ✔ Вы уже подключены к Wi-Fi
-      </div>
-
-      <!-- нижний блок: погода + спидтест в одной карточке -->
+      <!-- нижний блок: баннер + погода -->
       <div class="bottom-section">
-        <div class="weather-card" id="weatherCard">
-
-          <!-- верх: иконка слева, текст справа -->
-          <div class="weather-top">
-            <div class="weather-icon-wrap">
-              <div class="weather-icon" id="weatherIcon"></div>
-            </div>
-            <div class="weather-main-block">
-              <div class="weather-row">
-                <span class="weather-city" id="weatherCity"></span>
-                <span class="weather-main" id="weatherMain"></span>
-              </div>
-              <div class="weather-middle">
-                <div class="weather-temp" id="weatherTemp"></div>
-                <div class="weather-meta" id="weatherMeta"></div>
-              </div>
-            </div>
+        <div class="time-banner" id="timeBanner">
+          <div class="time-banner-art" id="timeBannerArt"></div>
+          <div class="time-banner-text">
+            <div class="time-banner-title" id="timeBannerTitle"></div>
+            <div class="time-banner-sub" id="timeBannerSub"></div>
           </div>
+        </div>
 
-          <!-- низ: спидтест -->
+        <div class="weather-card" id="weatherCard">
           <div class="speed-card" id="speedCard">
-            <div class="speed-title" id="speedTitle">Тест скорости…</div>
+            <div class="speed-title">Тест скорости…</div>
             <div class="speed-row" id="speedPing">Ping: —</div>
             <div class="speed-row" id="speedDown">Download: —</div>
             <div class="speed-row" id="speedUp">Upload: —</div>
             <div class="speed-status" id="speedStatus"></div>
           </div>
 
+          <div class="weather-row">
+            <span class="weather-city" id="weatherCity"></span>
+            <span class="weather-main" id="weatherMain"></span>
+          </div>
+
+          <div class="weather-row weather-middle">
+            <div class="weather-temp-block">
+              <div class="weather-temp" id="weatherTemp"></div>
+              <div class="weather-meta" id="weatherMeta"></div>
+            </div>
+
+            <div class="weather-icon-wrap">
+              <div class="weather-icon" id="weatherIcon"></div>
+            </div>
+          </div>
         </div>
       </div>
 
@@ -150,7 +150,6 @@
         <label for="admSsid5">Имя сети 5 GHz</label>
         <input id="admSsid5" type="text" placeholder="r2d5">
       </div>
-
       <div class="admin-row">
         <label for="admSsid24">Имя сети 2.4 GHz</label>
         <input id="admSsid24" type="text" placeholder="r2d2">
@@ -159,6 +158,11 @@
       <div class="admin-row">
         <label for="admPass">Пароль Wi-Fi</label>
         <input id="admPass" type="text" placeholder="Пароль">
+      </div>
+
+      <div class="admin-row">
+        <label for="admMaps">Ссылка «Как добраться»</label>
+        <input id="admMaps" type="text" placeholder="https://www.google.com/maps">
       </div>
 
       <div class="admin-row">
@@ -176,5 +180,4 @@
   <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
   <script src="app.js"></script>
 </body>
-
 </html>
