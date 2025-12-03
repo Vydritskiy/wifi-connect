@@ -430,6 +430,29 @@ h1{
   transform:translateY(-1px);
   filter:brightness(1.04);
 }
+.connected-banner{
+  display:none;
+  width:100%;
+  padding:16px 18px;
+  border-radius:20px;
+  margin-top:14px;
+
+  background:linear-gradient(135deg,var(--accent),var(--accent2));
+  color:white;
+  font-size:16px;
+  text-align:center;
+
+  box-shadow:0 10px 32px rgba(0,0,0,0.55),
+              0 0 18px rgba(160,120,255,0.9);
+
+  animation:connectedGlow 3s ease-in-out infinite;
+}
+
+@keyframes connectedGlow{
+  0%{ box-shadow:0 10px 32px rgba(0,0,0,0.55),0 0 10px rgba(150,110,255,0.5); }
+  50%{ box-shadow:0 10px 32px rgba(0,0,0,0.55),0 0 22px rgba(200,150,255,1); }
+  100%{ box-shadow:0 10px 32px rgba(0,0,0,0.55),0 0 10px rgba(150,110,255,0.5); }
+}
 
 /* QR */
 .qr{
