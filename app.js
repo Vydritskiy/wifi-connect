@@ -528,35 +528,44 @@ function resetConfig(){
   toggleAdmin();
 }
 
-function checkWifiConnection(){
+async function checkWifiConnection() {
   const banner = document.getElementById("connectedBanner");
-  const btns = document.querySelectorAll(".btn");
+  const buttons = document.querySelectorAll(".btn");
+  const qrBox = document.getElementById("qrBox");
 
-  // Если браузер поддерживает navigator.connection
-  const conn = navigator.connection || navigator.mozConnection || navigator.webkitConnection;
+  let isWifi = false;
 
-  // Признаки Wi-Fi
-  const isWifi =
-    (conn && conn.type === "wifi") ||
-    (conn && conn.effectiveType && (conn.effectiveType === "wifi")) ||
-    navigator.userAgent.includes("iPhone") || navigator.userAgent.includes("Android");
+  // --- 1) Быстрый надёжный тест пинга ---
+  try {
+    const t0 = performance.now();
+    await fetch("https://captive.apple.com", { cache: "no-store" });
+    const dt = performance.now() - t0;
 
-  if(isWifi){
-    // Показать баннер
+    // если ответ быстрый — почти гарантированно локальная сеть (Wi-Fi)
+    if (dt < 250) isWifi = true;
+  } catch (e) {
+    // если ошибка — ничего не делаем
+  }
+
+  // --- 2) Если Wi-Fi — показываем баннер и скрываем кнопки ---
+  if (isWifi) {
     banner.style.display = "block";
 
-    // Скрыть кнопки
-    btns.forEach(b => {
-      if(b.innerText.includes("Подключиться") ||
-         b.innerText.includes("QR") ||
-         b.innerText.includes("Скопировать"))
-      {
+    buttons.forEach(b => {
+      const f = b.getAttribute("onclick") || "";
+
+      // скрываем ТОЛЬКО эти 3 кнопки:
+      if (
+        f.includes("autoConnect") ||
+        f.includes("showQR") ||
+        f.includes("copyPass")
+      ) {
         b.style.display = "none";
       }
     });
 
-    // Скрыть QR если открыт
-    document.getElementById("qrBox").style.display = "none";
+    // скрыть QR если был открыт
+    if (qrBox) qrBox.style.display = "none";
   }
 }
 
