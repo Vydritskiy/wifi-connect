@@ -573,14 +573,16 @@ window.saveConfig = saveConfig;
 
 /* ---------- INIT ---------- */
 
-window.addEventListener("load", () => {
+window.addEventListener("load", async () => {
   recalcWidth();
   applyConfigToUI();
   updateOnlineStatus();
   updateHeroArt();
   fetchWeather();
-  speedTest();
-  detectAlreadyConnected();
+
+  await speedTest();  // сначала спидтест
+  detectAlreadyConnected(); // потом проверка подключения
 });
+
 
 window.addEventListener("resize", recalcWidth);
