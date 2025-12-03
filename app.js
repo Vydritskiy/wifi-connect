@@ -47,7 +47,6 @@ const helperText    = document.getElementById("helperText");
 const netStatus     = document.getElementById("netStatus");
 const dots          = document.querySelectorAll(".dots span");
 const welcomeEl     = document.getElementById("welcomeText");
-const heroArtEl     = document.getElementById("heroArt");
 const adminPanelEl  = document.getElementById("adminPanel");
 const weatherBgEl   = document.getElementById("weatherBg");
 
@@ -100,27 +99,6 @@ function getSsidForBand(band){
 }
 function getCurrentSsid(){
   return getSsidForBand(getCurrentBand());
-}
-
-const HERO_ART = {
-  "5":  "icons/hero_r2d5.svg",
-  "24": "icons/hero_r2d2.svg"
-};
-
-function updateHeroArt(){
-  if(!heroArtEl) return;
-  const band = getCurrentBand();
-  const src = HERO_ART[band] || HERO_ART["5"];
-  const current = heroArtEl.getAttribute("src") || "";
-  if(current === src) return;
-
-  heroArtEl.classList.add("fade-enter");
-  setTimeout(()=>{
-    heroArtEl.src = src;
-    requestAnimationFrame(()=>{
-      heroArtEl.classList.remove("fade-enter");
-    });
-  },200);
 }
 
 /* ---------- Time banner ---------- */
@@ -429,7 +407,6 @@ track.addEventListener("transitionend", e=>{
     track.style.transition="transform 0.7s cubic-bezier(.22,.61,.36,1)";
   }
   updateMeta();
-  updateHeroArt();
   isAnimating=false;
 });
 
