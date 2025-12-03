@@ -429,6 +429,7 @@ track.addEventListener("transitionend", e=>{
     track.style.transition="transform 0.7s cubic-bezier(.22,.61,.36,1)";
   }
   updateMeta();
+  updateHeroArt();
   isAnimating=false;
 });
 
