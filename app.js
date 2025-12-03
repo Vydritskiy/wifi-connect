@@ -8,7 +8,7 @@ const defaultConfig = {
   city: "Kyiv",
 
   // OpenWeather key
-  weatherApiKey: "a6bfa1313f42de95ed0d1c270d242040"
+  weatherApiKey: "6530afae9a05d8f6e1c997682469a69d"
 };
 
 let CONFIG = loadConfig();
