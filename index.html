@@ -22,6 +22,11 @@
 
     <div class="card">
 
+      <!-- верхний арт-дроид (по сети) -->
+      <div class="hero-art">
+        <img id="heroArt" src="icons/hero_r2d5.svg" alt="Wi-Fi droid art">
+      </div>
+
       <!-- карусель сетей -->
       <div class="carousel-shell">
         <div class="carousel" id="carousel">
@@ -78,10 +83,6 @@
       <button class="btn" onclick="showQR()">Показать QR-код</button>
       <button class="btn" onclick="copyPass()">Скопировать пароль</button>
       <button class="btn" onclick="openMaps()">Как добраться 🚕</button>
-      <!-- НЕОНОВАЯ ПЛАШКА ПРИ ПОДКЛЮЧЕНИИ -->
-      <div class="connected-banner" id="connectedBanner">
-       <span>📶 Вы уже подключены к сети Wi-Fi</span>
-      </div>
 
       <!-- QR -->
       <div class="qr" id="qrBox">
@@ -92,10 +93,8 @@
       <div class="helper" id="helperText"></div>
       <div class="status" id="netStatus"></div>
 
-      <!-- нижний блок -->
+      <!-- нижний блок: баннер + погода -->
       <div class="bottom-section">
-
-        <!-- Баннер времени суток -->
         <div class="time-banner" id="timeBanner">
           <div class="time-banner-art" id="timeBannerArt"></div>
           <div class="time-banner-text">
@@ -104,41 +103,23 @@
           </div>
         </div>
 
-        <!-- SUPER WEATHER + SPEED CARD -->
-        <div class="super-card" id="superCard">
-
-          <!-- Верхняя строка -->
-          <div class="super-top">
-            <div class="super-city" id="superCity">Kyiv</div>
-            <div class="super-cond" id="superCond">—</div>
-                      </div>
-
-          <!-- Температура -->
-          <div class="super-temp" id="superTemp">—°C</div>
-          <div class="super-meta" id="superMeta"></div>
-
-          <div class="super-divider"></div>
-
-          <!-- Speed Test -->
-          <div class="super-speed-row">
-            <span>Download</span>
-            <span id="superDown">—</span>
+        <div class="weather-card" id="weatherCard">
+          <div class="weather-row">
+            <span class="weather-city" id="weatherCity"></span>
+            <span class="weather-main" id="weatherMain"></span>
           </div>
 
-          <div class="super-speed-row">
-            <span>Upload</span>
-            <span id="superUp">—</span>
+          <div class="weather-row weather-middle">
+            <div class="weather-temp-block">
+              <div class="weather-temp" id="weatherTemp"></div>
+              <div class="weather-meta" id="weatherMeta"></div>
+            </div>
+
+            <div class="weather-icon-wrap">
+              <div class="weather-icon" id="weatherIcon"></div>
+            </div>
           </div>
-
-          <div class="super-speed-row">
-  <span>Ping</span>
-  <span id="superPing">— ms</span>
-</div>
-
-
-          <div class="super-status" id="superStatus">Измерение…</div>
         </div>
-
       </div>
 
     </div>
