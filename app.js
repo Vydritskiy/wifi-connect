@@ -489,7 +489,6 @@ function saveConfig(){
   CONFIG.ssid5=document.getElementById("admSsid5").value||defaultConfig.ssid5;
   CONFIG.ssid24=document.getElementById("admSsid24").value||defaultConfig.ssid24;
   CONFIG.pass=document.getElementById("admPass").value||defaultConfig.pass;
-  CONFIG.city=document.getElementById("admCity").value||defaultConfig.city;
 
   saveConfigToStorage();
   applyConfigToUI();
