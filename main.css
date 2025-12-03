@@ -150,12 +150,13 @@ h1 {
 }
 .hero-art img {
   width: auto;
-  max-height: 250px; /* Увеличиваем для более крупной иконки */
-  height: 100%;
+  max-height: 260px; /* теперь дроид реально будет большим */
+  height: auto;
   margin: 0 auto;
   display: block;
   object-fit: contain;
 }
+
 
 /* CAROUSEL */
 .carousel-shell {
