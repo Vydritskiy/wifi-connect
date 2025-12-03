@@ -5,7 +5,6 @@ const defaultConfig = {
   pass: "Jgthfnbdysq1913",
   welcome: "Добро пожаловать! Чувствуй себя как дома 🧡",
   mapsUrl: "https://www.google.com/maps/place/вулиця+Андрія+Малишка,+31А,+Київ",
-  city: "Kyiv",
 
   // OpenWeather key
   weatherApiKey: "a6bfa1313f42de95ed0d1c270d242040"
@@ -192,6 +191,22 @@ function updateTimeBanner(){
   artEl.style.backgroundImage = "url("+(lastWeatherKind==="snow"?"icons/hero_r2d2.svg":"icons/hero_r2d5.svg")+")";
 
   updateWeatherBackground();
+}
+
+async function detectCityFromDevice(){
+  try{
+    const res = await fetch("https://ipapi.co/json/");
+    const data = await res.json();
+
+    if(data && data.city){
+      CONFIG.city = data.city;
+      console.log("Город определён автоматически:", CONFIG.city);
+    } else {
+      CONFIG.city = defaultConfig.city;
+    }
+  }catch(e){
+    CONFIG.city = defaultConfig.city;
+  }
 }
 
 /* ---------- Weather API ---------- */
@@ -556,7 +571,9 @@ window.addEventListener("load", ()=>{
   applyConfigToUI();
   updateHeroArt();
   updateTimeBanner();
+  detectCityFromDevice().then(() => {
   fetchWeather();
+});
   runSpeedTest();
   checkWifiConnection();
 });
