@@ -1,0 +1,91 @@
+/* =========================================
+   CAROUSEL.CSS — карусель сетей
+   ========================================= */
+
+.carousel-shell{
+  position:relative;
+}
+
+.carousel{
+  position:relative;
+  height:340px;
+  overflow:hidden;
+}
+
+.track{
+  display:flex;
+  height:100%;
+  transition:transform .7s cubic-bezier(.22,.61,.36,1);
+}
+
+.slide{
+  flex:0 0 100%;
+  height:100%;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
+
+.slide-card{
+  width:100%;
+  max-width:480px;
+  height:260px;
+  border-radius:32px;
+  padding:26px 28px 20px;
+  background:radial-gradient(circle at top,#2b184f,#0b021e);
+  border:1px solid rgba(190,155,255,0.7);
+  box-shadow:
+     0 0 0 1px rgba(80,40,160,0.7),
+     0 20px 40px rgba(0,0,0,0.8);
+
+  display:flex;
+  flex-direction:column;
+  justify-content:space-between;
+}
+
+.slide-inner img{
+  width:120px;
+  margin-bottom:10px;
+  filter:drop-shadow(0 0 18px rgba(170,140,255,0.7));
+}
+
+/* точки */
+
+.dots{
+  text-align:center;
+  margin-top:8px;
+}
+
+.dots span{
+  width:10px;
+  height:10px;
+  margin:0 4px;
+  border-radius:50%;
+  display:inline-block;
+  background:#5d4f94;
+}
+
+.dots span.active{
+  background:var(--accent);
+  box-shadow:0 0 10px var(--accent);
+}
+
+/* стрелки */
+
+.nav-arrow{
+  position:absolute;
+  top:50%;
+  transform:translateY(-50%);
+  width:52px;
+  height:52px;
+  border-radius:50%;
+  background:rgba(0,0,0,0.55);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  cursor:pointer;
+  z-index:20;
+}
+
+.nav-arrow.left{ left:-26px; }
+.nav-arrow.right{ right:-26px; }
