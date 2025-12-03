@@ -278,42 +278,47 @@ async function runSpeedTest(){
 
   superStatus.textContent = "Измерение…";
 
-  /* PING */
+  /* ---------- PING ---------- */
   let ping = 0;
   try{
     const t0 = performance.now();
-    await fetch("https://cors.eu.org/", { mode:"no-cors" });
+    await fetch("https://cloudflare.com", { mode:"no-cors" });
     ping = Math.round(performance.now() - t0);
   }catch{}
   superPing.textContent = ping + " ms";
 
-  /* DOWNLOAD */
-  let down=0;
+  /* ---------- DOWNLOAD ---------- */
+  let down = 0;
   try{
-    const size=1000000;
-    const t0=performance.now();
-    await fetch("https://speed.hetzner.de/1MB.bin");
-    const t1=performance.now();
-    down = Math.round((size/((t1-t0)/1000))/1024/1024);
+    const size = 1000000;
+    const t0 = performance.now();
+    await fetch("https://speed.cloudflare.com/__down?bytes=1000000");
+    const t1 = performance.now();
+    down = Math.round((size / ((t1 - t0)/1000)) / 1024 / 1024);
   }catch{}
   superDown.textContent = down + " МБ/с";
 
-  /* UPLOAD */
-  let up=0;
+  /* ---------- UPLOAD ---------- */
+  let up = 0;
   try{
-    const data=new Uint8Array(200000);
-    const t0=performance.now();
-    await fetch("https://httpbin.org/post",{ method:"POST", body:data });
-    const t1=performance.now();
-    up = Math.round((200000/((t1-t0)/1000))/1024/1024);
+    const data = new Uint8Array(300000); 
+    const t0 = performance.now();
+    await fetch("https://speed.cloudflare.com/__up", {
+      method: "POST",
+      body: data
+    });
+    const t1 = performance.now();
+    up = Math.round((300000 / ((t1 - t0)/1000)) / 1024 / 1024);
   }catch{}
   superUp.textContent = up + " МБ/с";
 
-  if(down>40) superStatus.textContent="Отлично 👍";
-  else if(down>15) superStatus.textContent="Хорошо 🙂";
-  else if(down>5) superStatus.textContent="Средне 😐";
-  else superStatus.textContent="Плохо 😢";
+  /* ---------- статус ---------- */
+  if(down > 40) superStatus.textContent = "Отлично 👍";
+  else if(down > 15) superStatus.textContent = "Хорошо 🙂";
+  else if(down > 5) superStatus.textContent = "Средне 😐";
+  else superStatus.textContent = "Плохо 😢";
 }
+
 
 /* ---------- UI config ---------- */
 function applyConfigToUI(){
