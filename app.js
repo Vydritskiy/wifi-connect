@@ -566,20 +566,23 @@ async function checkWifiConnection() {
   index = (oldAndroid || oldIOS) ? 2 : 1;
 })();
 
-window.addEventListener("load", () => {
+window.addEventListener("load", async () => {
   recalcWidth();
 
-  detectCityFromDevice().then(() => {
-    // теперь город точно известен
-    applyConfigToUI();
-    updateHeroArt();
-    updateTimeBanner();
-    fetchWeather();
-  });
+  // 1. ЖДЁМ автоматическое определение города
+  await detectCityFromDevice();
 
+  // 2. Теперь UI может обновляться
+  applyConfigToUI();
+  updateHeroArt();
+  updateTimeBanner();
+  fetchWeather();
+
+  // 3. Эти функции не завязаны на CONFIG.city
   runSpeedTest();
   checkWifiConnection();
 });
+
 
 window.addEventListener("resize", recalcWidth);
 
