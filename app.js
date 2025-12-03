@@ -427,6 +427,8 @@ async function detectAlreadyConnected() {
     if (helper) {
       const tpl = t("alreadyConnectedTo");
       helper.innerHTML = tpl.replace("{ssid}", getCurrentSsid());
+      document.body.classList.add("connected");
+
     }
 
     const autoBtn = document.getElementById("btnAuto");
