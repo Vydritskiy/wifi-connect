@@ -4,23 +4,30 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Wi-Fi Connect</title>
-  <link rel="icon" type="image/svg+xml" href="icons/fav/favicon_droid_round_smirk.svg">
-  <link rel="manifest" href="manifest.json">
-  <link rel="stylesheet" href="css/reset.css">
-  <link rel="stylesheet" href="css/core.css">
-  <link rel="stylesheet" href="css/weather.css">
-  <link rel="stylesheet" href="css/cards.css">
-  <link rel="stylesheet" href="css/carousel.css">
-  <link rel="stylesheet" href="css/admin.css">
 
+  <!-- Иконка -->
+  <link rel="icon" type="image/svg+xml" href="icons/fav/favicon_droid_round_smirk.svg">
+
+  <!-- PWA manifest -->
+  <link rel="manifest" href="manifest.json">
+
+  <!-- CSS-файлы (в правильном порядке) -->
+  <link rel="stylesheet" href="reset.css">
+  <link rel="stylesheet" href="core.css">
+  <link rel="stylesheet" href="carousel.css">
+  <link rel="stylesheet" href="cards.css">
+  <link rel="stylesheet" href="weather.css">
+  <link rel="stylesheet" href="admin.css">
+  <link rel="stylesheet" href="main.css">
 </head>
+
 <body>
 
-  <!-- Анимированный фон по погоде -->
+  <!-- Погодный фон -->
   <div class="weather-bg" id="weatherBg"></div>
 
   <!-- Кнопка админки -->
-  <div class="admin-toggle" onclick="toggleAdmin()">⚙️</div>
+  <div class="admin-toggle" id="btnAdminToggle">⚙️</div>
 
   <div class="wrapper">
     <div class="welcome" id="welcomeText">Добро пожаловать! Чувствуй себя как дома 🧡</div>
@@ -28,7 +35,7 @@
 
     <div class="card">
 
-      <!-- карусель сетей -->
+      <!-- КАРУСЕЛЬ -->
       <div class="carousel-shell">
         <div class="carousel" id="carousel">
           <div class="track" id="track">
@@ -65,10 +72,10 @@
         </div>
 
         <!-- стрелки -->
-        <div class="nav-arrow left" onclick="prevSlide()">
+        <div class="nav-arrow left" id="btnPrev">
           <img src="icons/arrow_left.svg" alt="">
         </div>
-        <div class="nav-arrow right" onclick="nextSlide()">
+        <div class="nav-arrow right" id="btnNext">
           <img src="icons/arrow_right.svg" alt="">
         </div>
       </div>
@@ -80,13 +87,14 @@
       </div>
 
       <!-- кнопки -->
-      <button class="btn" onclick="autoConnect()">Подключиться автоматически (Android)</button>
-      <button class="btn" onclick="showQR()">Показать QR-код</button>
-      <button class="btn" onclick="copyPass()">Скопировать пароль</button>
-      <button class="btn" onclick="openMaps()">Как добраться 🚕</button>
-      <!-- НЕОНОВАЯ ПЛАШКА ПРИ ПОДКЛЮЧЕНИИ -->
+      <button class="btn" id="btnAutoConnect">Подключиться автоматически (Android)</button>
+      <button class="btn" id="btnShowQR">Показать QR-код</button>
+      <button class="btn" id="btnCopyPass">Скопировать пароль</button>
+      <button class="btn" id="btnOpenMaps">Как добраться 🚕</button>
+
+      <!-- НЕОНОВАЯ ПЛАШКА -->
       <div class="connected-banner" id="connectedBanner">
-       <span>📶 Вы уже подключены к сети Wi-Fi</span>
+        <span>📶 Вы уже подключены к сети Wi-Fi</span>
       </div>
 
       <!-- QR -->
@@ -113,19 +121,16 @@
         <!-- SUPER WEATHER + SPEED CARD -->
         <div class="super-card" id="superCard">
 
-          <!-- Верхняя строка -->
           <div class="super-top">
             <div class="super-city" id="superCity">Kyiv</div>
             <div class="super-cond" id="superCond">—</div>
-                      </div>
+          </div>
 
-          <!-- Температура -->
           <div class="super-temp" id="superTemp">—°C</div>
           <div class="super-meta" id="superMeta"></div>
 
           <div class="super-divider"></div>
 
-          <!-- Speed Test -->
           <div class="super-speed-row">
             <span>Download</span>
             <span id="superDown">—</span>
@@ -137,14 +142,13 @@
           </div>
 
           <div class="super-speed-row">
-  <span>Ping</span>
-  <span id="superPing">— ms</span>
-</div>
-
+            <span>Ping</span>
+            <span id="superPing">— ms</span>
+          </div>
 
           <div class="super-status" id="superStatus">Измерение…</div>
-        </div>
 
+        </div>
       </div>
 
     </div>
@@ -152,9 +156,9 @@
 
   <!-- Мини-админка -->
   <div class="admin-panel" id="adminPanel">
-    <div class="admin-backdrop" onclick="toggleAdmin()"></div>
+    <div class="admin-backdrop" id="btnAdminBackdrop"></div>
     <div class="admin-inner">
-      <div class="admin-close" onclick="toggleAdmin()">✕</div>
+      <div class="admin-close" id="btnAdminClose">✕</div>
       <h2>Настройки для хозяина</h2>
 
       <div class="admin-row">
@@ -166,6 +170,7 @@
         <label for="admSsid5">Имя сети 5 GHz</label>
         <input id="admSsid5" type="text" placeholder="r2d5">
       </div>
+
       <div class="admin-row">
         <label for="admSsid24">Имя сети 2.4 GHz</label>
         <input id="admSsid24" type="text" placeholder="r2d2">
@@ -177,13 +182,18 @@
       </div>
 
       <div class="admin-actions">
-        <button class="admin-btn reset" onclick="resetConfig()">Сбросить по умолчанию</button>
-        <button class="admin-btn save" onclick="saveConfig()">Сохранить</button>
+        <button class="admin-btn reset" id="btnAdminReset">Сбросить по умолчанию</button>
+        <button class="admin-btn save" id="btnAdminSave">Сохранить</button>
       </div>
+
     </div>
   </div>
 
+  <!-- QR библиотека -->
   <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
-  <script src="app.js"></script>
+
+  <!-- Главный модуль -->
+  <script type="module" src="js/app.js"></script>
+
 </body>
 </html>
