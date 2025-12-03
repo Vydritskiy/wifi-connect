@@ -257,6 +257,7 @@ body{
 /* ---------- Общий layout ---------- */
 
 .wrapper{
+  min-height:100%;
   max-width:520px;
   margin:40px auto;
   padding:16px;
