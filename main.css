@@ -97,11 +97,14 @@ h1 {
   opacity: 0.92;
 }
 
-@media (max-width: 768px) {
-  h1 {
-    font-size: 18px; /* Меньше для мобильных устройств */
+@media (min-width: 768px) {
+  #btnAuto,
+  #btnQR,
+  #btnCopy {
+    display: none !important;
   }
 }
+
 
 
 .welcome {
