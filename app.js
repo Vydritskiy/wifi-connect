@@ -566,14 +566,17 @@ async function checkWifiConnection() {
   index = (oldAndroid || oldIOS) ? 2 : 1;
 })();
 
-window.addEventListener("load", ()=>{
+window.addEventListener("load", () => {
   recalcWidth();
-  applyConfigToUI();
-  updateHeroArt();
-  updateTimeBanner();
+
   detectCityFromDevice().then(() => {
-  fetchWeather();
-});
+    // теперь город точно известен
+    applyConfigToUI();
+    updateHeroArt();
+    updateTimeBanner();
+    fetchWeather();
+  });
+
   runSpeedTest();
   checkWifiConnection();
 });
