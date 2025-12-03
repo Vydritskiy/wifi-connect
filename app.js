@@ -290,34 +290,41 @@ async function runSpeedTest(){
   /* ---------- DOWNLOAD ---------- */
   let down = 0;
   try{
-    const size = 1000000;
+    const size = 20000000; // 20 MB
     const t0 = performance.now();
-    await fetch("https://speed.cloudflare.com/__down?bytes=1000000");
+    await fetch(`https://speed.cloudflare.com/__down?bytes=${size}`);
     const t1 = performance.now();
-    down = Math.round((size / ((t1 - t0)/1000)) / 1024 / 1024);
+    down = (size / ((t1 - t0)/1000)) / 1024 / 1024;
+    down = down.toFixed(1);
   }catch{}
   superDown.textContent = down + " МБ/с";
 
   /* ---------- UPLOAD ---------- */
   let up = 0;
   try{
-    const data = new Uint8Array(300000); 
+    const sizeUp = 1000000; // 1 MB upload
+    const data = new Uint8Array(sizeUp);
     const t0 = performance.now();
     await fetch("https://speed.cloudflare.com/__up", {
       method: "POST",
       body: data
     });
     const t1 = performance.now();
-    up = Math.round((300000 / ((t1 - t0)/1000)) / 1024 / 1024);
+    up = (sizeUp / ((t1 - t0)/1000)) / 1024 / 1024;
+    up = up.toFixed(1);
   }catch{}
   superUp.textContent = up + " МБ/с";
 
   /* ---------- статус ---------- */
-  if(down > 40) superStatus.textContent = "Отлично 👍";
-  else if(down > 15) superStatus.textContent = "Хорошо 🙂";
-  else if(down > 5) superStatus.textContent = "Средне 😐";
-  else superStatus.textContent = "Плохо 😢";
+  const d = parseFloat(down);
+
+  if(d > 80) superStatus.textContent = "🐉 Максимум скорости";
+  else if(d > 40) superStatus.textContent = "🔥 Очень быстро";
+  else if(d > 20) superStatus.textContent = "⚡ Нормально";
+  else if(d > 5) superStatus.textContent = "🙂 Приемлемо";
+  else superStatus.textContent = "🐌 Медленно";
 }
+
 
 
 /* ---------- UI config ---------- */
