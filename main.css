@@ -310,7 +310,8 @@ h1 {
 
 /* BOTTOM SECTION */
 .bottom-section {
-  margin-top: 6px;
+  margin-top: 0;
+  padding-top: 4px;
 }
 
 /* WEATHER CARD + SPEED */
@@ -338,8 +339,8 @@ h1 {
   justify-content: flex-start;
 }
 .weather-icon {
-  width: 72px;
-  height: 72px;
+  width: 88px;
+  height: 88px;
   border-radius: 20px;
   background: radial-gradient(circle at top, #ffdf73, #ff9d42);
   position: relative;
@@ -413,11 +414,11 @@ h1 {
 /* SPEED внутри погоды */
 .speed-card {
   margin-top: 4px;
-  border-radius: 18px;
-  padding: 7px 10px 8px;
-  background: rgba(4, 0, 40, 0.75);
-  border: 1px solid rgba(180, 155, 255, 0.4);
+  padding: 6px 0;
+  background: transparent;   /* единая карточка */
+  border: none;              /* убираем лишнюю рамку */
 }
+
 .speed-title {
   font-size: 13px;
   margin-bottom: 4px;
