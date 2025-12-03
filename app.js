@@ -528,6 +528,38 @@ function resetConfig(){
   toggleAdmin();
 }
 
+function checkWifiConnection(){
+  const banner = document.getElementById("connectedBanner");
+  const btns = document.querySelectorAll(".btn");
+
+  // Если браузер поддерживает navigator.connection
+  const conn = navigator.connection || navigator.mozConnection || navigator.webkitConnection;
+
+  // Признаки Wi-Fi
+  const isWifi =
+    (conn && conn.type === "wifi") ||
+    (conn && conn.effectiveType && (conn.effectiveType === "wifi")) ||
+    navigator.userAgent.includes("iPhone") || navigator.userAgent.includes("Android");
+
+  if(isWifi){
+    // Показать баннер
+    banner.style.display = "block";
+
+    // Скрыть кнопки
+    btns.forEach(b => {
+      if(b.innerText.includes("Подключиться") ||
+         b.innerText.includes("QR") ||
+         b.innerText.includes("Скопировать"))
+      {
+        b.style.display = "none";
+      }
+    });
+
+    // Скрыть QR если открыт
+    document.getElementById("qrBox").style.display = "none";
+  }
+}
+
 /* ---------- Startup ---------- */
 
 (function autoPick(){
@@ -541,6 +573,7 @@ window.addEventListener("load", ()=>{
   updateTimeBanner();
   fetchWeather();
   runSpeedTest();
+  checkWifiConnection();
 });
 
 window.addEventListener("resize", recalcWidth);
