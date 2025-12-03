@@ -1,0 +1,62 @@
+/* =========================================
+   CARDS.CSS — карточки, кнопки, баннеры
+   ========================================= */
+
+.card{
+  background:var(--card-bg);
+  border-radius:28px;
+  padding:24px 24px 22px;
+  box-shadow:0 22px 70px rgba(0,0,0,0.6);
+  position:relative;
+  z-index:1;
+}
+
+.btn{
+  width:100%;
+  padding:15px;
+  border-radius:18px;
+  border:none;
+  font-size:16px;
+  background:linear-gradient(135deg,var(--accent),var(--accent2));
+  color:white;
+  margin-top:12px;
+  cursor:pointer;
+  box-shadow:0 12px 32px rgba(0,0,0,0.55);
+  transition:.12s;
+}
+
+.connected-banner{
+  display:none;
+  width:100%;
+  padding:16px 18px;
+  border-radius:20px;
+  margin-top:14px;
+
+  background:linear-gradient(135deg,var(--accent),var(--accent2));
+  color:white;
+
+  animation:connectedGlow 3s ease-in-out infinite;
+}
+
+.super-card{
+  border-radius:18px;
+  padding:14px 16px 16px;
+  background:rgba(255,255,255,0.02);
+  border:1px solid rgba(200,170,255,0.35);
+  box-shadow:0 12px 32px rgba(0,0,0,0.55);
+  backdrop-filter:blur(4px);
+  display:flex;
+  flex-direction:column;
+  gap:8px;
+}
+
+/* time-banner */
+.time-banner{
+  border-radius:18px;
+  padding:10px 14px;
+  background:rgba(255,255,255,0.02);
+  border:1px dashed rgba(200,170,255,0.55);
+  display:flex;
+  align-items:center;
+  gap:10px;
+}
