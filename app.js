@@ -410,13 +410,9 @@ async function detectAlreadyConnected() {
 
   // ждём окончания первого спидтеста
   await new Promise(r => setTimeout(r, 4000));
-
-  const conn = navigator.connection || navigator.webkitConnection;
-  const isWifi = conn && (conn.type === "wifi" || conn.effectiveType === "wifi");
-
+  const ok = navigator.onLine && down >= 5;
   const down = lastDownMbps || 0;
-  const ok = navigator.onLine && down >= 5 && (isWifi || !conn);
-
+ 
   if (ok) {
     if (banner) {
       banner.style.display = "block";
@@ -519,7 +515,7 @@ function copyPass() {
 }
 
 function openMaps() {
-  window.open(defaultConfig.mapsUrl, "_blank");
+  window.open(CONFIG.mapsUrl || defaultConfig.mapsUrl, "_blank");
 }
 
 window.showQR = showQR;
