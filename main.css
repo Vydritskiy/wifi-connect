@@ -142,13 +142,13 @@ h1 {
   align-items: center;
 }
 .hero-art img {
-  width: auto;
-  max-height: 180px; /* Adjusted height for both PC and mobile */
-  height: 100%;
-  margin: 0 auto;
-  display: block;
+  width: 100%;
+  max-width: 380px;
+  height: auto;
+  max-height: 340px;
   object-fit: contain;
 }
+
 
 /* CAROUSEL */
 .carousel-shell {
