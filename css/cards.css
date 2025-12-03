@@ -38,6 +38,13 @@
   animation:connectedGlow 3s ease-in-out infinite;
 }
 
+.connected-banner.show{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:8px;             /* по желанию — отступ между иконкой и текстом */
+}
+
 .super-card{
   border-radius:18px;
   padding:14px 16px 16px;
