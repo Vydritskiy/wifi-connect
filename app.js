@@ -775,5 +775,6 @@ window.addEventListener("load", ()=>{
   updateHeroArt();
   updateTimeBanner();
   fetchWeather();
+  runSpeedTest();
 });
 window.addEventListener("resize", recalcWidth);
