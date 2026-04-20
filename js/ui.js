@@ -43,6 +43,7 @@ export function goTo(newIndex) {
   clearTimeout(window.__carouselUnlock);
   window.__carouselUnlock = setTimeout(() => {
     updateMeta();
+    applyConfigToUI();
     unlockCarousel();
   }, 850);
 }
