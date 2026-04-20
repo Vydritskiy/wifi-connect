@@ -1,0 +1,154 @@
+/* =========================================
+   WEATHER.CSS — погода и анимации
+   ========================================= */
+
+/* Базовый погодный фон */
+.weather-bg{
+  position:absolute;
+  top:0;
+  left:0;
+
+  width:100%;
+  min-height:100%;
+  height:100%;
+  pointer-events:none;
+  overflow:hidden;
+
+  z-index:0;
+
+  background:radial-gradient(circle at top,#120624,#05000f);
+}
+
+.weather-bg::before,
+.weather-bg::after{
+  content:"";
+  position:absolute;
+  inset:-40%;
+  pointer-events:none;
+}
+
+/* ===== ЯСНО — ДЕНЬ ===== */
+.weather-bg.clear-day{
+  background:radial-gradient(circle at top,#37206a,#05000f 70%);
+}
+
+.weather-bg.clear-day::before{
+  background:
+    radial-gradient(circle at 15% 15%,rgba(255,240,120,0.8),transparent 55%),
+    radial-gradient(circle at 85% 25%,rgba(255,255,255,0.15),transparent 60%);
+}
+
+/* ===== ЯСНО — НОЧЬ ===== */
+
+.weather-bg.clear-night{
+  background:radial-gradient(circle at top,#090021,#000013 70%);
+}
+
+.weather-bg.clear-night::before{
+  background-image:
+    radial-gradient(2px 2px at 10% 20%,#fff,transparent),
+    radial-gradient(2px 2px at 25% 35%,#fff,transparent),
+    radial-gradient(2px 2px at 40% 15%,#fff,transparent),
+    radial-gradient(2px 2px at 70% 30%,#fff,transparent),
+    radial-gradient(2px 2px at 85% 18%,#fff,transparent),
+    radial-gradient(2px 2px at 60% 60%,#fff,transparent),
+    radial-gradient(2px 2px at 30% 70%,#fff,transparent);
+
+  opacity:.8;
+  animation:bgStarsDrift 40s linear infinite;
+}
+
+@keyframes bgStarsDrift{
+  0%{ transform:translate3d(0,0,0); }
+  100%{ transform:translate3d(-40px,40px,0); }
+}
+
+/* ===== ОБЛАКА — ДЕНЬ ===== */
+
+.weather-bg.clouds-day{
+  background:radial-gradient(circle at top,#2e184f,#050010 70%);
+}
+
+.weather-bg.clouds-day::before{
+  background:
+    radial-gradient(circle at 20% 20%,rgba(255,255,255,0.25),transparent 60%),
+    radial-gradient(circle at 60% 25?,rgba(250,250,255,0.24),transparent 65%),
+    radial-gradient(circle at 40% 40?,rgba(255,255,255,0.2),transparent 70%);
+
+  filter:blur(2px);
+  animation:bgCloudsDrift 45s linear infinite;
+}
+
+@keyframes bgCloudsDrift{
+  0%{ transform:translateX(0); }
+  100%{ transform:translateX(-80px); }
+}
+
+/* ===== ДОЖДЬ ===== */
+
+.weather-bg.rain{
+  background:radial-gradient(circle at top,#0a0a2d,#02000f 70%);
+}
+
+.weather-bg.rain::before{
+  background-image:url("icons/weather/rain.webp");
+  opacity:.45;
+  animation:rainFall .8s linear infinite;
+}
+
+@keyframes rainFall{
+  0%{ background-position:0 -200px; }
+  100%{ background-position:0 200px; }
+}
+
+/* ===== СНЕГ ===== */
+
+.weather-bg.snow{
+  background:radial-gradient(circle at top,#102040,#04001a 70%);
+}
+
+.weather-bg.snow::before{
+  background-image:url("icons/weather/snow.webp");
+  opacity:.75;
+  animation:snowFall 6s linear infinite;
+}
+
+@keyframes snowFall{
+  0%{ background-position:0 -300px; }
+  100%{ background-position:0 300px; }
+}
+
+/* ===== ГРОЗА ===== */
+
+.weather-bg.thunder{
+  background:radial-gradient(circle at top,#1b0035,#00000a 80%);
+}
+
+.weather-bg.thunder::after{
+  background-image:url("icons/weather/lightning.webp");
+  opacity:0;
+  animation:lightningFlash 5s infinite;
+}
+
+@keyframes lightningFlash{
+  0%,94%,100%{ opacity:0; }
+  95%{ opacity:.8; }
+  97%{ opacity:1; }
+}
+
+/* ===== ТУМАН ===== */
+
+.weather-bg.fog{
+  background:radial-gradient(circle at top,#12072c,#040010 70%);
+}
+
+.weather-bg.fog::before{
+  background-image:url("icons/weather/fog.webp");
+  opacity:.45;
+  animation:fogSlide 50s linear infinite;
+}
+
+@keyframes fogSlide{
+  0%{ background-position:0 0; }
+  100%{ background-position:2000px 0; }
+}
