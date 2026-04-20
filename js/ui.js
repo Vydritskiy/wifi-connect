@@ -56,6 +56,13 @@ export function goTo(newIndex) {
 
   el.track.style.transform =
     `translateX(${-newIndex * slideWidth}px)`;
+
+  // fallback если transitionend не пришёл
+  clearTimeout(window.__carouselUnlock);
+  window.__carouselUnlock = setTimeout(() => {
+    setAnimating(false);
+    updateMeta();
+  }, 800);
 }
 
 /* =========================================
@@ -90,6 +97,7 @@ el.track.addEventListener("transitionend", (e) => {
   }
 
   updateMeta();
+   clearTimeout(window.__carouselUnlock);
   setAnimating(false);
 });
 
