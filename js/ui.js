@@ -187,38 +187,39 @@ function openMaps() {
 
 async function checkWifiConnection() {
   try {
-    const res = await fetch("https://www.google.com/generate_204", {
-      method: "GET",
-      mode: "no-cors",
-      cache: "no-store"
-    });
+    let connected = false;
 
-    // если запрос успешен — считаем, что интернет есть
-    // Но нам нужно проверить, подключён ли человек к нашем SSID?
-    // Прямой способ отсутствует — делаем фейк-фичу через heuristic.
+    // если speedtest показал нормальную скорость
+    if (window.__speedDownMbps >= 8) {
+      connected = true;
+    }
 
-    const ssid = getCurrentSsid();
-    const connected = await heuristicWiFiCheck(ssid);
+    const conn =
+      navigator.connection ||
+      navigator.webkitConnection ||
+      navigator.mozConnection;
+
+    if (conn) {
+      if (
+        conn.type === "wifi" ||
+        conn.effectiveType === "wifi"
+      ) {
+        connected = true;
+      }
+    }
 
     if (connected) {
       el.connectedBanner.classList.add("show");
 
-      // скрыть кнопки
-      el.btnShowQR.style.display = "none";
-      el.btnCopyPass.style.display = "none";
+      // скрываем ТОЛЬКО автоконнект
       el.btnAutoConnect.style.display = "none";
+    } else {
+      el.connectedBanner.classList.remove("show");
+      el.btnAutoConnect.style.display = "";
     }
-  } catch (e) {
-    // игнорируем
-  }
-}
 
-// имитация проверки (на веб-страницах нет API)
-async function heuristicWiFiCheck(ssid) {
-  // Онлайн + страница открыта локально через NFC → почти всегда подключен
-  return navigator.onLine;
+  } catch (e) {}
 }
-
 
 // ========================================================
 // АДМИН-ПАНЕЛЬ
