@@ -163,5 +163,6 @@ function bindTap(node, fn) {
 
 window.addEventListener("resize", recalcWidth);
 applyConfigToUI();
+recalcWidth();
 updateOnlineStatus();
 updateMeta();
