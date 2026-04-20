@@ -85,7 +85,10 @@
   justify-content:center;
   cursor:pointer;
   z-index:20;
+  pointer-events:auto;
+  user-select:none;
+  -webkit-user-select:none;
 }
 
-.nav-arrow.left{ left:-26px; }
-.nav-arrow.right{ right:-26px; }
+.nav-arrow.left{ left:8px; }
+.nav-arrow.right{ right:8px; }
