@@ -1,0 +1,84 @@
+<svg width="420" height="180" viewBox="0 0 420 180" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="r2_bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#1A0F35"/>
+      <stop offset="1" stop-color="#070017"/>
+    </linearGradient>
+    <linearGradient id="r2_body" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#9B75FF"/>
+      <stop offset="1" stop-color="#C5A0FF"/>
+    </linearGradient>
+  </defs>
+
+  <!-- фон-карточка -->
+  <rect x="28" y="18" width="364" height="132" rx="32"
+        fill="url(#r2_bg)" stroke="rgba(190,155,255,0.75)" stroke-width="1.5"/>
+  <rect x="34" y="24" width="352" height="120" rx="28"
+        stroke="rgba(80,40,160,0.85)" stroke-width="1" fill="none"/>
+
+  <!-- звёзды -->
+  <circle cx="80" cy="40" r="1.6" fill="#F3EBFF" opacity="0.8"/>
+  <circle cx="110" cy="58" r="1.4" fill="#C5A0FF" opacity="0.9"/>
+  <circle cx="320" cy="46" r="1.6" fill="#F3EBFF" opacity="0.8"/>
+  <circle cx="290" cy="76" r="1.4" fill="#C5A0FF" opacity="0.8"/>
+  <circle cx="255" cy="38" r="1.6" fill="#F3EBFF" opacity="0.9"/>
+
+  <!-- тень -->
+  <ellipse cx="210" cy="150" rx="62" ry="12" fill="#000" opacity="0.55"/>
+
+  <!-- цилиндрический дроид -->
+  <g transform="translate(150,32)">
+    <!-- боковые ноги -->
+    <rect x="18" y="64" width="10" height="32" rx="4" fill="#140A26"/>
+    <rect x="92" y="64" width="10" height="32" rx="4" fill="#140A26"/>
+
+    <!-- опоры -->
+    <rect x="24" y="96" width="14" height="10" rx="3" fill="#1B0F35"/>
+    <rect x="80" y="96" width="14" height="10" rx="3" fill="#1B0F35"/>
+
+    <!-- тело -->
+    <rect x="30" y="32" width="56" height="64" rx="18"
+          fill="#F5F7FF" stroke="#3E2A63" stroke-width="1.4"/>
+
+    <!-- вертикальные панели -->
+    <rect x="36" y="40" width="44" height="18" rx="6" fill="#D4DEF8"/>
+    <rect x="36" y="64" width="19" height="19" rx="4" fill="#D4DEF8"/>
+    <rect x="61" y="64" width="19" height="19" rx="4" fill="#D4DEF8"/>
+
+    <!-- синие вставки -->
+    <rect x="38" y="42" width="10" height="14" rx="3" fill="#4754F4"/>
+    <rect x="52" y="42" width="12" height="6" rx="2" fill="#4754F4"/>
+    <rect x="67" y="42" width="11" height="14" rx="3" fill="#4754F4"/>
+
+    <rect x="40" y="68" width="7" height="11" rx="2" fill="#4754F4"/>
+    <rect x="65" y="68" width="7" height="7" rx="2" fill="#4754F4"/>
+
+    <!-- купол -->
+    <path d="M30 40C34 20 44 10 58 10C72 10 82 20 86 40Z"
+          fill="url(#r2_body)"/>
+
+    <!-- тёмная полоса -->
+    <path d="M34 32C38 24 46 20 58 20C70 20 78 24 82 32"
+          stroke="#1A0F35" stroke-width="4" stroke-linecap="round" opacity="0.95"/>
+
+    <!-- глаз + маленький сенсор -->
+    <circle cx="48" cy="30" r="6.5" fill="#0B0714"/>
+    <circle cx="48" cy="30" r="3.3" fill="#A5B4FC"/>
+    <circle cx="68" cy="30" r="3" fill="#F97373"/>
+
+    <!-- контур купола -->
+    <path d="M32 42C36 25 46 16 58 16C70 16 80 25 84 42"
+          stroke="#C5A0FF" stroke-width="1.4" stroke-linecap="round" opacity="0.9"/>
+  </g>
+
+  <!-- мягкие Wi-Fi-дуги -->
+  <g>
+    <path d="M210 24C185 24 163 34 144 53"
+          stroke="url(#r2_body)" stroke-width="2.6" stroke-linecap="round"/>
+    <path d="M210 36C190 36 171 44 156 59"
+          stroke="#D6C5FF" stroke-width="2.1" stroke-linecap="round" opacity="0.9"/>
+    <path d="M210 48C194 48 180 54 170 64"
+          stroke="#BFA2FF" stroke-width="1.8" stroke-linecap="round" opacity="0.85"/>
+    <circle cx="210" cy="58" r="3" fill="#F3EBFF"/>
+  </g>
+</svg>
