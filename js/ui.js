@@ -1,198 +1,198 @@
 /* =========================================
-   UI.JS — управление интерфейсом, каруселью,
-   QR-кодом, кнопками, админкой, startup
+   UI.JS — полностью исправленный
+   Совместим с config.js (setter state fix)
    ========================================= */
 
 import {
-  el,
   CONFIG,
-  saveConfigToStorage,
+  el,
+
   slides,
   REAL_COUNT,
+
   index,
   slideWidth,
   isAnimating,
+
+  setIndex,
+  setAnimating,
+  setSlideWidth,
+
+  getCurrentBand,
+  getCurrentSsid,
+  getSsidForBand,
+
   recalcWidth,
   updateMeta,
-  getCurrentSsid,
-  getCurrentBand
+  applyConfigToUI
 } from "./config.js";
 
-import { runSpeedTest } from "./speedtest.js";
-import { fetchWeather, detectCityFromDevice } from "./weather.js";
+/* =========================================
+   Клоны для бесконечной карусели
+   ========================================= */
+(function initCarouselClones() {
+  if (REAL_COUNT <= 0) return;
 
+  const firstClone = slides[0].cloneNode(true);
+  const lastClone = slides[REAL_COUNT - 1].cloneNode(true);
 
+  el.track.appendChild(firstClone);
+  el.track.insertBefore(lastClone, el.track.firstChild);
+})();
 
-// ========================================================
-// КАРУСЕЛЬ
-// ========================================================
-
-let startX = null;
-let startY = null;
-let draggingMouse = false;
-
-// --- перемотка ---
-function goTo(newIndex) {
+/* =========================================
+   GO TO
+   ========================================= */
+export function goTo(newIndex) {
   if (isAnimating) return;
-  isAnimating = true;
 
-  index = newIndex;
-  el.track.style.transform = `translateX(${-index * slideWidth}px)`;
+  setAnimating(true);
+  setIndex(newIndex);
+
+  el.track.style.transition =
+    "transform 0.7s cubic-bezier(.22,.61,.36,1)";
+
+  el.track.style.transform =
+    `translateX(${-index * slideWidth}px)`;
 }
 
-function nextSlide() { goTo(index + 1); }
-function prevSlide() { goTo(index - 1); }
+/* =========================================
+   NEXT / PREV
+   ========================================= */
+export function nextSlide() {
+  goTo(index + 1);
+}
 
+export function prevSlide() {
+  goTo(index - 1);
+}
 
-// --- бесконечный цикл ---
-el.track.addEventListener("transitionend", () => {
+/* =========================================
+   TRANSITION END
+   ========================================= */
+el.track.addEventListener("transitionend", (e) => {
+  if (e.propertyName !== "transform") return;
+
   if (index === 0) {
     el.track.style.transition = "none";
-    index = REAL_COUNT;
-    el.track.style.transform = `translateX(${-index * slideWidth}px)`;
-    void el.track.offsetWidth;
-    el.track.style.transition = "transform 0.7s cubic-bezier(.22,.61,.36,1)";
+    setIndex(REAL_COUNT);
+    el.track.style.transform =
+      `translateX(${-REAL_COUNT * slideWidth}px)`;
   }
-  else if (index === slides.length - 1) {
+
+  if (index === slides.length - 1) {
     el.track.style.transition = "none";
-    index = 1;
-    el.track.style.transform = `translateX(${-index * slideWidth}px)`;
-    void el.track.offsetWidth;
-    el.track.style.transition = "transform 0.7s cubic-bezier(.22,.61,.36,1)";
+    setIndex(1);
+    el.track.style.transform =
+      `translateX(${-1 * slideWidth}px)`;
   }
 
   updateMeta();
-  isAnimating = false;
+  setAnimating(false);
 });
 
+/* =========================================
+   SWIPE
+   ========================================= */
+let startX = null;
+let startY = null;
 
-// ========================================================
-// СВАЙПЫ
-// ========================================================
-
-function swipeStart(e) {
-  const p = e.touches ? e.touches[0] : e;
-  startX = p.clientX;
-  startY = p.clientY;
-  draggingMouse = !e.touches;
+function touchStart(e) {
+  const t = e.touches[0];
+  startX = t.clientX;
+  startY = t.clientY;
 }
 
-function swipeMove(e) {
-  if (startX === null) return;
+function touchEnd(e) {
+  if (startX == null) return;
 
-  const p = e.touches ? e.touches[0] : e;
-  const dx = p.clientX - startX;
-  const dy = p.clientY - startY;
+  const t = e.changedTouches[0];
+  const dx = t.clientX - startX;
+  const dy = t.clientY - startY;
 
-  // вертикальный свайп — игнорируем
-  if (Math.abs(dy) > Math.abs(dx)) return;
-
-  e.preventDefault();
-}
-
-function swipeEnd(e) {
-  if (startX === null) return;
-  const p = e.changedTouches ? e.changedTouches[0] : e;
-
-  const dx = p.clientX - startX;
-
-  if (dx > 40) prevSlide();
-  else if (dx < -40) nextSlide();
+  if (Math.abs(dx) > Math.abs(dy) && Math.abs(dx) > 45) {
+    if (dx < 0) nextSlide();
+    else prevSlide();
+  }
 
   startX = null;
   startY = null;
-  draggingMouse = false;
 }
 
+if (el.card) {
+  el.card.addEventListener("touchstart", touchStart, { passive: true });
+  el.card.addEventListener("touchend", touchEnd);
+}
 
-// навешиваем события
-el.carousel.addEventListener("touchstart", swipeStart, { passive: true });
-el.carousel.addEventListener("touchmove", swipeMove, { passive: false });
-el.carousel.addEventListener("touchend", swipeEnd);
-
-el.carousel.addEventListener("mousedown", swipeStart);
-document.addEventListener("mousemove", e => draggingMouse && swipeMove(e));
-document.addEventListener("mouseup", swipeEnd);
-
-
-// ========================================================
-// QR-КОД
-// ========================================================
-
+/* =========================================
+   QR
+   ========================================= */
 let qrObj = null;
 
-function showQR() {
-  el.qrBox.classList.toggle("open");
+export function showQR() {
+  if (!el.qrCanvas || !el.qrBox) return;
+
+  const payload =
+    `WIFI:T:WPA;S:${getCurrentSsid()};P:${CONFIG.pass};;`;
 
   if (!qrObj) {
     qrObj = new QRCode(el.qrCanvas, {
-      text: "",
-      width: 220,
-      height: 220
+      width: 200,
+      height: 200
     });
   }
 
-  const ssid = getCurrentSsid();
-  const pass = CONFIG.pass;
+  qrObj.clear();
+  qrObj.makeCode(payload);
 
-  const wifiString = `WIFI:T:WPA;S:${ssid};P:${pass};;`;
-
-  qrObj.makeCode(wifiString);
+  el.qrBox.style.display = "block";
 }
 
+/* =========================================
+   AUTO CONNECT
+   ========================================= */
+export function autoConnect() {
+  location.href =
+    `WIFI:T:WPA;S:${getCurrentSsid()};P:${CONFIG.pass};;`;
+}
 
-// ========================================================
-// КОПИРОВАНИЕ ПАРОЛЯ
-// ========================================================
-
-function copyPass() {
+/* =========================================
+   COPY PASS
+   ========================================= */
+export function copyPass() {
   navigator.clipboard.writeText(CONFIG.pass).then(() => {
-    el.netStatus.textContent = "Пароль скопирован";
-    el.netStatus.classList.add("show");
-    setTimeout(() => el.netStatus.classList.remove("show"), 2000);
+    alert("Пароль скопирован");
   });
 }
 
-
-// ========================================================
-// АВТО-КОННЕКТ (Android)
-// ========================================================
-
-function autoConnect() {
-  const ssid = getCurrentSsid();
-  const pass = CONFIG.pass;
-
-  if (navigator.userAgent.toLowerCase().includes("android")) {
-    window.location.href = `intent://scan/#Intent;scheme=wifi;package=com.android.settings;S.wifi_ssid=${ssid};S.wifi_password=${pass};end`;
-  } else {
-    el.netStatus.textContent = "Эта функция только для Android";
-    el.netStatus.classList.add("show");
-    setTimeout(() => el.netStatus.classList.remove("show"), 2000);
-  }
-}
-
-
-// ========================================================
-// Открытие карт
-// ========================================================
-
-function openMaps() {
+/* =========================================
+   MAPS
+   ========================================= */
+export function openMaps() {
   window.open(CONFIG.mapsUrl, "_blank");
 }
 
+/* =========================================
+   ONLINE STATUS
+   ========================================= */
+export function updateOnlineStatus() {
+  if (!el.netStatus) return;
 
-// ========================================================
-// ПРОВЕРКА ПОДКЛЮЧЕНИЯ К WI-FI
-// ========================================================
+  el.netStatus.textContent = navigator.onLine
+    ? "Статус интернета: онлайн ✅"
+    : "Статус интернета: офлайн ⛔";
+}
 
-async function checkWifiConnection() {
+window.addEventListener("online", updateOnlineStatus);
+window.addEventListener("offline", updateOnlineStatus);
+
+/* =========================================
+   WIFI CHECK
+   Скрывает ТОЛЬКО autoConnect
+   ========================================= */
+export async function checkWifiConnection() {
   try {
     let connected = false;
-
-    // если speedtest показал нормальную скорость
-    if (window.__speedDownMbps >= 8) {
-      connected = true;
-    }
 
     const conn =
       navigator.connection ||
@@ -208,95 +208,52 @@ async function checkWifiConnection() {
       }
     }
 
-    if (connected) {
-      el.connectedBanner.classList.add("show");
-
-      // скрываем ТОЛЬКО автоконнект
-      el.btnAutoConnect.style.display = "none";
-    } else {
-      el.connectedBanner.classList.remove("show");
-      el.btnAutoConnect.style.display = "";
+    if (window.__speedDownMbps >= 8) {
+      connected = true;
     }
 
-  } catch (e) {}
+    if (connected) {
+      if (el.connectedBanner)
+        el.connectedBanner.classList.add("show");
+
+      if (el.btnAutoConnect)
+        el.btnAutoConnect.style.display = "none";
+    } else {
+      if (el.connectedBanner)
+        el.connectedBanner.classList.remove("show");
+
+      if (el.btnAutoConnect)
+        el.btnAutoConnect.style.display = "";
+    }
+
+    updateMeta();
+
+  } catch (e) {
+    console.error("WiFi check error:", e);
+  }
 }
 
-// ========================================================
-// АДМИН-ПАНЕЛЬ
-// ========================================================
-
-function toggleAdmin() {
-  el.adminPanel.classList.add("open");
-
-  el.admWelcome.value = CONFIG.welcome;
-  el.admSsid5.value = CONFIG.ssid5;
-  el.admSsid24.value = CONFIG.ssid24;
-  el.admPass.value = CONFIG.pass;
+/* =========================================
+   ADMIN PANEL
+   ========================================= */
+export function toggleAdmin() {
+  if (!el.adminPanel) return;
+  el.adminPanel.classList.toggle("open");
 }
 
-function closeAdmin() {
-  el.adminPanel.classList.remove("open");
-}
+/* =========================================
+   INIT BUTTONS
+   ========================================= */
+(function bindButtons() {
+  if (el.btnPrev) el.btnPrev.addEventListener("click", prevSlide);
+  if (el.btnNext) el.btnNext.addEventListener("click", nextSlide);
 
-function saveAdminSettings() {
-  CONFIG.welcome = el.admWelcome.value.trim();
-  CONFIG.ssid5 = el.admSsid5.value.trim();
-  CONFIG.ssid24 = el.admSsid24.value.trim();
-  CONFIG.pass = el.admPass.value.trim();
+  if (el.btnShowQR) el.btnShowQR.addEventListener("click", showQR);
+  if (el.btnAutoConnect) el.btnAutoConnect.addEventListener("click", autoConnect);
+  if (el.btnCopyPass) el.btnCopyPass.addEventListener("click", copyPass);
+  if (el.btnOpenMaps) el.btnOpenMaps.addEventListener("click", openMaps);
 
-  saveConfigToStorage();
-
-  location.reload(); // обновляем UI
-}
-
-function resetAdminSettings() {
-  localStorage.removeItem("wifiGuestConfig");
-  location.reload();
-}
-
-
-// ========================================================
-// СТАРТ ПРИЛОЖЕНИЯ
-// ========================================================
-
-async function startup() {
-  recalcWidth();
-  updateMeta();
-
-  await detectCityFromDevice();
-  await fetchWeather();
-  runSpeedTest();
-
-  checkWifiConnection();
-}
-
-// пересчёт ширины при ресайзе
-window.addEventListener("resize", recalcWidth);
-
-
-
-// ========================================================
-// ПРИВЯЗКА ВСЕХ КНОПОК
-// ========================================================
-
-el.btnPrev?.addEventListener("click", prevSlide);
-el.btnNext?.addEventListener("click", nextSlide);
-
-el.btnShowQR?.addEventListener("click", showQR);
-el.btnCopyPass?.addEventListener("click", copyPass);
-el.btnAutoConnect?.addEventListener("click", autoConnect);
-el.btnOpenMaps?.addEventListener("click", openMaps);
-
-el.btnAdminToggle?.addEventListener("click", toggleAdmin);
-el.btnAdminClose?.addEventListener("click", closeAdmin);
-el.btnAdminBackdrop?.addEventListener("click", closeAdmin);
-
-el.btnAdminSave?.addEventListener("click", saveAdminSettings);
-el.btnAdminReset?.addEventListener("click", resetAdminSettings);
-
-
-// ========================================================
-// RUN
-// ========================================================
-
-startup();
+  if (el.btnAdminToggle) el.btnAdminToggle.addEventListener("click", toggleAdmin);
+  if (el.btnAdminClose) el.btnAdminClose.addEventListener("click", toggleAdmin);
+  if (el.btnAdminBackdrop) el.btnAdminBackdrop.addEventListener("click", toggleAdmin);
+})();
