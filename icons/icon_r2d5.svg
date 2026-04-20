@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200">
+<defs>
+  <linearGradient id="g" x1="0%" y1="0%" x2="100%" y2="100%">
+    <stop offset="0%" stop-color="#c79bff"/>
+    <stop offset="100%" stop-color="#8f6bff"/>
+  </linearGradient>
+</defs>
+<rect x="15" y="15" width="170" height="170" rx="32" fill="#161125"/>
+<path d="M60 120a40 40 0 0 1 80 0" fill="none" stroke="url(#g)" stroke-width="14" stroke-linecap="round"/>
+<path d="M75 142a25 25 0 0 1 50 0" fill="none" stroke="url(#g)" stroke-width="14" stroke-linecap="round"/>
+<circle cx="100" cy="162" r="6.5" fill="url(#g)"/>
+<path d="M70 78a30 30 0 0 1 60 0v20H70z" fill="url(#g)"/>
+<circle cx="100" cy="83" r="7" fill="#161125"/>
+<circle cx="100" cy="83" r="3.5" fill="url(#g)"/>
+<text x="100" y="196" fill="url(#g)" font-size="22" text-anchor="middle" font-family="-apple-system,system-ui,sans-serif">r2d5</text>
+</svg>
