@@ -97,14 +97,24 @@ if (el.card) {
 
 export function autoConnect() {
   const ua = navigator.userAgent.toLowerCase();
-  if (!/android/.test(ua)) return;
-
   const ssid = getCurrentSsid();
   const pass = CONFIG.pass;
 
-  const payload = `WIFI:T:WPA;S:${ssid};P:${pass};;`;
+  if (/android/.test(ua)) {
+    const payload = `WIFI:T:WPA;S:${ssid};P:${pass};;`;
+    window.location.href = payload;
+    return;
+  }
 
-  window.location.href = payload;
+  if (/windows/.test(ua)) {
+    if (navigator.clipboard && window.isSecureContext) {
+      navigator.clipboard.writeText(pass);
+      alert(`Выберите сеть ${ssid} в Windows.\nПароль скопирован.`);
+    } else {
+      prompt(`Подключитесь к сети ${ssid}. Скопируйте пароль:`, pass);
+    }
+    return;
+  }
 }
 
 export function copyPass() {
