@@ -134,6 +134,8 @@ export async function fetchWeather() {
 // =========================================
 
 function updateWeatherState(data) {
+  const hour = new Date().getHours();
+  const isNight = hour >= 22 || hour < 6;
   const weather = data.weather?.[0];
   const main = weather?.main?.toLowerCase();
   const id = weather?.id;
