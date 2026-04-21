@@ -9,7 +9,7 @@ export const defaultConfig = {
   pass: "Jgthfnbdysq1913",
   welcome: "Добро пожаловать! Чувствуй себя как дома 🧡",
   mapsUrl: "https://www.google.com/maps/place/вулиця+Андрія+Малишка,+31А,+Київ",
-  weatherApiKey: "a6bfa1313f42de95ed0d1c270d242040",
+  weatherApiKey: "6530afae9a05d8f6e1c997682469a69d",
   city: "Kyiv"
 };
 
