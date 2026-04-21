@@ -1,10 +1,17 @@
-// Главный модуль — точка входа приложения
-// Подключает всё остальное
-
 import "./config.js";
-import "./weather.js";
-import "./speedtest.js";
 import "./ui.js";
 
-// Здесь может быть любая глобальная инициализация, если понадобится в будущем
+import {
+  detectCityFromDevice,
+  fetchWeather
+} from "./weather.js";
 
+import {
+  runSpeedTest
+} from "./speedtest.js";
+
+(async function initApp() {
+  await detectCityFromDevice();
+  await fetchWeather();
+  await runSpeedTest();
+})();
