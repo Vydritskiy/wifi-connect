@@ -5,23 +5,22 @@ import {
   setWeatherState
 } from "./config.js";
 
-/* ===============================
-   Определение города
-================================= */
+/* =========================================
+   Определение города по IP
+========================================= */
 export async function detectCityFromDevice() {
   try {
     const res = await fetch("https://ipapi.co/json/");
     const data = await res.json();
-
     CONFIG.city = data?.city || defaultConfig.city;
   } catch (e) {
     CONFIG.city = defaultConfig.city;
   }
 }
 
-/* ===============================
+/* =========================================
    Получение погоды
-================================= */
+========================================= */
 export async function fetchWeather() {
   const city = (CONFIG.city || defaultConfig.city).trim();
   const apiKey = (CONFIG.weatherApiKey || "").trim();
@@ -32,10 +31,7 @@ export async function fetchWeather() {
   }
 
   const url =
-    `https://api.openweathermap.org/data/2.5/weather` +
-    `?q=${encodeURIComponent(city)}` +
-    `&appid=${apiKey}` +
-    `&units=metric&lang=ru`;
+    `https://api.openweathermap.org/data/2.5/weather?q=${encodeURIComponent(city)}&appid=${apiKey}&units=metric&lang=ru`;
 
   try {
     const res = await fetch(url, {
@@ -61,9 +57,9 @@ export async function fetchWeather() {
   }
 }
 
-/* ===============================
-   UI вывод
-================================= */
+/* =========================================
+   Вывод погоды
+========================================= */
 function renderWeather(data) {
   const city = data.name || CONFIG.city;
   const temp = Math.round(data.main.temp);
@@ -85,9 +81,9 @@ function renderError(city, msg) {
   el.superMeta.textContent = msg;
 }
 
-/* ===============================
-   Определение типа погоды
-================================= */
+/* =========================================
+   Тип погоды
+========================================= */
 function updateWeatherState(data) {
   const weather = data.weather?.[0] || {};
   const main = (weather.main || "").toLowerCase();
@@ -99,29 +95,19 @@ function updateWeatherState(data) {
 
   let kind = "clear";
 
-  if (main.includes("clear")) kind = "clear";
-
-  else if (main.includes("cloud")) {
+  if (main.includes("clear")) {
+    kind = "clear";
+  } else if (main.includes("cloud")) {
     if (id === 804) kind = "clouds-overcast";
     else if (id === 802 || id === 803) kind = "clouds-broken";
     else kind = "clouds-few";
-  }
-
-  else if (main.includes("rain")) {
-    kind = (id >= 500 && id <= 504)
-      ? "rain-light"
-      : "rain-heavy";
-  }
-
-  else if (main.includes("snow")) {
-    kind = (id >= 600 && id < 620)
-      ? "snow-light"
-      : "snow-heavy";
-  }
-
-  else if (main.includes("thunder")) kind = "thunder";
-
-  else if (
+  } else if (main.includes("rain")) {
+    kind = (id >= 500 && id <= 504) ? "rain-light" : "rain-heavy";
+  } else if (main.includes("snow")) {
+    kind = (id >= 600 && id < 620) ? "snow-light" : "snow-heavy";
+  } else if (main.includes("thunder")) {
+    kind = "thunder";
+  } else if (
     main.includes("mist") ||
     main.includes("fog") ||
     main.includes("haze")
@@ -132,19 +118,17 @@ function updateWeatherState(data) {
   setWeatherState(kind, isNight, temp);
 }
 
-/* ===============================
+/* =========================================
    Фон
-================================= */
+========================================= */
 export function updateWeatherBackground() {
   if (!el.weatherBg) return;
-
-  const cls = "weather-bg";
-  el.weatherBg.className = cls;
+  el.weatherBg.className = "weather-bg";
 }
 
-/* ===============================
+/* =========================================
    Баннер времени суток
-================================= */
+========================================= */
 export function updateTimeBanner() {
   if (!el.timeBanner) return;
 
@@ -166,12 +150,12 @@ export function updateTimeBanner() {
     title = "Ночной режим";
     sub = "Роутер не спит.";
   }
-  
+
   el.timeBannerTitle.textContent = title;
   el.timeBannerSub.textContent = sub;
 
   if (el.timeBannerArt) {
     el.timeBannerArt.style.backgroundImage =
-      `url(icons/hero_r2d5.svg)`;
+      "url(icons/hero_r2d5.svg)";
   }
 }
