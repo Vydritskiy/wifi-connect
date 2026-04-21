@@ -63,7 +63,11 @@ export async function fetchWeather() {
   const url = `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${apiKey}&units=metric&lang=ru`;
 
   try {
-    const res = await fetch(url);
+    const res = await fetch(url, {
+  method: "GET",
+  mode: "cors",
+  cache: "no-store"
+});
 
     // --- обработка ошибок API ---
     if (res.status === 401) {
@@ -120,11 +124,13 @@ export async function fetchWeather() {
     updateWeatherBackground();
 
   } catch (e) {
-    el.superCity.textContent = city;
-    el.superTemp.textContent = "—°C";
-    el.superCond.textContent = "нет данных";
-    el.superMeta.textContent = "Ошибка сети";
-  }
+  console.error("Weather error:", e);
+
+  el.superCity.textContent = city;
+  el.superTemp.textContent = "—°C";
+  el.superCond.textContent = "нет данных";
+  el.superMeta.textContent = e.message || "Ошибка сети";
+}
 }
 
 
