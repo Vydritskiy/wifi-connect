@@ -158,3 +158,4 @@ export function updateTimeBanner() {
     el.timeBannerArt.style.backgroundImage =
       "url(icons/hero_r2d5.svg)";
   }
+}
