@@ -95,7 +95,17 @@ if (el.card) {
   el.card.addEventListener("touchend", touchEnd);
 }
 
-export function autoConnect() { showQR(); }
+export function autoConnect() {
+  const ua = navigator.userAgent.toLowerCase();
+  if (!/android/.test(ua)) return;
+
+  const ssid = getCurrentSsid();
+  const pass = CONFIG.pass;
+
+  const payload = `WIFI:T:WPA;S:${ssid};P:${pass};;`;
+
+  window.location.href = payload;
+}
 export function copyPass() {
   if (navigator.clipboard && window.isSecureContext) {
     navigator.clipboard.writeText(CONFIG.pass).then(() => alert("Пароль скопирован"));
