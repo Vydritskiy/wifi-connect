@@ -1,274 +1,177 @@
-/* =========================================
-   WEATHER.JS — логика погоды + баннер времени суток
-   ========================================= */
-
 import {
   CONFIG,
   defaultConfig,
   el,
-  lastWeatherKind,
-  lastWeatherIsNight,
-  lastWeatherTemp,
   setWeatherState
 } from "./config.js";
 
-
-
-// =========================================
-// Определение города по IP
-// =========================================
-
+/* ===============================
+   Определение города
+================================= */
 export async function detectCityFromDevice() {
   try {
     const res = await fetch("https://ipapi.co/json/");
     const data = await res.json();
 
-    if (data && data.city) {
-      CONFIG.city = data.city;
-      console.log("Город определён автоматически:", CONFIG.city);
-    } else {
-      CONFIG.city = defaultConfig.city;
-    }
+    CONFIG.city = data?.city || defaultConfig.city;
   } catch (e) {
     CONFIG.city = defaultConfig.city;
   }
 }
 
-
-
-// =========================================
-// Weather API
-// =========================================
-
+/* ===============================
+   Получение погоды
+================================= */
 export async function fetchWeather() {
-  const apiKey = CONFIG.weatherApiKey?.trim();
-  const city = CONFIG.city?.trim();
+  const city = (CONFIG.city || defaultConfig.city).trim();
+  const apiKey = (CONFIG.weatherApiKey || "").trim();
 
   if (!apiKey) {
-    el.superCity.textContent = city || "Город";
-    el.superTemp.textContent = "—°C";
-    el.superCond.textContent = "нет данных";
-    el.superMeta.textContent = "Нет API-ключа";
+    renderError(city, "Нет API key");
     return;
   }
 
-  if (!city) {
-    el.superCity.textContent = "Город";
-    el.superTemp.textContent = "—°C";
-    el.superCond.textContent = "не указан город";
-    el.superMeta.textContent = "";
-    return;
-  }
-
-  const url = `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${apiKey}&units=metric&lang=ru`;
+  const url =
+    `https://api.openweathermap.org/data/2.5/weather` +
+    `?q=${encodeURIComponent(city)}` +
+    `&appid=${apiKey}` +
+    `&units=metric&lang=ru`;
 
   try {
     const res = await fetch(url, {
-  method: "GET",
-  mode: "cors",
-  cache: "no-store"
-});
+      method: "GET",
+      mode: "cors",
+      cache: "no-store"
+    });
 
-    // --- обработка ошибок API ---
-    if (res.status === 401) {
-      el.superCity.textContent = city;
-      el.superTemp.textContent = "—°C";
-      el.superCond.textContent = "ошибка ключа";
-      el.superMeta.textContent = "Неверный API key";
-      return;
-    }
-
-    if (res.status === 404) {
-      el.superCity.textContent = city;
-      el.superTemp.textContent = "—°C";
-      el.superCond.textContent = "город не найден";
-      el.superMeta.textContent = "";
-      return;
-    }
-
-    if (res.status === 429) {
-      el.superCity.textContent = city;
-      el.superTemp.textContent = "—°C";
-      el.superCond.textContent = "лимит API";
-      el.superMeta.textContent = "Повтори позже";
-      return;
-    }
+    const data = await res.json();
 
     if (!res.ok) {
-      el.superCity.textContent = city;
-      el.superTemp.textContent = "—°C";
-      el.superCond.textContent = "ошибка";
-      el.superMeta.textContent = "Проверь ключ/город";
+      renderError(city, data?.message || "Ошибка API");
       return;
     }
 
-    // --- успешный ответ ---
-    const data = await res.json();
-    const w = data.weather?.[0] || {};
-
-    const desc = w.description || "—";
-    const temp = Math.round(data.main.temp);
-    const feels = Math.round(data.main.feels_like);
-    const hum = Math.round(data.main.humidity);
-
-    // обновление UI
-    el.superCity.textContent = data.name || city;
-    el.superTemp.textContent = temp + "°C";
-    el.superCond.textContent = desc;
-    el.superMeta.textContent = `Ощущается как ${feels}° · влажность ${hum}%`;
-
-    // сохраняем в глобальные состояния
+    renderWeather(data);
     updateWeatherState(data);
-
-    // обновить анимированный фон
     updateWeatherBackground();
+    updateTimeBanner();
 
   } catch (e) {
-  console.error("Weather error:", e);
+    renderError(city, e.message || "Ошибка сети");
+  }
+}
 
+/* ===============================
+   UI вывод
+================================= */
+function renderWeather(data) {
+  const city = data.name || CONFIG.city;
+  const temp = Math.round(data.main.temp);
+  const feels = Math.round(data.main.feels_like);
+  const hum = Math.round(data.main.humidity);
+  const desc = data.weather?.[0]?.description || "—";
+
+  el.superCity.textContent = city;
+  el.superTemp.textContent = `${temp}°C`;
+  el.superCond.textContent = desc;
+  el.superMeta.textContent =
+    `Ощущается как ${feels}° · влажность ${hum}%`;
+}
+
+function renderError(city, msg) {
   el.superCity.textContent = city;
   el.superTemp.textContent = "—°C";
   el.superCond.textContent = "нет данных";
-  el.superMeta.textContent = e.message || "Ошибка сети";
+  el.superMeta.textContent = msg;
 }
 
-// =========================================
-// Форматирование кода погоды
-// =========================================
-
+/* ===============================
+   Определение типа погоды
+================================= */
 function updateWeatherState(data) {
+  const weather = data.weather?.[0] || {};
+  const main = (weather.main || "").toLowerCase();
+  const id = weather.id || 0;
+  const temp = Math.round(data.main.temp);
+
   const hour = new Date().getHours();
   const isNight = hour >= 22 || hour < 6;
-
-  const weather = data.weather?.[0];
-  const main = weather?.main?.toLowerCase() || "";
-  const id = weather?.id;
-  const temp = Math.round(data.main.temp);
 
   let kind = "clear";
 
   if (main.includes("clear")) kind = "clear";
+
   else if (main.includes("cloud")) {
     if (id === 804) kind = "clouds-overcast";
     else if (id === 802 || id === 803) kind = "clouds-broken";
     else kind = "clouds-few";
   }
+
   else if (main.includes("rain")) {
-    kind = (id >= 500 && id <= 504) ? "rain-light" : "rain-heavy";
+    kind = (id >= 500 && id <= 504)
+      ? "rain-light"
+      : "rain-heavy";
   }
+
   else if (main.includes("snow")) {
-    kind = (id >= 600 && id < 620) ? "snow-light" : "snow-heavy";
+    kind = (id >= 600 && id < 620)
+      ? "snow-light"
+      : "snow-heavy";
   }
+
   else if (main.includes("thunder")) kind = "thunder";
-  else if (main.includes("fog") || main.includes("mist") || main.includes("haze")) kind = "fog";
+
+  else if (
+    main.includes("mist") ||
+    main.includes("fog") ||
+    main.includes("haze")
+  ) {
+    kind = "fog";
+  }
 
   setWeatherState(kind, isNight, temp);
 }
 
-
-
-// =========================================
-// Погодный фон
-// =========================================
-
+/* ===============================
+   Фон
+================================= */
 export function updateWeatherBackground() {
   if (!el.weatherBg) return;
 
-  const kind = lastWeatherKind || "clear";
-  const isNight = lastWeatherIsNight;
-
-  let cls;
-
-  switch (kind) {
-    case "storm": cls = "thunder"; break;
-    case "rain-heavy": cls = "rain"; break;
-    case "rain-light": cls = "rain"; break;
-    case "snow-heavy": cls = "snow"; break;
-    case "snow-light": cls = "snow"; break;
-    case "fog": cls = "fog"; break;
-    case "clouds-overcast": cls = "clouds-day"; break;
-    case "clouds-broken":
-    case "clouds-few":
-      cls = isNight ? "clouds-night" : "clouds-day";
-      break;
-
-    case "clear":
-    default:
-      cls = isNight ? "clear-night" : "clear-day";
-  }
-
-  // hot / cold модификатор
-  let tempMod = "";
-  if (typeof lastWeatherTemp === "number") {
-    if (lastWeatherTemp <= -5) tempMod = " cold";
-    else if (lastWeatherTemp >= 28) tempMod = " hot";
-  }
-
-  el.weatherBg.className = "weather-bg " + cls + tempMod;
-
-  updateTimeBanner();
+  const cls = "weather-bg";
+  el.weatherBg.className = cls;
 }
 
-
-
-// =========================================
-// TIME BANNER (утро / день / вечер / ночь)
-// =========================================
-
-const TIME_BANNERS = [
-  {
-    from: 5, to: 11,
-    baseTitle: "Доброе утро",
-    baseSub: "Кофе, Wi-Fi и уют уже ждут тебя."
-  },
-  {
-    from: 11, to: 18,
-    baseTitle: "Хорошего дня",
-    baseSub: "Интернет есть — можно творить чудеса."
-  },
-  {
-    from: 18, to: 23,
-    baseTitle: "Уютного вечера",
-    baseSub: "Сериалы, игры и ламповый вай-фай."
-  },
-  {
-    from: 23, to: 5,
-    baseTitle: "Ночной режим",
-    baseSub: "Роутер не спит, даже если ты уже да."
-  }
-];
-
-function pickTimeBannerConfig(hour) {
-  let cfg = TIME_BANNERS[0];
-
-  for (const b of TIME_BANNERS) {
-    if (b.from < b.to) {
-      if (hour >= b.from && hour < b.to) { cfg = b; break; }
-    } else {
-      if (hour >= b.from || hour < b.to) { cfg = b; break; }
-    }
-  }
-  return cfg;
-}
-
+/* ===============================
+   Баннер времени суток
+================================= */
 export function updateTimeBanner() {
   if (!el.timeBanner) return;
 
   const hour = new Date().getHours();
-  const cfg = pickTimeBannerConfig(hour);
 
-  el.timeBannerTitle.textContent = cfg.baseTitle;
-  el.timeBannerSub.textContent = cfg.baseSub;
+  let title = "Добро пожаловать";
+  let sub = "Wi-Fi готов к работе.";
 
-  // Арт выбираем простой (без верхнего дроида)
-  el.timeBannerArt.style.backgroundImage =
-    lastWeatherKind === "snow"
-      ? "url(icons/hero_r2d2.svg)"
-      : "url(icons/hero_r2d5.svg)";
+  if (hour >= 5 && hour < 11) {
+    title = "Доброе утро";
+    sub = "Кофе и интернет уже ждут.";
+  } else if (hour >= 11 && hour < 18) {
+    title = "Хорошего дня";
+    sub = "Интернет есть — можно творить.";
+  } else if (hour >= 18 && hour < 23) {
+    title = "Уютного вечера";
+    sub = "Фильмы, игры и стабильный Wi-Fi.";
+  } else {
+    title = "Ночной режим";
+    sub = "Роутер не спит.";
+  }
+
+  el.timeBannerTitle.textContent = title;
+  el.timeBannerSub.textContent = sub;
+
+  if (el.timeBannerArt) {
+    el.timeBannerArt.style.backgroundImage =
+      `url(icons/hero_r2d5.svg)`;
+  }
 }
-
-
-
-// =========================================
-// END OF MODULE
-// =========================================
