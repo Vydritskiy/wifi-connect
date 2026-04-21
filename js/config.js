@@ -10,7 +10,7 @@ export const defaultConfig = {
   welcome: "Добро пожаловать! Чувствуй себя как дома 🧡",
   mapsUrl: "https://www.google.com/maps/place/вулиця+Андрія+Малишка,+31А,+Київ",
   weatherApiKey: "a6bfa1313f42de95ed0d1c270d242040",
-  city: "Odesa"
+  city: "Kyiv"
 };
 
 export let CONFIG = loadConfig();
