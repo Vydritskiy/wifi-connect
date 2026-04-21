@@ -1,43 +1,99 @@
-/* =========================================
-   CORE.CSS — переменные, основа, типографика
-   ========================================= */
-
 :root{
-  --accent:#9b75ff;
-  --accent2:#c5a0ff;
-  --bg1:#1a0f35;
-  --bg2:#070017;
-  --card-bg:rgba(15,0,40,0.92);
-  --text:#f3ebff;
+  --accent:#0A84FF;
+  --accent2:#5AC8FA;
+
+  --bg1:#0b0b0f;
+  --bg2:#1c1c1e;
+
+  --text:#ffffff;
+  --text-soft:rgba(255,255,255,.72);
+
+  --glass:rgba(255,255,255,.08);
+  --glass-strong:rgba(255,255,255,.14);
+  --stroke:rgba(255,255,255,.10);
+
+  --shadow:0 10px 30px rgba(0,0,0,.18);
+  --shadow-soft:0 4px 18px rgba(0,0,0,.12);
+}
+
+/* ===== Dynamic Themes ===== */
+
+body.theme-morning{
+  --accent:#5AC8FA;
+  --accent2:#64D2FF;
+  --bg1:#8ec5fc;
+  --bg2:#e0f2ff;
+  --text:#ffffff;
+}
+
+body.theme-day{
+  --accent:#0A84FF;
+  --accent2:#5E5CE6;
+  --bg1:#cfe8ff;
+  --bg2:#eef5ff;
+  --text:#111111;
+  --text-soft:rgba(0,0,0,.65);
+  --glass:rgba(255,255,255,.55);
+  --glass-strong:rgba(255,255,255,.72);
+  --stroke:rgba(255,255,255,.45);
+}
+
+body.theme-evening{
+  --accent:#FF9F0A;
+  --accent2:#FF375F;
+  --bg1:#2c1a4d;
+  --bg2:#5a275a;
+}
+
+body.theme-night{
+  --accent:#0A84FF;
+  --accent2:#5E5CE6;
+  --bg1:#050507;
+  --bg2:#121216;
+}
+
+/* ===== Base ===== */
+
+html,body{
+  min-height:100%;
 }
 
 body{
-  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
-  background:transparent !important;
+  font-family:-apple-system,BlinkMacSystemFont,"SF Pro Text","SF Pro Display","Segoe UI",sans-serif;
   color:var(--text);
+  background:
+    radial-gradient(circle at top left,var(--bg1),transparent 45%),
+    radial-gradient(circle at bottom right,var(--bg2),transparent 45%),
+    linear-gradient(180deg,var(--bg1),var(--bg2));
   overflow-x:hidden;
   position:relative;
+  transition:
+    background .8s ease,
+    color .35s ease;
 }
 
 /* основной контейнер */
 .wrapper{
   min-height:100%;
-  max-width:520px;
-  margin:40px auto;
-  padding:16px;
+  max-width:540px;
+  margin:28px auto;
+  padding:18px;
   position:relative;
   z-index:1;
 }
 
 h1{
   text-align:center;
-  font-size:26px;
-  margin-bottom:16px;
+  font-size:28px;
+  font-weight:700;
+  letter-spacing:-0.02em;
+  margin-bottom:14px;
 }
 
 .welcome{
   text-align:center;
   font-size:15px;
-  opacity:.9;
-  margin-bottom:6px;
+  color:var(--text-soft);
+  margin-bottom:10px;
+  line-height:1.35;
 }
