@@ -139,37 +139,30 @@ export async function fetchWeather() {
 function updateWeatherState(data) {
   const hour = new Date().getHours();
   const isNight = hour >= 22 || hour < 6;
+
   const weather = data.weather?.[0];
-  const main = weather?.main?.toLowerCase();
+  const main = weather?.main?.toLowerCase() || "";
   const id = weather?.id;
   const temp = Math.round(data.main.temp);
 
-  // сохраняем температуру
-  setWeatherState(lastWeatherKind, isNight, temp);
+  let kind = "clear";
 
-  // определяем тип погоды
-  if (!main) {
-    setWeatherState("clear", isNight, temp);
-    return;
-  }
-
-  if (main.includes("clear")) setWeatherState("clear", isNight, temp);
+  if (main.includes("clear")) kind = "clear";
   else if (main.includes("cloud")) {
-    if (id === 804) lastWeatherKind = "clouds-overcast";
-    else if (id === 802 || id === 803) lastWeatherKind = "clouds-broken";
-    else lastWeatherKind = "clouds-few";
+    if (id === 804) kind = "clouds-overcast";
+    else if (id === 802 || id === 803) kind = "clouds-broken";
+    else kind = "clouds-few";
   }
   else if (main.includes("rain")) {
-    if (id >= 500 && id <= 504) lastWeatherKind = "rain-light";
-    else lastWeatherKind = "rain-heavy";
+    kind = (id >= 500 && id <= 504) ? "rain-light" : "rain-heavy";
   }
   else if (main.includes("snow")) {
-    if (id >= 600 && id < 620) lastWeatherKind = "snow-light";
-    else lastWeatherKind = "snow-heavy";
+    kind = (id >= 600 && id < 620) ? "snow-light" : "snow-heavy";
   }
-  else if (main.includes("thunder")) lastWeatherKind = "thunder";
-  else if (main.includes("fog") || main.includes("mist") || main.includes("haze")) lastWeatherKind = "fog";
-  else setWeatherState("clear", isNight, temp);
+  else if (main.includes("thunder")) kind = "thunder";
+  else if (main.includes("fog") || main.includes("mist") || main.includes("haze")) kind = "fog";
+
+  setWeatherState(kind, isNight, temp);
 }
 
 
