@@ -44,9 +44,17 @@ body.theme-day{
 
 body.theme-evening{
   --accent:#FF9F0A;
-  --accent2:#FF375F;
-  --bg1:#ff9966;
-  --bg2:#5e2b97;
+  --accent2:#5856D6;
+
+  --bg1:#1e2749;
+  --bg2:#4b2e83;
+
+  --text:#ffffff;
+  --text-soft:rgba(255,255,255,.72);
+
+  --glass:rgba(255,255,255,.10);
+  --glass-strong:rgba(255,255,255,.16);
+  --stroke:rgba(255,255,255,.12);
 }
 
 body.theme-night{
