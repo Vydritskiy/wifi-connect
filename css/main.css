@@ -1,5 +1,97 @@
+html,
+body{
+  margin:0;
+  padding:0;
+  min-height:100%;
+}
 
-html,body{margin:0;padding:0;min-height:100%;background:#070017!important}
-body{min-height:100vh}
-.wrapper{min-height:100vh}
-.weather-bg{position:fixed;inset:0;z-index:-1}
+body{
+  min-height:100vh;
+  -webkit-font-smoothing:antialiased;
+  -moz-osx-font-smoothing:grayscale;
+  text-rendering:optimizeLegibility;
+}
+
+/* main wrapper */
+.wrapper{
+  min-height:100vh;
+  display:flex;
+  flex-direction:column;
+  gap:14px;
+}
+
+/* spacing between sections */
+.wrapper > *{
+  position:relative;
+  z-index:1;
+}
+
+/* smooth UI transitions */
+*{
+  transition:
+    background-color .25s ease,
+    border-color .25s ease,
+    color .25s ease,
+    box-shadow .25s ease;
+}
+
+/* inputs */
+input,
+textarea,
+select,
+button{
+  outline:none;
+}
+
+/* scrollbars */
+::-webkit-scrollbar{
+  width:8px;
+}
+
+::-webkit-scrollbar-track{
+  background:transparent;
+}
+
+::-webkit-scrollbar-thumb{
+  background:rgba(255,255,255,.18);
+  border-radius:999px;
+}
+
+/* selection */
+::selection{
+  background:rgba(10,132,255,.28);
+  color:#fff;
+}
+
+/* iOS safe spacing mobile */
+@media (max-width:640px){
+  .wrapper{
+    padding:16px 14px 28px;
+    gap:12px;
+  }
+
+  h1{
+    font-size:26px;
+  }
+
+  .card{
+    border-radius:24px;
+  }
+
+  .slide-card{
+    height:250px;
+    border-radius:28px;
+  }
+
+  .nav-arrow{
+    width:42px;
+    height:42px;
+  }
+}
+
+/* large screens */
+@media (min-width:900px){
+  .wrapper{
+    margin-top:36px;
+  }
+}
