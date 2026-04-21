@@ -165,7 +165,8 @@ export function updateTimeBanner() {
   } else {
     title = "Ночной режим";
     sub = "Роутер не спит.";
-
+  }
+  
   el.timeBannerTitle.textContent = title;
   el.timeBannerSub.textContent = sub;
 
@@ -173,4 +174,4 @@ export function updateTimeBanner() {
     el.timeBannerArt.style.backgroundImage =
       `url(icons/hero_r2d5.svg)`;
   }
-}
+  }
