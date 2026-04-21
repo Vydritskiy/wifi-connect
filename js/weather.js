@@ -165,7 +165,6 @@ export function updateTimeBanner() {
   } else {
     title = "Ночной режим";
     sub = "Роутер не спит.";
-  }
   
   el.timeBannerTitle.textContent = title;
   el.timeBannerSub.textContent = sub;
