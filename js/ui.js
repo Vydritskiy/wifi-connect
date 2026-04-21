@@ -106,6 +106,7 @@ export function autoConnect() {
 
   window.location.href = payload;
 }
+
 export function copyPass() {
   if (navigator.clipboard && window.isSecureContext) {
     navigator.clipboard.writeText(CONFIG.pass).then(() => alert("Пароль скопирован"));
