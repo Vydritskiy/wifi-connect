@@ -1,111 +1,170 @@
-/* =========================================
-   SPEEDTEST.JS — тест скорости интернет-соединения
-   ========================================= */
-
 import { el } from "./config.js";
 
+/* =========================================
+   SPEEDTEST.JS — точнее, стабильнее, автообновление
+========================================= */
 
-// ==========================
-// PING
-// ==========================
+const CF_TRACE = "https://speed.cloudflare.com/cdn-cgi/trace";
+const CF_DOWN = "https://speed.cloudflare.com/__down";
+const CF_UP = "https://speed.cloudflare.com/__up";
+
+/* =========================================
+   HELPERS
+========================================= */
+function setText(node, value) {
+  if (node) node.textContent = value;
+}
+
+function median(arr) {
+  const s = [...arr].sort((a, b) => a - b);
+  const mid = Math.floor(s.length / 2);
+  return s.length % 2 ? s[mid] : (s[mid - 1] + s[mid]) / 2;
+}
+
+function sleep(ms) {
+  return new Promise(r => setTimeout(r, ms));
+}
+
+/* =========================================
+   PING
+========================================= */
+async function singlePing() {
+  const t0 = performance.now();
+  await fetch(`${CF_TRACE}?t=${Date.now()}`, {
+    cache: "no-store",
+    mode: "cors"
+  });
+  return performance.now() - t0;
+}
+
 async function measurePing() {
-  let ping = 0;
+  const values = [];
 
-  try {
-    const t0 = performance.now();
-    await fetch("https://speed.cloudflare.com/cdn-cgi/trace", { mode: "no-cors" });
-    ping = Math.round(performance.now() - t0);
-  } catch (e) {
-    ping = 0;
+  for (let i = 0; i < 3; i++) {
+    try {
+      values.push(await singlePing());
+    } catch (_) {}
+    await sleep(150);
   }
 
-  el.superPing.textContent = ping + " ms";
+  const ping = values.length ? Math.round(median(values)) : 0;
+  setText(el.superPing, `${ping} ms`);
   return ping;
 }
 
+/* =========================================
+   DOWNLOAD
+========================================= */
+async function singleDownload(bytes) {
+  const t0 = performance.now();
 
+  const res = await fetch(`${CF_DOWN}?bytes=${bytes}&t=${Date.now()}`, {
+    cache: "no-store",
+    mode: "cors"
+  });
 
-// ==========================
-// DOWNLOAD SPEED
-// ==========================
+  await res.blob();
+
+  const sec = (performance.now() - t0) / 1000;
+  return (bytes * 8) / sec / 1024 / 1024; // Mbps
+}
+
 async function measureDownload() {
-  let down = 0;
+  const values = [];
+  const bytes = 20000000; // 20 MB
 
-  try {
-    const size = 20000000; // 20MB тестовый файл
-    const t0 = performance.now();
-    await fetch(`https://speed.cloudflare.com/__down?bytes=${size}`);
-    const t1 = performance.now();
-
-    down = (size / ((t1 - t0) / 1000)) / 1024 / 1024 * 8; // Mbps
-  } catch (e) {
-    down = 0;
+  for (let i = 0; i < 3; i++) {
+    try {
+      const val = await singleDownload(bytes);
+      values.push(val);
+      setText(el.superDown, `${val.toFixed(1)} Mbps`);
+    } catch (_) {}
+    await sleep(250);
   }
 
-  down = +down.toFixed(1);
-  el.superDown.textContent = down + " Mbps";
-
+  const down = values.length ? median(values) : 0;
+  setText(el.superDown, `${down.toFixed(1)} Mbps`);
   return down;
 }
 
+/* =========================================
+   UPLOAD
+========================================= */
+async function singleUpload(bytes) {
+  const data = new Uint8Array(bytes);
+  crypto.getRandomValues(data);
 
+  const t0 = performance.now();
 
-// ==========================
-// UPLOAD SPEED
-// ==========================
+  await fetch(`${CF_UP}?t=${Date.now()}`, {
+    method: "POST",
+    body: data,
+    cache: "no-store",
+    mode: "cors"
+  });
+
+  const sec = (performance.now() - t0) / 1000;
+  return (bytes * 8) / sec / 1024 / 1024; // Mbps
+}
+
 async function measureUpload() {
-  let up = 0;
+  const values = [];
+  const bytes = 5000000; // 5 MB
 
-  try {
-    const sizeUp = 1000000; // 1MB
-    const data = new Uint8Array(sizeUp);
-
-    const t0 = performance.now();
-    await fetch("https://speed.cloudflare.com/__up", {
-      method: "POST",
-      body: data
-    });
-    const t1 = performance.now();
-
-    up = (sizeUp / ((t1 - t0) / 1000)) / 1024 / 1024 * 8;
-  } catch (e) {
-    up = 0;
+  for (let i = 0; i < 3; i++) {
+    try {
+      const val = await singleUpload(bytes);
+      values.push(val);
+      setText(el.superUp, `${val.toFixed(1)} Mbps`);
+    } catch (_) {}
+    await sleep(250);
   }
 
-  up = +up.toFixed(1);
-  el.superUp.textContent = up + " Mbps";
-
+  const up = values.length ? median(values) : 0;
+  setText(el.superUp, `${up.toFixed(1)} Mbps`);
   return up;
 }
 
-
-
-// ==========================
-// MAIN SPEEDTEST FUNCTION
-// ==========================
-export async function runSpeedTest() {
-  if (!el.superStatus) return;
-
-  el.superStatus.textContent = "Измерение…";
-
-  const ping = await measurePing();
-  const down = await measureDownload();
-  const up = await measureUpload();
-
-  // ---- статус теста ----
-  if (down > 80)       el.superStatus.textContent = "🐉 Максимум скорости";
-  else if (down > 40) el.superStatus.textContent = "🔥 Очень быстро";
-  else if (down > 20) el.superStatus.textContent = "⚡ Нормально";
-  else if (down > 5)  el.superStatus.textContent = "🙂 Приемлемо";
-  else                el.superStatus.textContent = "🐌 Медленно";
-
-  return { ping, down, up };
+/* =========================================
+   QUALITY
+========================================= */
+function getQuality(ping, down, up) {
+  if (down >= 300 && up >= 50 && ping <= 20) return "🚀 Премиум";
+  if (down >= 150 && up >= 20 && ping <= 35) return "🔥 Очень быстро";
+  if (down >= 50 && up >= 10 && ping <= 60) return "⚡ Хорошо";
+  if (down >= 15 && up >= 3 && ping <= 100) return "🙂 Нормально";
+  return "🐌 Слабо";
 }
 
+/* =========================================
+   MAIN
+========================================= */
+let running = false;
 
+export async function runSpeedTest() {
+  if (running) return;
+  running = true;
 
-// ==========================
-// АВТО-ПОВТОР ТЕСТА (если нужно)
-// ==========================
-// Можно включить в ui.js (startup), если хочешь:
-// setInterval(runSpeedTest, 30000);
+  try {
+    setText(el.superStatus, "Измерение...");
+
+    const ping = await measurePing();
+    const down = await measureDownload();
+    const up = await measureUpload();
+
+    setText(el.superStatus, getQuality(ping, down, up));
+
+    return { ping, down, up };
+
+  } catch (e) {
+    setText(el.superStatus, "Ошибка теста");
+  } finally {
+    running = false;
+  }
+}
+
+/* =========================================
+   AUTO START + EVERY 30 SEC
+========================================= */
+runSpeedTest();
+setInterval(runSpeedTest, 30000);
