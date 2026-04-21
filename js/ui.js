@@ -95,15 +95,6 @@ if (el.card) {
   el.card.addEventListener("touchend", touchEnd);
 }
 
-let qrObj = null;
-export function showQR() {
-  if (!el.qrCanvas || !el.qrBox) return;
-  const payload = `WIFI:T:WPA;S:${getCurrentSsid()};P:${CONFIG.pass};;`;
-  if (!qrObj) qrObj = new QRCode(el.qrCanvas, { width: 200, height: 200 });
-  qrObj.clear();
-  qrObj.makeCode(payload);
-  el.qrBox.style.display = "block";
-}
 export function autoConnect() { showQR(); }
 export function copyPass() {
   if (navigator.clipboard && window.isSecureContext) {
@@ -152,7 +143,6 @@ function bindTap(node, fn) {
 (function bindButtons() {
   bindTap(el.btnPrev, prevSlide);
   bindTap(el.btnNext, nextSlide);
-  bindTap(el.btnShowQR, showQR);
   bindTap(el.btnAutoConnect, autoConnect);
   bindTap(el.btnCopyPass, copyPass);
   bindTap(el.btnOpenMaps, openMaps);
