@@ -133,6 +133,22 @@ export function updateTimeBanner() {
   if (!el.timeBanner) return;
 
   const hour = new Date().getHours();
+  document.body.classList.remove(
+  "theme-morning",
+  "theme-day",
+  "theme-evening",
+  "theme-night"
+);
+
+if (hour >= 5 && hour < 11) {
+  document.body.classList.add("theme-morning");
+} else if (hour >= 11 && hour < 18) {
+  document.body.classList.add("theme-day");
+} else if (hour >= 18 && hour < 23) {
+  document.body.classList.add("theme-evening");
+} else {
+  document.body.classList.add("theme-night");
+}
 
   let title = "Добро пожаловать";
   let sub = "Wi-Fi готов к работе.";
