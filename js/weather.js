@@ -159,4 +159,3 @@ export function updateTimeBanner() {
       "url(icons/hero_r2d5.svg)";
   }
 }
-}
