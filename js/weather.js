@@ -131,9 +131,6 @@ export async function fetchWeather() {
   el.superCond.textContent = "нет данных";
   el.superMeta.textContent = e.message || "Ошибка сети";
 }
-}
-
-
 
 // =========================================
 // Форматирование кода погоды
