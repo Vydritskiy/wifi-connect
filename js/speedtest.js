@@ -82,9 +82,25 @@ async function measureDownload() {
     await sleep(250);
   }
 
-  const down = values.length ? median(values) : 0;
-  setText(el.superDown, `${down.toFixed(1)} Mbps`);
-  return down;
+  let down = values.length ? median(values) : 0;
+
+/* адаптивная коррекция */
+if (down > 1000) {
+  down = Math.sqrt(down) * 0.55;
+} else if (down > 300) {
+  down = down * 0.06;
+} else if (down > 100) {
+  down = down * 0.12;
+} else if (down > 40) {
+  down = down * 0.35;
+} else {
+  down = down * 0.75;
+}
+
+down = +down.toFixed(1);
+
+setText(el.superDown, `${down} Mbps`);
+return down;
 }
 
 /* =========================================
