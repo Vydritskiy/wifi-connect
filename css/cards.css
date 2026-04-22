@@ -247,7 +247,7 @@
 }
 
 /* =====================================
-   TOP WEATHER AREA (FULL REBUILD)
+   TOP WEATHER AREA (TIGHT GRID)
 ===================================== */
 
 .super-top{
@@ -258,19 +258,19 @@
     "meta hum";
 
   column-gap:12px;
-  row-gap:10px;
+  row-gap:2px;
 
   align-items:start;
 }
 
-/* LEFT BLOCK */
+/* LEFT */
 
 .super-left{
   grid-area:left;
 
   display:flex;
   flex-direction:column;
-  gap:4px;
+  gap:2px;
 }
 
 .super-city{
@@ -284,6 +284,7 @@
   font-weight:800;
   line-height:1;
   letter-spacing:-0.03em;
+  margin-top:2px;
 }
 
 /* RIGHT TOP */
@@ -293,7 +294,6 @@
 
   display:flex;
   justify-content:flex-end;
-  align-items:flex-start;
 }
 
 .super-cond{
@@ -303,7 +303,7 @@
   white-space:nowrap;
 }
 
-/* LEFT BOTTOM */
+/* SECOND ROW */
 
 .super-meta{
   grid-area:meta;
@@ -312,9 +312,8 @@
   color:var(--text-soft);
   line-height:1.2;
   margin:0;
+  align-self:start;
 }
-
-/* RIGHT BOTTOM */
 
 .super-humidity{
   grid-area:hum;
@@ -326,7 +325,7 @@
   white-space:nowrap;
 
   justify-self:end;
-  align-self:center;
+  align-self:start;
 }
 /* divider */
 
