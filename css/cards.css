@@ -147,6 +147,17 @@
   z-index:2;
 }
 
+.btn-icon{
+  width:26px;
+  height:26px;
+  display:block;
+  opacity:.92;
+}
+
+.action-btn{
+  font-size:0;
+}
+
 /* =====================================
    CONNECTED BANNER
 ===================================== */
