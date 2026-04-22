@@ -88,16 +88,26 @@ export const el = {
   connectedBanner: document.getElementById("connectedBanner"),
 
   /* weather */
-  weatherBg: document.getElementById("weatherBg"),
-  superCity: document.getElementById("superCity"),
-  superCond: document.getElementById("superCond"),
-  superTemp: document.getElementById("superTemp"),
-  superHumidity: document.getElementById("superHumidity"),
-  superMeta: document.getElementById("superMeta"),
-  superPing: document.getElementById("superPing"),
-  superDown: document.getElementById("superDown"),
-  superUp: document.getElementById("superUp"),
-  superStatus: document.getElementById("superStatus"),
+weatherBg: document.getElementById("weatherBg"),
+
+superCity: document.getElementById("superCity"),
+superDate: document.getElementById("superDate"),
+superTemp: document.getElementById("superTemp"),
+superMeta: document.getElementById("superMeta"),
+
+superCond: document.getElementById("superCond"),
+superHumidity: document.getElementById("superHumidity"),
+superWind: document.getElementById("superWind"),
+superPressure: document.getElementById("superPressure"),
+
+hourHand: document.getElementById("hourHand"),
+minuteHand: document.getElementById("minuteHand"),
+secondHand: document.getElementById("secondHand"),
+
+superPing: document.getElementById("superPing"),
+superDown: document.getElementById("superDown"),
+superUp: document.getElementById("superUp"),
+superStatus: document.getElementById("superStatus"),
 
   /* admin */
   adminPanel: document.getElementById("adminPanel"),
