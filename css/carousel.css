@@ -19,7 +19,7 @@
 
 .carousel{
   position:relative;
-  overflow:visible;
+  overflow:hidden;
   height:320px;
   border-radius:30px;
 }
@@ -52,7 +52,7 @@
   width:100%;
   height:100%;
 
-  padding:0;
+  padding:4px;
 }
 
 /* =====================================
@@ -61,11 +61,8 @@
 
 .slide-card{
   position:relative;
-
-  width:calc(100% - 24px);
+  width:100%;
   height:100%;
-
-  margin:0 auto;
 }
 
 .slide-card::before{
@@ -169,8 +166,8 @@
     background .18s ease;
 }
 
-.left{ left:12px; }
-.right{ right:12px; }
+.left{ left:4px; }
+.right{ right:4px; }
 
 .nav-arrow:hover{
   width:8px;
