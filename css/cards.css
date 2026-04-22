@@ -82,8 +82,8 @@
   cursor:pointer;
 
   width:100%;
-  min-height:76px;
-  padding:14px 10px;
+  min-height:42px;
+  padding:8px;
   margin:0;
 
   display:flex;
@@ -148,10 +148,10 @@
 }
 
 .btn-icon{
-  width:26px;
-  height:26px;
+  width:14px;
+  height:14px;
   display:block;
-  opacity:.92;
+  opacity:.9;
 }
 
 .action-btn{
