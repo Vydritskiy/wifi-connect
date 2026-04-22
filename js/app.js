@@ -74,6 +74,8 @@ function startClock() {
 
 (async function initApp() {
   setThemeByTime();
-  await fetchWeather();
-  await runSpeedTest();
+startClock();
+
+await fetchWeather();
+await runSpeedTest();
 })();
