@@ -247,11 +247,16 @@
 }
 
 /* top row */
+/* верхняя зона */
 .super-top{
+  position:relative;
+
   display:flex;
   align-items:flex-start;
   justify-content:space-between;
   gap:12px;
+
+  padding-bottom:18px;
 }
 
 .super-city{
@@ -276,15 +281,23 @@
   margin-top:2px;
 }
 
-/* weather meta */
+/* feels like строка */
 .super-meta{
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  gap:12px;
+  font-size:13px;
+  color:var(--text-soft);
+  margin-top:2px;
+}
+
+/* влажность в правый нижний угол */
+.super-humidity,
+.meta-right{
+  position:absolute;
+  right:0;
+  bottom:0;
 
   font-size:13px;
   color:var(--text-soft);
+  text-align:right;
 }
 
 /* divider */
