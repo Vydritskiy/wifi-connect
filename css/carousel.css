@@ -327,3 +327,36 @@
     margin-top:8px !important;
   }
 }
+
+/* =====================================
+   TABLET
+===================================== */
+
+@media (min-width:561px) and (max-width:1024px){
+
+  .carousel{
+    height:340px;
+  }
+
+  .slide-inner img{
+    width:82%;
+    max-height:82%;
+  }
+
+  .nav-arrow{
+    width:14px;
+  }
+
+  .slide-frequency{
+    font-size:20px;
+  }
+
+  .wrapper{
+    max-width:720px;
+  }
+
+  .action-btn{
+    min-height:72px;
+    font-size:28px;
+  }
+}
