@@ -72,7 +72,6 @@ export const el = {
 
   /* text */
   welcomeEl: document.getElementById("welcomeText"),
-  netStatus: document.getElementById("netStatus"),
 
   /* dots */
   dots: Array.from(document.querySelectorAll(".dots span")),
