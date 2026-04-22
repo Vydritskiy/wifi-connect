@@ -14,8 +14,7 @@ export async function detectCityFromDevice() {
     const res = await fetch("https://ipapi.co/json/");
     const data = await res.json();
 
-    CONFIG.city =
-      data?.city || defaultConfig.city;
+    CONFIG.city = data?.city || defaultConfig.city;
 
   } catch {
     CONFIG.city = defaultConfig.city;
@@ -28,12 +27,10 @@ export async function detectCityFromDevice() {
 
 export async function fetchWeather() {
   const city =
-    (CONFIG.city || defaultConfig.city)
-      .trim();
+    (CONFIG.city || defaultConfig.city).trim();
 
   const apiKey =
-    (CONFIG.weatherApiKey || "")
-      .trim();
+    (CONFIG.weatherApiKey || "").trim();
 
   if (!apiKey) {
     renderError(city, "Нет API key");
@@ -106,11 +103,20 @@ function renderWeather(data) {
     el.superCond.textContent = desc;
   }
 
+  if (el.superHumidity) {
+    el.superHumidity.textContent =
+      `влажность ${hum}%`;
+  }
+
   if (el.superMeta) {
     el.superMeta.textContent =
-      `Ощущается как ${feels}° · влажность ${hum}%`;
+      `Ощущается как ${feels}°`;
   }
 }
+
+/* =========================================
+   Error state
+========================================= */
 
 function renderError(city, msg) {
   if (el.superCity) {
@@ -124,6 +130,10 @@ function renderError(city, msg) {
   if (el.superCond) {
     el.superCond.textContent =
       "нет данных";
+  }
+
+  if (el.superHumidity) {
+    el.superHumidity.textContent = "—";
   }
 
   if (el.superMeta) {
@@ -140,8 +150,7 @@ function updateWeatherState(data) {
     data.weather?.[0] || {};
 
   const main =
-    (weather.main || "")
-      .toLowerCase();
+    (weather.main || "").toLowerCase();
 
   const id =
     weather.id || 0;
@@ -213,12 +222,11 @@ function updateWeatherState(data) {
 export function updateWeatherBackground() {
   if (!el.weatherBg) return;
 
-  el.weatherBg.className =
-    "weather-bg";
+  el.weatherBg.className = "weather-bg";
 }
 
 /* =========================================
-   Time banner text only
+   Time banner
 ========================================= */
 
 export function updateTimeBanner() {
@@ -257,13 +265,11 @@ export function updateTimeBanner() {
   }
 
   if (el.timeBannerTitle) {
-    el.timeBannerTitle.textContent =
-      title;
+    el.timeBannerTitle.textContent = title;
   }
 
   if (el.timeBannerSub) {
-    el.timeBannerSub.textContent =
-      sub;
+    el.timeBannerSub.textContent = sub;
   }
 
   if (el.timeBannerArt) {
