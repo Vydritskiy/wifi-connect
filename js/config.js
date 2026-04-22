@@ -1,71 +1,95 @@
 /* =========================================
-   CONFIG.JS — базовая конфигурация и UI основа
-   ========================================= */
+   CONFIG.JS
+   Core config + DOM refs + shared state
+========================================= */
 
-// ---------- Конфиг + localStorage ----------
+/* -----------------------------------------
+   DEFAULT CONFIG
+----------------------------------------- */
+
 export const defaultConfig = {
   ssid5: "r2d5",
   ssid24: "r2d2",
   pass: "Jgthfnbdysq1913",
+
   welcome: "Добро пожаловать! Чувствуй себя как дома 🧡",
-  mapsUrl: "https://www.google.com/maps/place/вулиця+Андрія+Малишка,+31А,+Київ",
-  weatherApiKey: "6530afae9a05d8f6e1c997682469a69d",
-  city: "Kyiv"
+
+  mapsUrl:
+    "https://www.google.com/maps/place/вулиця+Андрія+Малишка,+31А,+Київ",
+
+  city: "Kyiv",
+  weatherApiKey: "6530afae9a05d8f6e1c997682469a69d"
 };
 
-export let CONFIG = loadConfig();
+/* -----------------------------------------
+   STORAGE
+----------------------------------------- */
 
 export function loadConfig() {
   try {
-    const saved = localStorage.getItem("wifiGuestConfig");
-    if (saved) {
-      const obj = JSON.parse(saved);
+    const raw = localStorage.getItem("wifiGuestConfig");
+    if (!raw) return { ...defaultConfig };
 
-      // чистка некорректных значений
-      if (obj.mapsUrl && /maps\.app\.goo\.gl\/XXXXXXXX/i.test(obj.mapsUrl)) {
-        delete obj.mapsUrl;
-      }
-      if (obj.weatherApiKey) {
-        delete obj.weatherApiKey;
-      }
+    const saved = JSON.parse(raw);
 
-      return Object.assign({}, defaultConfig, obj);
-    }
-  } catch (e) {}
+    const {
+      weatherApiKey,
+      ...safeData
+    } = saved || {};
 
-  return { ...defaultConfig };
+    return {
+      ...defaultConfig,
+      ...safeData
+    };
+
+  } catch {
+    return { ...defaultConfig };
+  }
 }
+
+export let CONFIG = loadConfig();
 
 export function saveConfigToStorage() {
   try {
-    const { weatherApiKey, ...rest } = CONFIG;
-    localStorage.setItem("wifiGuestConfig", JSON.stringify(rest));
-  } catch (e) {}
+    const { weatherApiKey, ...safeData } = CONFIG;
+
+    localStorage.setItem(
+      "wifiGuestConfig",
+      JSON.stringify(safeData)
+    );
+  } catch {}
 }
 
-
-
-// =========================================
-// DOM-элементы (глобальные ссылки)
-// =========================================
+/* -----------------------------------------
+   DOM REFERENCES
+----------------------------------------- */
 
 export const el = {
-  track: document.getElementById("track"),
+  /* layout */
   carousel: document.getElementById("carousel"),
+  track: document.getElementById("track"),
   card: document.querySelector(".card"),
-  netStatus: document.getElementById("netStatus"),
-  dots: document.querySelectorAll(".dots span"),
+
+  /* text */
   welcomeEl: document.getElementById("welcomeText"),
-  adminPanel: document.getElementById("adminPanel"),
+  netStatus: document.getElementById("netStatus"),
+
+  /* dots */
+  dots: Array.from(document.querySelectorAll(".dots span")),
+
+  /* buttons */
+  btnPrev: document.getElementById("btnPrev"),
+  btnNext: document.getElementById("btnNext"),
+
+  btnAutoConnect: document.getElementById("btnAutoConnect"),
+  btnCopyPass: document.getElementById("copyBtn"),
+  btnOpenMaps: document.getElementById("mapBtn"),
+
+  /* connected */
+  connectedBanner: document.getElementById("connectedBanner"),
+
+  /* weather */
   weatherBg: document.getElementById("weatherBg"),
-
-  // TIME BANNER
-  timeBanner: document.getElementById("timeBanner"),
-  timeBannerTitle: document.getElementById("timeBannerTitle"),
-  timeBannerSub: document.getElementById("timeBannerSub"),
-  timeBannerArt: document.getElementById("timeBannerArt"),
-
-  // SUPER WEATHER CARD
   superCity: document.getElementById("superCity"),
   superCond: document.getElementById("superCond"),
   superTemp: document.getElementById("superTemp"),
@@ -75,22 +99,8 @@ export const el = {
   superUp: document.getElementById("superUp"),
   superStatus: document.getElementById("superStatus"),
 
-  // QR
-  qrBox: document.getElementById("qrBox"),
-  qrCanvas: document.getElementById("qrCanvas"),
-
-  // CONNECTED BANNER
-  connectedBanner: document.getElementById("connectedBanner"),
-
-  // BUTTONS
-  btnAutoConnect: document.getElementById("btnAutoConnect"),
-  btnShowQR: document.getElementById("btnShowQR"),
-  btnCopyPass: document.getElementById("btnCopyPass"),
-  btnOpenMaps: document.getElementById("btnOpenMaps"),
-  btnPrev: document.getElementById("btnPrev"),
-  btnNext: document.getElementById("btnNext"),
-
-  // ADMIN
+  /* admin */
+  adminPanel: document.getElementById("adminPanel"),
   btnAdminToggle: document.getElementById("btnAdminToggle"),
   btnAdminClose: document.getElementById("btnAdminClose"),
   btnAdminBackdrop: document.getElementById("btnAdminBackdrop"),
@@ -103,120 +113,162 @@ export const el = {
   admPass: document.getElementById("admPass")
 };
 
+/* -----------------------------------------
+   CAROUSEL STATE
+----------------------------------------- */
 
+export let slides = Array.from(
+  document.querySelectorAll(".slide")
+);
 
-// =========================================
-// Глобальные переменные состояния
-// =========================================
-
-export let slides = Array.from(document.querySelectorAll(".slide"));
 export const REAL_COUNT = slides.length;
 
 export let index = 1;
 export let slideWidth = 0;
 export let isAnimating = false;
 
+/* -----------------------------------------
+   DEVICE INFO
+----------------------------------------- */
+
 export const ua = navigator.userAgent.toLowerCase();
-export const isIOS = /iphone|ipad|ipod/.test(ua);
+
 export const isAndroid = /android/.test(ua);
-export const oldAndroid = /android\s([0-6]\.|7\.0)/i.test(ua);
-export const oldIOS = /os\s(9_|10_)/i.test(ua);
+export const isIOS = /iphone|ipad|ipod/.test(ua);
+
+export const oldAndroid =
+  /android\s([0-6]\.|7\.0)/i.test(ua);
+
+export const oldIOS =
+  /os\s(9_|10_)/i.test(ua);
+
+/* -----------------------------------------
+   WEATHER STATE
+----------------------------------------- */
 
 export let lastWeatherKind = null;
 export let lastWeatherIsNight = false;
 export let lastWeatherTemp = null;
 
+export function setWeatherState(kind, night, temp){
+  lastWeatherKind = kind;
+  lastWeatherIsNight = night;
+  lastWeatherTemp = temp;
+}
 
-
-// =========================================
-// Helpers — выбор сети
-// =========================================
+/* -----------------------------------------
+   HELPERS
+----------------------------------------- */
 
 export function getCurrentBand() {
-  const logical = (index - 1 + REAL_COUNT) % REAL_COUNT;
+  const logical =
+    (index - 1 + REAL_COUNT) % REAL_COUNT;
+
   return logical === 0 ? "5" : "24";
 }
 
 export function getSsidForBand(band) {
-  return band === "5" ? CONFIG.ssid5 : CONFIG.ssid24;
+  return band === "5"
+    ? CONFIG.ssid5
+    : CONFIG.ssid24;
 }
 
 export function getCurrentSsid() {
   return getSsidForBand(getCurrentBand());
 }
 
-
-
-// =========================================
-// Применение конфигурации к UI
-// =========================================
+/* -----------------------------------------
+   UI APPLY
+----------------------------------------- */
 
 export function applyConfigToUI() {
-  if (el.welcomeEl) el.welcomeEl.textContent = CONFIG.welcome;
+  if (el.welcomeEl) {
+    el.welcomeEl.textContent = CONFIG.welcome;
+  }
 
-  document.querySelectorAll(".slide").forEach(slide => {
-    const band = slide.dataset.net === "r2d5" ? "5" : "24";
-    const ssidMain = slide.querySelector(".slide-ssid-main");
-    const ssidSub = slide.querySelector(".slide-ssid-sub");
-    const cap = slide.querySelector(".slide-caption");
+  document
+    .querySelectorAll(".slide")
+    .forEach(slide => {
 
-    if (ssidMain) ssidMain.textContent = getSsidForBand(band);
-    if (ssidSub) ssidSub.textContent = band === "5" ? "5 GHz" : "2.4 GHz";
+      const band =
+        slide.dataset.net === "r2d5"
+          ? "5"
+          : "24";
 
-    if (cap) {
-      cap.textContent = band === "5"
-        ? `${getSsidForBand("5")} · быстрее, если поддерживается`
-        : `${getSsidForBand("24")} · стабильнее на расстоянии`;
-    }
-  });
+      const caption =
+        slide.querySelector(".slide-caption");
 
-  
-}
+      if (caption) {
+        caption.textContent =
+          band === "5"
+            ? `${CONFIG.ssid5} · быстрее`
+            : `${CONFIG.ssid24} · стабильнее`;
+      }
+    });
 
-
-
-// =========================================
-// Пересчёт ширины слайдов
-// =========================================
-
-export function recalcWidth() {
-  slideWidth = el.carousel.offsetWidth;
-  el.track.style.transition = "none";
-  el.track.style.transform = `translateX(${-index * slideWidth}px)`;
-  void el.track.offsetWidth;
-  el.track.style.transition = "transform 0.7s cubic-bezier(.22,.61,.36,1)";
-  
-}
-
-
-
-// =========================================
-// Обновление метаданных хелпера и точек
-// =========================================
-
-
-
-
-
-export function updateMeta() {
-  const logical = (index - 1 + REAL_COUNT) % REAL_COUNT;
-  if (el.dots && el.dots.length) {
-    el.dots.forEach((dot,i)=> dot.classList.toggle("active", i===logical));
+  if (el.btnOpenMaps) {
+    el.btnOpenMaps.href = CONFIG.mapsUrl;
   }
 }
 
-// =========================================
-// Сервисный код — стартовая корректировка выбора слайда
-// =========================================
+/* -----------------------------------------
+   CAROUSEL META
+----------------------------------------- */
 
-// старые устройства начинают со второго слайда (2.4 GHz)
+export function updateMeta() {
+  const logical =
+    (index - 1 + REAL_COUNT) % REAL_COUNT;
+
+  el.dots.forEach((dot, i) => {
+    dot.classList.toggle(
+      "active",
+      i === logical
+    );
+  });
+
+  if (el.netStatus) {
+    const ssid = getCurrentSsid();
+
+    el.netStatus.textContent =
+      `Выбрана сеть: ${ssid}`;
+  }
+}
+
+export function recalcWidth() {
+  if (!el.carousel || !el.track) return;
+
+  slideWidth = el.carousel.offsetWidth;
+
+  el.track.style.transition = "none";
+  el.track.style.transform =
+    `translateX(${-index * slideWidth}px)`;
+
+  void el.track.offsetWidth;
+}
+
+/* -----------------------------------------
+   MUTATORS
+----------------------------------------- */
+
+export function setIndex(v){
+  index = v;
+}
+
+export function setAnimating(v){
+  isAnimating = v;
+}
+
+export function setSlideWidth(v){
+  slideWidth = v;
+}
+
+/* -----------------------------------------
+   START POSITION
+----------------------------------------- */
+
 (function autoPick() {
-  index = (oldAndroid || oldIOS) ? 2 : 1;
+  index =
+    (oldAndroid || oldIOS)
+      ? 2
+      : 1;
 })();
-
-
-export function setIndex(v){ index = v; }
-export function setAnimating(v){ isAnimating = v; }
-export function setSlideWidth(v){ slideWidth = v; }
-
-export function setWeatherState(kind, night, temp){ lastWeatherKind=kind; lastWeatherIsNight=night; lastWeatherTemp=temp; }
