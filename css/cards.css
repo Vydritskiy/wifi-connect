@@ -251,10 +251,14 @@
 ===================================== */
 
 .super-top{
+  position:relative;
+
   display:flex;
   align-items:flex-start;
   justify-content:space-between;
   gap:12px;
+
+  min-height:92px;
 }
 
 .super-left{
@@ -296,7 +300,9 @@
 }
 
 .super-humidity{
-  margin-top:52px; /* регулируй 48-60px если нужно */
+  position:absolute;
+  right:0;
+  bottom:0;
 
   font-size:13px;
   color:var(--text-soft);
