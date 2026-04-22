@@ -273,15 +273,8 @@
 
 @media (max-width:560px){
 
-  .carousel{
-    height:260px;
-    border-radius:26px;
-  }
-
-  .slide-card{
-    border-radius:26px;
-    padding:12px;
-  }
+  .carousel{ height:260px; border-radius:26px; }
+  .slide-card{ border-radius:26px; padding:12px; }
 
   .slide-inner img{
     width:76%;
@@ -296,31 +289,48 @@
 
   .nav-arrow{
     width:14px;
-    top:0;
-    bottom:0;
     font-size:14px;
   }
 
-  .left{
-    left:0;
-    border-radius:26px 0 0 26px;
+  .left{ left:0; border-radius:26px 0 0 26px; }
+  .right{ right:0; border-radius:0 26px 26px 0; }
+}
+
+/* =====================================
+   SMALL MOBILE
+===================================== */
+
+@media (max-width:420px){
+
+  .carousel{ height:230px; }
+
+  .slide-inner img{
+    width:72%;
+    max-height:72%;
   }
 
-  .right{
-    right:0;
-    border-radius:0 26px 26px 0;
+  .slide-frequency{
+    font-size:16px;
+    top:10px;
+    left:12px;
   }
 
-  .dots{
-    margin-top:10px;
+  .nav-arrow{
+    width:12px;
+    font-size:12px;
   }
+}
 
-  .dots span{
-    width:7px;
-    height:7px;
-  }
+/* =====================================
+   TABLET
+===================================== */
 
-  .dots span.active{
-    width:20px;
+@media (min-width:561px) and (max-width:900px){
+
+  .carousel{ height:300px; }
+
+  .slide-inner img{
+    width:74%;
+    max-height:74%;
   }
 }
