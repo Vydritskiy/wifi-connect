@@ -247,29 +247,30 @@
 }
 
 /* =====================================
-   TOP WEATHER AREA
+   TOP WEATHER AREA (FULL REBUILD)
 ===================================== */
 
 .super-top{
-  position:relative;
+  display:grid;
+  grid-template-columns:1fr 140px;
+  grid-template-areas:
+    "left cond"
+    "meta hum";
 
-  display:flex;
-  align-items:flex-start;
-  justify-content:space-between;
-  gap:12px;
+  column-gap:12px;
+  row-gap:10px;
 
-  min-height:92px;
+  align-items:start;
 }
 
-/* left side */
+/* LEFT BLOCK */
 
 .super-left{
-  grid-column:1;
-  grid-row:1;
+  grid-area:left;
 
   display:flex;
   flex-direction:column;
-  gap:2px;
+  gap:4px;
 }
 
 .super-city{
@@ -283,44 +284,50 @@
   font-weight:800;
   line-height:1;
   letter-spacing:-0.03em;
-  margin-top:2px;
 }
 
-/* right side */
+/* RIGHT TOP */
 
 .super-right{
-  width:140px;
-  text-align:right;
+  grid-area:cond;
+
+  display:flex;
+  justify-content:flex-end;
+  align-items:flex-start;
 }
+
 .super-cond{
   font-size:13px;
   line-height:1.2;
   text-align:right;
   white-space:nowrap;
-  margin-left:auto;
 }
 
-/* second row */
+/* LEFT BOTTOM */
 
 .super-meta{
+  grid-area:meta;
+
   font-size:13px;
   color:var(--text-soft);
-  margin-top:2px;
   line-height:1.2;
+  margin:0;
 }
 
+/* RIGHT BOTTOM */
+
 .super-humidity{
-  position:absolute;
-  right:0;
-  top:calc(100% - 22px);
+  grid-area:hum;
 
   font-size:13px;
   color:var(--text-soft);
   line-height:1.2;
   text-align:right;
   white-space:nowrap;
-}
 
+  justify-self:end;
+  align-self:center;
+}
 /* divider */
 
 .super-divider{
