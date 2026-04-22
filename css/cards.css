@@ -320,16 +320,7 @@
 }
 
 .clock-mark{
-  position:absolute;
-  left:50%;
-  top:50%;
-
-  width:3px;
-  height:14px;
-  border-radius:2px;
-  background:#fff;
-
-  transform-origin:center -58px;
+  display:none;
 }
 
 .m12{ transform:translate(-50%,-50%) rotate(0deg); }
