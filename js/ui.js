@@ -135,53 +135,49 @@ el.carousel?.addEventListener(
    ACTIONS
 ----------------------------------------- */
 
-/* -----------------------------------------
-   ACTIONS
------------------------------------------ */
-
-export async function copyPass(e) {
-  e?.preventDefault();
-
+export function copyPass() {
   const pass = CONFIG.pass;
 
-  try {
-    await navigator.clipboard.writeText(pass);
-    alert("Пароль скопирован");
-  } catch {
-    const input = document.createElement("input");
-    input.value = pass;
-    document.body.appendChild(input);
-    input.select();
-    document.execCommand("copy");
-    input.remove();
-    alert("Пароль скопирован");
+  if (
+    navigator.clipboard &&
+    window.isSecureContext
+  ) {
+    navigator.clipboard
+      .writeText(pass)
+      .then(() => alert("Пароль скопирован"));
+  } else {
+    prompt("Скопируйте пароль:", pass);
   }
 }
 
-export function openMaps(e) {
-  e?.preventDefault();
-
-  const url = CONFIG.mapsUrl?.trim();
-
-  if (!url) return;
-
-  window.open(url, "_blank", "noopener,noreferrer");
+export function openMaps() {
+  window.open(
+    CONFIG.mapsUrl,
+    "_blank",
+    "noopener"
+  );
 }
 
-export function autoConnect(e) {
-  e?.preventDefault();
-
+export function autoConnect() {
   const ssid = getCurrentSsid();
   const pass = CONFIG.pass;
-  const ua = navigator.userAgent.toLowerCase();
+
+  const ua =
+    navigator.userAgent.toLowerCase();
 
   if (/android/.test(ua)) {
-    location.href = `WIFI:T:WPA;S:${ssid};P:${pass};;`;
+    const payload =
+      `WIFI:T:WPA;S:${ssid};P:${pass};;`;
+
+    location.href = payload;
     return;
   }
 
   copyPass();
-  alert(`Выберите сеть ${ssid} вручную`);
+
+  alert(
+    `Выберите сеть ${ssid} вручную`
+  );
 }
 
 /* -----------------------------------------
