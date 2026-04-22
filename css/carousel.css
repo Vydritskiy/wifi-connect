@@ -329,34 +329,90 @@
 }
 
 /* =====================================
-   TABLET
+   TABLET / MEDIUM SCREENS
 ===================================== */
 
 @media (min-width:561px) and (max-width:1024px){
 
-  .carousel{
-    height:340px;
+  /* page width */
+  .wrapper{
+    max-width:760px;
+    padding-left:24px;
+    padding-right:24px;
   }
 
+  /* hero text */
+  .welcome{
+    font-size:22px;
+  }
+
+  .title{
+    font-size:56px;
+    line-height:1.05;
+  }
+
+  /* carousel shell */
+  .carousel-shell{
+    margin-top:10px;
+    border-radius:34px;
+  }
+
+  .carousel{
+    height:360px;
+    border-radius:34px;
+  }
+
+  .slide{
+    height:100%;
+  }
+
+  .slide-card{
+    height:100%;
+    border-radius:34px;
+  }
+
+  /* image */
   .slide-inner img{
     width:82%;
     max-height:82%;
   }
 
+  /* label */
+  .slide-frequency{
+    top:16px;
+    left:18px;
+    font-size:22px;
+  }
+
+  /* arrows */
   .nav-arrow{
     width:14px;
   }
 
-  .slide-frequency{
-    font-size:20px;
+  .left{
+    left:0;
   }
 
-  .wrapper{
-    max-width:720px;
+  .right{
+    right:0;
   }
 
-  .action-btn{
-    min-height:72px;
-    font-size:28px;
+  /* dots */
+  .dots{
+    margin-top:10px;
+  }
+
+  /* buttons */
+  .action-btn,
+  .btn{
+    min-height:82px;
+    font-size:30px;
+    border-radius:28px;
+  }
+
+  /* settings button */
+  .settings-btn{
+    width:64px;
+    height:64px;
   }
 }
