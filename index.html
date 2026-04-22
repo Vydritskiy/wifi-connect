@@ -9,7 +9,6 @@
   <link rel="icon" type="image/svg+xml" href="icons/fav/favicon_droid_round_smirk.svg">
   <link rel="manifest" href="manifest.json">
 
-  <!-- Styles -->
   <link rel="stylesheet" href="css/reset.css">
   <link rel="stylesheet" href="css/core.css">
   <link rel="stylesheet" href="css/carousel.css">
@@ -21,17 +20,14 @@
 
 <body>
 
-  <!-- Weather background -->
   <div class="weather-bg" id="weatherBg"></div>
 
-  <!-- Admin button -->
   <button class="admin-toggle" id="btnAdminToggle" aria-label="Открыть настройки">
     ⚙️
   </button>
 
   <main class="wrapper">
 
-    <!-- Header -->
     <header class="hero">
       <div class="welcome" id="welcomeText">
         Добро пожаловать! Чувствуй себя как дома 🧡
@@ -42,50 +38,34 @@
       </h1>
     </header>
 
-    <!-- Main card -->
     <section class="card">
 
-      <!-- =====================================
-           CAROUSEL
-      ====================================== -->
-
+      <!-- CAROUSEL -->
       <section class="carousel-shell">
 
         <div class="carousel" id="carousel">
 
           <div class="track" id="track">
 
-            <!-- 5 GHz -->
             <article class="slide" data-net="r2d5">
               <div class="slide-card">
                 <div class="slide-inner">
 
-                  <img
-                    src="icons/icon_r2d5.svg"
-                    alt="Wi-Fi сеть 5GHz"
-                  >
+                  <img src="icons/icon_r2d5.svg" alt="Wi-Fi сеть 5GHz">
 
-                  <div class="slide-frequency">
-                    5 GHz
-                  </div>
+                  <div class="slide-frequency">5 GHz</div>
 
                 </div>
               </div>
             </article>
 
-            <!-- 2.4 GHz -->
             <article class="slide" data-net="r2d2">
               <div class="slide-card">
                 <div class="slide-inner">
 
-                  <img
-                    src="icons/icon_r2d2.svg"
-                    alt="Wi-Fi сеть 2.4GHz"
-                  >
+                  <img src="icons/icon_r2d2.svg" alt="Wi-Fi сеть 2.4GHz">
 
-                  <div class="slide-frequency">
-                    2.4 GHz
-                  </div>
+                  <div class="slide-frequency">2.4 GHz</div>
 
                 </div>
               </div>
@@ -93,20 +73,11 @@
 
           </div>
 
-          <!-- Arrows INSIDE carousel -->
-          <button
-            class="nav-arrow left"
-            id="btnPrev"
-            aria-label="Предыдущая сеть"
-          >
+          <button class="nav-arrow left" id="btnPrev" aria-label="Предыдущая сеть">
             <img src="icons/arrow_left.svg" alt="">
           </button>
 
-          <button
-            class="nav-arrow right"
-            id="btnNext"
-            aria-label="Следующая сеть"
-          >
+          <button class="nav-arrow right" id="btnNext" aria-label="Следующая сеть">
             <img src="icons/arrow_right.svg" alt="">
           </button>
 
@@ -114,83 +85,78 @@
 
       </section>
 
-      <!-- Dots -->
+      <!-- DOTS -->
       <div class="dots" id="dots">
         <span class="active"></span>
         <span></span>
       </div>
 
-      <!-- =====================================
-           ACTION BUTTONS
-      ====================================== -->
-
+      <!-- ACTION BUTTONS -->
       <section class="actions-wrap">
-  <div class="actions">
+        <div class="actions">
 
-    <button
-      class="action-btn"
-      id="btnAutoConnect"
-      aria-label="Подключиться"
-      data-tip="Подключиться"
-    >
-      <svg viewBox="0 0 24 24" class="btn-icon" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-        <path d="M5 12.5a10 10 0 0 1 14 0"/>
-        <path d="M8.5 16a5 5 0 0 1 7 0"/>
-        <path d="M12 20h.01"/>
-      </svg>
-    </button>
+          <button
+            class="action-btn"
+            id="btnAutoConnect"
+            aria-label="Подключиться"
+            data-tip="Подключиться"
+          >
+            <svg viewBox="0 0 24 24" class="btn-icon" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M5 12.5a10 10 0 0 1 14 0"/>
+              <path d="M8.5 16a5 5 0 0 1 7 0"/>
+              <path d="M12 20h.01"/>
+            </svg>
+          </button>
 
-    <button
-      class="action-btn"
-      id="copyBtn"
-      aria-label="Скопировать пароль"
-      data-tip="Скопировать пароль"
-    >
-      <svg viewBox="0 0 24 24" class="btn-icon" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-        <rect x="9" y="9" width="10" height="10" rx="2"/>
-        <rect x="5" y="5" width="10" height="10" rx="2"/>
-      </svg>
-    </button>
+          <button
+            class="action-btn"
+            id="copyBtn"
+            aria-label="Скопировать пароль"
+            data-tip="Скопировать пароль"
+          >
+            <svg viewBox="0 0 24 24" class="btn-icon" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="9" y="9" width="10" height="10" rx="2"/>
+              <rect x="5" y="5" width="10" height="10" rx="2"/>
+            </svg>
+          </button>
 
-    <a
-      class="action-btn"
-      id="mapBtn"
-      aria-label="Открыть карту"
-      data-tip="Открыть карту"
-    >
-      <svg viewBox="0 0 24 24" class="btn-icon" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-        <path d="M12 21s6-5.5 6-11a6 6 0 1 0-12 0c0 5.5 6 11 6 11z"/>
-        <circle cx="12" cy="10" r="2"/>
-      </svg>
-    </a>
+          <a
+            class="action-btn"
+            id="mapBtn"
+            aria-label="Открыть карту"
+            data-tip="Открыть карту"
+          >
+            <svg viewBox="0 0 24 24" class="btn-icon" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M12 21s6-5.5 6-11a6 6 0 1 0-12 0c0 5.5 6 11 6 11z"/>
+              <circle cx="12" cy="10" r="2"/>
+            </svg>
+          </a>
 
-  </div>
-</section>
-      <!-- Connected -->
+        </div>
+      </section>
+
+      <!-- CONNECTED -->
       <div class="connected-banner" id="connectedBanner">
         <span>📶 Вы уже подключены к сети Wi-Fi</span>
       </div>
 
-      <!-- =====================================
-           WEATHER + SPEEDTEST
-      ====================================== -->
-
+      <!-- WEATHER + SPEED -->
       <section class="bottom-section">
 
         <div class="super-card" id="superCard">
 
           <div class="super-top">
-            <div class="super-city" id="superCity">
-              Kyiv
+
+            <div class="super-left">
+              <div class="super-city" id="superCity">Kyiv</div>
+              <div class="super-temp" id="superTemp">—°C</div>
             </div>
 
-            <div class="super-cond" id="superCond">
-              —
+            <div class="super-right">
+              <div class="super-cond" id="superCond">—</div>
+              <div class="super-humidity" id="superHumidity">—</div>
             </div>
-          </div>
 
-          <div class="super-temp" id="superTemp">
-            —°C
           </div>
 
           <div class="super-meta" id="superMeta"></div>
@@ -224,21 +190,14 @@
 
   </main>
 
-  <!-- =====================================
-       ADMIN PANEL
-  ====================================== -->
-
+  <!-- ADMIN PANEL -->
   <aside class="admin-panel" id="adminPanel">
 
     <div class="admin-backdrop" id="btnAdminBackdrop"></div>
 
     <div class="admin-inner">
 
-      <button
-        class="admin-close"
-        id="btnAdminClose"
-        aria-label="Закрыть"
-      >
+      <button class="admin-close" id="btnAdminClose" aria-label="Закрыть">
         ✕
       </button>
 
@@ -246,56 +205,27 @@
 
       <div class="admin-row">
         <label for="admWelcome">Приветствие</label>
-        <input
-          id="admWelcome"
-          type="text"
-          placeholder="Добро пожаловать!"
-        >
+        <input id="admWelcome" type="text" placeholder="Добро пожаловать!">
       </div>
 
       <div class="admin-row">
         <label for="admSsid5">Имя сети 5 GHz</label>
-        <input
-          id="admSsid5"
-          type="text"
-          placeholder="r2d5"
-        >
+        <input id="admSsid5" type="text" placeholder="r2d5">
       </div>
 
       <div class="admin-row">
         <label for="admSsid24">Имя сети 2.4 GHz</label>
-        <input
-          id="admSsid24"
-          type="text"
-          placeholder="r2d2"
-        >
+        <input id="admSsid24" type="text" placeholder="r2d2">
       </div>
 
       <div class="admin-row">
         <label for="admPass">Пароль Wi-Fi</label>
-        <input
-          id="admPass"
-          type="text"
-          placeholder="Пароль"
-        >
+        <input id="admPass" type="text" placeholder="Пароль">
       </div>
 
       <div class="admin-actions">
-
-        <button
-          class="admin-btn reset"
-          id="btnAdminReset"
-        >
-          Сбросить
-        </button>
-
-        <button
-          class="admin-btn save"
-          id="btnAdminSave"
-        >
-          Сохранить
-        </button>
-
+        <button class="admin-btn reset" id="btnAdminReset">Сбросить</button>
+        <button class="admin-btn save" id="btnAdminSave">Сохранить</button>
       </div>
 
     </div>
