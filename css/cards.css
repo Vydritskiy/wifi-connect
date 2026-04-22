@@ -251,17 +251,22 @@
 ===================================== */
 
 .super-top{
-  position:relative;
+  display:grid;
+  grid-template-columns:1fr 140px;
+  grid-template-rows:auto auto;
+  column-gap:12px;
+  row-gap:6px;
 
-  display:flex;
-  align-items:flex-start;
-  justify-content:space-between;
-  gap:12px;
-
+  align-items:start;
   min-height:92px;
 }
 
+/* left side */
+
 .super-left{
+  grid-column:1;
+  grid-row:1;
+
   display:flex;
   flex-direction:column;
   gap:2px;
@@ -281,42 +286,46 @@
   margin-top:2px;
 }
 
-/* right column */
+/* right side */
 
 .super-right{
+  grid-column:2;
+  grid-row:1;
+
   display:flex;
-  flex-direction:column;
-  align-items:flex-end;
-
-  min-width:140px;
+  justify-content:flex-start;
+  align-items:flex-start;
 }
-
 
 .super-cond{
   font-size:13px;
   line-height:1.2;
   text-align:right;
   white-space:nowrap;
+  margin-left:auto;
+}
+
+/* second row */
+
+.super-meta{
+  grid-column:1;
+  grid-row:2;
+
+  font-size:13px;
+  color:var(--text-soft);
+  margin-top:2px;
 }
 
 .super-humidity{
-  position:absolute;
-  right:0;
-  bottom:0;
+  grid-column:2;
+  grid-row:2;
 
   font-size:13px;
   color:var(--text-soft);
   line-height:1.2;
   text-align:right;
   white-space:nowrap;
-}
-
-/* feels like */
-
-.super-meta{
-  font-size:13px;
-  color:var(--text-soft);
-  margin-top:2px;
+  margin-left:auto;
 }
 
 /* divider */
