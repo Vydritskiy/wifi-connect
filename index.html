@@ -1,126 +1,123 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
   <title>Wi-Fi Connect</title>
 
-  <!-- Иконка -->
   <link rel="icon" type="image/svg+xml" href="icons/fav/favicon_droid_round_smirk.svg">
-
-  <!-- PWA manifest -->
   <link rel="manifest" href="manifest.json">
 
-  <!-- CSS-файлы (в правильном порядке) -->
-<link rel="stylesheet" href="css/reset.css">
-<link rel="stylesheet" href="css/core.css">
-<link rel="stylesheet" href="css/carousel.css">
-<link rel="stylesheet" href="css/cards.css">
-<link rel="stylesheet" href="css/weather.css">
-<link rel="stylesheet" href="css/admin.css">
-<link rel="stylesheet" href="css/main.css">
-
+  <!-- Styles -->
+  <link rel="stylesheet" href="css/reset.css">
+  <link rel="stylesheet" href="css/core.css">
+  <link rel="stylesheet" href="css/carousel.css">
+  <link rel="stylesheet" href="css/cards.css">
+  <link rel="stylesheet" href="css/weather.css">
+  <link rel="stylesheet" href="css/admin.css">
+  <link rel="stylesheet" href="css/main.css">
 </head>
 
 <body>
 
-  <!-- Погодный фон -->
+  <!-- Dynamic weather background -->
   <div class="weather-bg" id="weatherBg"></div>
 
-  <!-- Кнопка админки -->
-  <div class="admin-toggle" id="btnAdminToggle">⚙️</div>
+  <!-- Admin trigger -->
+  <button class="admin-toggle" id="btnAdminToggle" aria-label="Открыть настройки">
+    ⚙️
+  </button>
 
-  <div class="wrapper">
-    <div class="welcome" id="welcomeText">Добро пожаловать! Чувствуй себя как дома 🧡</div>
-    <h1>Подключение к Wi-Fi</h1>
+  <main class="wrapper">
 
-    <div class="card">
+    <!-- Header -->
+    <header class="hero">
+      <div class="welcome" id="welcomeText">
+        Добро пожаловать! Чувствуй себя как дома 🧡
+      </div>
+      <h1 class="page-title">Подключение к Wi-Fi</h1>
+    </header>
 
-      <!-- КАРУСЕЛЬ -->
-      <div class="carousel-shell">
+    <!-- Main card -->
+    <section class="card">
+
+      <!-- Carousel -->
+      <section class="carousel-shell">
+
         <div class="carousel" id="carousel">
           <div class="track" id="track">
 
-            <!-- 5 GHz -->
-            <div class="slide" data-net="r2d5">
+            <!-- Network 1 -->
+            <article class="slide" data-net="r2d5">
               <div class="slide-card">
                 <div class="slide-inner">
-                  <img src="icons/icon_r2d5.svg" alt="r2d5">
-                  <div class="slide-frequency">2.4&nbsp;GHz</div>
-                  <!--<div class="slide-ssid-main">5 GHz</div> 
-                  <div class="slide-ssid-sub">5 GHz</div>-->
-                </div>
-                <div class="slide-caption">
-                  <!--r2d5 · быстрее, если поддерживается-->
+                  <img src="icons/icon_r2d5.svg" alt="Wi-Fi сеть 5GHz">
+                  <div class="slide-frequency">5 GHz</div>
                 </div>
               </div>
-            </div>
+            </article>
 
-            <!-- 2.4 GHz -->
-            <div class="slide" data-net="r2d2">
+            <!-- Network 2 -->
+            <article class="slide" data-net="r2d2">
               <div class="slide-card">
                 <div class="slide-inner">
-                  <img src="icons/icon_r2d2.svg" alt="r2d2">
-                  <div class="slide-frequency">2.4&nbsp;GHz</div>
-                  <!--<div class="slide-ssid-main">2.4 GHz</div>
-                  <div class="slide-ssid-sub">2.4 GHz</div>-->
-                </div>
-                <div class="slide-caption">
-                  <!-- r2d2 · стабильнее на расстоянии -->
+                  <img src="icons/icon_r2d2.svg" alt="Wi-Fi сеть 2.4GHz">
+                  <div class="slide-frequency">2.4 GHz</div>
                 </div>
               </div>
-            </div>
+            </article>
 
           </div>
         </div>
 
-        <!-- стрелки -->
-        <div class="nav-arrow left" id="btnPrev">
+        <!-- Arrows -->
+        <button class="nav-arrow left" id="btnPrev" aria-label="Предыдущая сеть">
           <img src="icons/arrow_left.svg" alt="">
-        </div>
-        <div class="nav-arrow right" id="btnNext">
-          <img src="icons/arrow_right.svg" alt="">
-        </div>
-      </div>
+        </button>
 
-      <!-- точки -->
+        <button class="nav-arrow right" id="btnNext" aria-label="Следующая сеть">
+          <img src="icons/arrow_right.svg" alt="">
+        </button>
+
+      </section>
+
+      <!-- Dots -->
       <div class="dots" id="dots">
         <span class="active"></span>
         <span></span>
       </div>
 
-      <!-- кнопки -->
-      <div class="actions-wrap">
+      <!-- Action buttons block -->
+      <section class="actions-wrap">
+        <div class="actions">
 
-  <div class="actions">
-    <button class="action-btn">
-      <span>Подключиться автоматически (Android)</span>
-    </button>
+          <button class="action-btn" id="btnAutoConnect">
+            <span>Подключиться автоматически</span>
+          </button>
 
-    <button class="action-btn" id="copyBtn">
-      <span>Скопировать пароль</span>
-    </button>
+          <button class="action-btn" id="copyBtn">
+            <span>Скопировать пароль</span>
+          </button>
 
-    <a class="action-btn" href="#" target="_blank">
-      <span>Карта</span>
-    </a>
-  </div>
+          <a class="action-btn" id="mapBtn" href="#" target="_blank" rel="noopener">
+            <span>Карта</span>
+          </a>
 
-</div>
+        </div>
+      </section>
 
-      <!-- НЕОНОВАЯ ПЛАШКА -->
+      <!-- Connected banner -->
       <div class="connected-banner" id="connectedBanner">
         <span>📶 Вы уже подключены к сети Wi-Fi</span>
       </div>
 
-      <!-- подписи -->
-      
+      <!-- Helper text -->
       <div class="status" id="netStatus"></div>
 
-      <!-- нижний блок -->
-      <div class="bottom-section">
+      <!-- Info section -->
+      <section class="bottom-section">
 
-        <!-- SUPER WEATHER + SPEED CARD -->
         <div class="super-card" id="superCard">
 
           <div class="super-top">
@@ -148,19 +145,29 @@
             <span id="superPing">— ms</span>
           </div>
 
-          <div class="super-status" id="superStatus">Измерение…</div>
+          <div class="super-status" id="superStatus">
+            Измерение…
+          </div>
 
         </div>
-      </div>
 
-    </div>
-  </div>
+      </section>
 
-  <!-- Мини-админка -->
-  <div class="admin-panel" id="adminPanel">
+    </section>
+
+  </main>
+
+  <!-- Admin panel -->
+  <aside class="admin-panel" id="adminPanel">
+
     <div class="admin-backdrop" id="btnAdminBackdrop"></div>
+
     <div class="admin-inner">
-      <div class="admin-close" id="btnAdminClose">✕</div>
+
+      <button class="admin-close" id="btnAdminClose" aria-label="Закрыть">
+        ✕
+      </button>
+
       <h2>Настройки для хозяина</h2>
 
       <div class="admin-row">
@@ -184,14 +191,18 @@
       </div>
 
       <div class="admin-actions">
-        <button class="admin-btn reset" id="btnAdminReset">Сбросить по умолчанию</button>
-        <button class="admin-btn save" id="btnAdminSave">Сохранить</button>
+        <button class="admin-btn reset" id="btnAdminReset">
+          Сбросить
+        </button>
+
+        <button class="admin-btn save" id="btnAdminSave">
+          Сохранить
+        </button>
       </div>
 
     </div>
-  </div>
+  </aside>
 
-  <!-- Главный модуль -->
   <script type="module" src="js/app.js"></script>
 
 </body>
