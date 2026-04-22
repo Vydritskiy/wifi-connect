@@ -1,158 +1,253 @@
+/* =====================================
+   MAIN CARD
+===================================== */
+
 .card{
-  background:var(--glass);
-  border:1px solid var(--stroke);
-  border-radius:28px;
-  padding:22px 22px 20px;
-  box-shadow:var(--shadow);
-  backdrop-filter:blur(28px) saturate(180%);
-  -webkit-backdrop-filter:blur(28px) saturate(180%);
   position:relative;
   overflow:hidden;
+
+  padding:20px;
+  border-radius:var(--radius-xl);
+
+  background:var(--glass);
+  border:1px solid var(--stroke);
+
+  box-shadow:var(--shadow);
+
+  backdrop-filter:blur(28px) saturate(180%);
+  -webkit-backdrop-filter:blur(28px) saturate(180%);
 }
 
 .card::before{
   content:"";
   position:absolute;
   inset:0;
-  border-radius:inherit;
-  background:
-    linear-gradient(180deg,rgba(255,255,255,.14),transparent 35%);
   pointer-events:none;
+  border-radius:inherit;
+
+  background:
+    linear-gradient(180deg,
+      rgba(255,255,255,.14),
+      transparent 28%);
 }
 
-/* ===== Buttons ===== */
+/* =====================================
+   ACTIONS BLOCK
+===================================== */
 
+.actions-wrap{
+  margin-top:18px;
+  padding:14px;
+  border-radius:var(--radius-lg);
+
+  background:rgba(255,255,255,.03);
+  border:1px solid rgba(255,255,255,.06);
+
+  box-shadow:var(--shadow-soft);
+}
+
+.actions{
+  display:grid;
+  gap:12px;
+}
+
+/* =====================================
+   ACTION BUTTONS
+===================================== */
+
+.action-btn,
 .btn{
-  width:100%;
-  padding:15px 16px;
-  margin-top:12px;
+  appearance:none;
   border:none;
-  border-radius:18px;
+  outline:none;
   cursor:pointer;
 
-  font-size:16px;
-  font-weight:600;
+  width:100%;
+  min-height:72px;
+  padding:14px 16px;
+
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:10px;
+
+  border-radius:18px;
+
+  text-decoration:none;
+
+  font-size:17px;
+  font-weight:700;
+  line-height:1.2;
   letter-spacing:-0.01em;
 
   color:var(--text);
+
   background:var(--glass-strong);
   border:1px solid var(--stroke);
 
   box-shadow:var(--shadow-soft);
 
-  backdrop-filter:blur(20px) saturate(180%);
-  -webkit-backdrop-filter:blur(20px) saturate(180%);
-
   transition:
     transform .14s ease,
-    background .25s ease,
-    box-shadow .25s ease;
+    background .2s ease,
+    border-color .2s ease,
+    opacity .2s ease;
 }
 
+.action-btn:hover,
 .btn:hover{
   background:rgba(255,255,255,.18);
 }
 
+.action-btn:active,
 .btn:active{
-  transform:scale(.98);
+  transform:scale(.985);
 }
 
-/* Primary action */
+/* Primary variant */
+.action-btn.primary,
 .btn.primary{
-  background:linear-gradient(135deg,var(--accent),var(--accent2));
   color:#fff;
   border:none;
+
+  background:
+    linear-gradient(135deg,
+      var(--accent),
+      var(--accent2));
 }
 
-/* ===== Connected Banner ===== */
+/* =====================================
+   CONNECTED BANNER
+===================================== */
 
 .connected-banner{
   display:none;
-  width:100%;
+
   margin-top:14px;
   padding:14px 16px;
+
   border-radius:18px;
 
-  background:rgba(52,199,89,.18);
+  background:rgba(52,199,89,.16);
   border:1px solid rgba(52,199,89,.35);
 
   color:var(--text);
+  font-size:15px;
+  font-weight:600;
+  line-height:1.35;
+
   box-shadow:var(--shadow-soft);
-  backdrop-filter:blur(20px);
 }
 
 .connected-banner.show{
   display:flex;
   align-items:center;
   justify-content:center;
-  gap:8px;
+  text-align:center;
 }
 
-/* ===== Speed / Weather Card ===== */
+/* =====================================
+   HELPER TEXT
+===================================== */
 
-.super-card{
+.status{
   margin-top:14px;
-  border-radius:22px;
-  padding:14px 16px 16px;
+  text-align:center;
 
-  background:var(--glass);
-  border:1px solid var(--stroke);
+  font-size:14px;
+  line-height:1.4;
 
-  box-shadow:var(--shadow);
-  backdrop-filter:blur(26px) saturate(180%);
-
-  display:flex;
-  flex-direction:column;
-  gap:8px;
-}
-
-/* ===== Time Banner ===== */
-
-.time-banner{
-  margin-top:12px;
-  border-radius:20px;
-  padding:12px 14px;
-
-  background:var(--glass);
-  border:1px solid var(--stroke);
-
-  box-shadow:var(--shadow-soft);
-  backdrop-filter:blur(24px);
-
-  display:flex;
-  align-items:center;
-  gap:12px;
-}
-
-/* ===== Small Text ===== */
-
-.status,
-.small,
-.meta{
   color:var(--text-soft);
 }
 
-.actions-wrap{
-  margin-top:24px;
-  padding:18px;
-  border-radius:24px;
-  background:rgba(255,255,255,0.03);
-  border:1px solid rgba(255,255,255,0.06);
-  backdrop-filter:blur(10px);
+/* =====================================
+   INFO SECTION
+===================================== */
+
+.bottom-section{
+  margin-top:14px;
 }
 
-.actions{
-  display:grid;
-  gap:14px;
+.super-card{
+  display:flex;
+  flex-direction:column;
+  gap:10px;
+
+  padding:16px;
+  border-radius:var(--radius-lg);
+
+  background:rgba(255,255,255,.04);
+  border:1px solid var(--stroke);
+
+  box-shadow:var(--shadow-soft);
 }
 
-.action-btn{
-  width:100%;
-  min-height:72px;
-  border:none;
-  border-radius:18px;
-  background:rgba(255,255,255,0.06);
-  color:#fff;
-  font-size:20px;
-  font-weight:600;
+/* top row */
+.super-top{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+}
+
+.super-city{
+  font-size:15px;
+  font-weight:700;
+}
+
+.super-cond{
+  font-size:14px;
+  color:var(--text-soft);
+}
+
+/* temperature */
+.super-temp{
+  font-size:42px;
+  font-weight:800;
+  line-height:1;
+  letter-spacing:-0.03em;
+}
+
+/* weather meta */
+.super-meta{
+  font-size:14px;
+  color:var(--text-soft);
+}
+
+/* divider */
+.super-divider{
+  height:1px;
+  background:rgba(255,255,255,.08);
+  margin:2px 0;
+}
+
+/* speed rows */
+.super-speed-row{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+
+  font-size:15px;
+}
+
+.super-speed-row span:last-child{
+  font-weight:700;
+}
+
+/* status */
+.super-status{
+  margin-top:4px;
+
+  font-size:13px;
+  color:var(--text-soft);
+}
+
+/* =====================================
+   UTIL
+===================================== */
+
+.small,
+.meta{
+  color:var(--text-soft);
 }
