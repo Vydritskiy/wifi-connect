@@ -246,84 +246,60 @@
     0 6px 14px rgba(0,0,0,.08);
 }
 
-/* =====================================
-   WEATHER BLOCK — 5 POINT GRID
-===================================== */
+/* 5 точек без растягивания */
 
 .super-top{
   display:grid;
   grid-template-columns:1fr auto;
-  grid-template-rows:auto 1fr auto;
+  grid-template-rows:auto auto auto;
   grid-template-areas:
     "city cond"
     "temp ."
     "meta hum";
 
   column-gap:18px;
-  row-gap:4px;
+  row-gap:2px;
 
-  min-height:120px;
   align-items:start;
 }
 
-/* top-left */
-.super-city{
-  grid-area:city;
-
-  font-size:14px;
-  font-weight:700;
-  line-height:1.2;
-}
-
-/* center-left */
-.super-temp{
-  grid-area:temp;
-
-  font-size:32px;
-  font-weight:800;
-  line-height:1;
-  letter-spacing:-0.03em;
-
-  align-self:center;
-}
-
-/* top-right */
+/* wrapper больше не нужен */
 .super-right{
   display:contents;
 }
 
+.super-city{ grid-area:city; }
+
+.super-temp{
+  grid-area:temp;
+  font-size:32px;
+  font-weight:800;
+  line-height:1;
+  letter-spacing:-0.03em;
+}
+
 .super-cond{
   grid-area:cond;
-
   font-size:13px;
-  line-height:1.2;
   text-align:right;
   white-space:nowrap;
 }
 
-/* bottom-left */
 .super-meta{
   grid-area:meta;
-
   font-size:13px;
   color:var(--text-soft);
-  line-height:1.2;
   margin:0;
 }
 
-/* bottom-right */
 .super-humidity{
   grid-area:hum;
-
   font-size:13px;
   color:var(--text-soft);
-  line-height:1.2;
   text-align:right;
   white-space:nowrap;
-
   justify-self:end;
 }
-
 /* divider */
 
 .super-divider{
