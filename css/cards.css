@@ -197,30 +197,30 @@
 }
 
 .super-card{
-  padding:12px;
-  gap:8px;
-  border-radius:22px;
+  padding:10px;
+  gap:6px;
+  border-radius:20px;
 }
 
 .super-top{
-  gap:8px;
+  gap:6px;
 }
 
 .super-city{
-  font-size:14px;
-}
-
-.super-cond{
   font-size:13px;
 }
 
+.super-cond{
+  font-size:12px;
+}
+
 .super-temp{
-  font-size:34px;
+  font-size:30px;
   line-height:1;
 }
 
 .super-meta{
-  font-size:13px;
+  font-size:12px;
 }
 
 .super-divider{
@@ -228,13 +228,13 @@
 }
 
 .super-speed-row{
-  gap:8px;
-  font-size:14px;
+  gap:6px;
+  font-size:13px;
 }
 
 .super-status{
-  margin-top:2px;
-  font-size:12px;
+  margin-top:1px;
+  font-size:11px;
 }
 
 /* =====================================
