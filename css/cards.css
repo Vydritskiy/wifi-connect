@@ -251,13 +251,13 @@
 ===================================== */
 
 .super-top{
-  display:grid;
-  grid-template-columns:1fr 140px;
-  grid-template-rows:auto auto;
-  column-gap:12px;
-  row-gap:6px;
+  position:relative;
 
-  align-items:start;
+  display:flex;
+  align-items:flex-start;
+  justify-content:space-between;
+  gap:12px;
+
   min-height:92px;
 }
 
@@ -289,14 +289,9 @@
 /* right side */
 
 .super-right{
-  grid-column:2;
-  grid-row:1;
-
-  display:flex;
-  justify-content:flex-start;
-  align-items:flex-start;
+  width:140px;
+  text-align:right;
 }
-
 .super-cond{
   font-size:13px;
   line-height:1.2;
@@ -308,24 +303,22 @@
 /* second row */
 
 .super-meta{
-  grid-column:1;
-  grid-row:2;
-
   font-size:13px;
   color:var(--text-soft);
   margin-top:2px;
+  line-height:1.2;
 }
 
 .super-humidity{
-  grid-column:2;
-  grid-row:2;
+  position:absolute;
+  right:0;
+  top:calc(100% - 22px);
 
   font-size:13px;
   color:var(--text-soft);
   line-height:1.2;
   text-align:right;
   white-space:nowrap;
-  margin-left:auto;
 }
 
 /* divider */
