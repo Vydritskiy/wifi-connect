@@ -338,20 +338,20 @@
 }
 
 .hour{
-  width:6px;
-  height:42px;
+  width:5px;
+  height:32px;
   background:#fff;
 }
 
 .minute{
-  width:4px;
-  height:62px;
+  width:3px;
+  height:46px;
   background:#fff;
 }
 
 .second{
   width:2px;
-  height:66px;
+  height:56px;
   background:#ffb347;
 }
 
