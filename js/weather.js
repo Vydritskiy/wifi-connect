@@ -87,16 +87,38 @@ function renderWeather(data) {
   const hum =
     Math.round(data.main.humidity);
 
+  const wind =
+    Math.round(data.wind.speed);
+
+  const pressure =
+    Math.round(data.main.pressure);
+
   const desc =
     data.weather?.[0]?.description || "—";
+
+  const now = new Date();
+
+  const dateText =
+    now.toLocaleDateString("ru-RU", {
+      day: "numeric",
+      month: "long"
+    });
 
   if (el.superCity) {
     el.superCity.textContent = city;
   }
 
+  if (el.superDate) {
+    el.superDate.textContent = dateText;
+  }
+
   if (el.superTemp) {
-    el.superTemp.textContent =
-      `${temp}°C`;
+    el.superTemp.textContent = `${temp}°C`;
+  }
+
+  if (el.superMeta) {
+    el.superMeta.textContent =
+      `Ощущается как ${feels}°`;
   }
 
   if (el.superCond) {
@@ -105,12 +127,17 @@ function renderWeather(data) {
 
   if (el.superHumidity) {
     el.superHumidity.textContent =
-      `влажность ${hum}%`;
+      `Влажность ${hum}%`;
   }
 
-  if (el.superMeta) {
-    el.superMeta.textContent =
-      `Ощущается как ${feels}°`;
+  if (el.superWind) {
+    el.superWind.textContent =
+      `Ветер ${wind} м/с`;
+  }
+
+  if (el.superPressure) {
+    el.superPressure.textContent =
+      `Давление ${pressure} hPa`;
   }
 }
 
