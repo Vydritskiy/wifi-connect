@@ -284,4 +284,15 @@
     width:100%;
   }
 
+   .nav-arrow{
+    inset-block:0;
+  }
+
+  .left{
+    inset-inline-start:0;
+  }
+
+  .right{
+    inset-inline-end:0;
+  }
 }
