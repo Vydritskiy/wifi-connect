@@ -316,16 +316,15 @@
 }
 
 .super-humidity{
-  grid-area:hum;
+  position:absolute;
+  right:0;
+  top:58px;
 
   font-size:13px;
   color:var(--text-soft);
   line-height:1.2;
   text-align:right;
   white-space:nowrap;
-
-  justify-self:end;
-  align-self:start;
 }
 /* divider */
 
