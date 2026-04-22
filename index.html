@@ -185,14 +185,40 @@
   <!-- RIGHT COLUMN -->
   <div class="super-right-col">
 
-    <div class="super-cond" id="superCond"></div>
+  <div class="super-cond" id="superCond"></div>
 
-    <div class="super-humidity" id="superHumidity"></div>
+  <!-- HUMIDITY -->
+  <div class="super-stat">
+    <span class="stat-icon" aria-hidden="true">
+      <svg viewBox="0 0 24 24" class="stat-svg" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M12 3s6 6.2 6 10a6 6 0 1 1-12 0c0-3.8 6-10 6-10z"/>
+      </svg>
+    </span>
+    <span class="stat-text" id="superHumidity"></span>
+  </div>
 
-    <div class="super-wind" id="superWind"></div>
+  <!-- WIND -->
+  <div class="super-stat">
+    <span class="stat-icon" aria-hidden="true">
+      <svg viewBox="0 0 24 24" class="stat-svg" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M3 8h10a3 3 0 1 0-3-3"/>
+        <path d="M2 12h15a3 3 0 1 1-3 3"/>
+        <path d="M4 16h8"/>
+      </svg>
+    </span>
+    <span class="stat-text" id="superWind"></span>
+  </div>
 
-    <div class="super-pressure" id="superPressure"></div>
-
+  <!-- PRESSURE -->
+  <div class="super-stat">
+    <span class="stat-icon" aria-hidden="true">
+      <svg viewBox="0 0 24 24" class="stat-svg" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M5 14a7 7 0 1 1 14 0"/>
+        <path d="M12 14l4-4"/>
+        <path d="M8 18h8"/>
+      </svg>
+    </span>
+    <span class="stat-text" id="superPressure"></span>
   </div>
 
 </div>
