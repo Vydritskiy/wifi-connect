@@ -3,14 +3,18 @@
 ===================================== */
 
 .carousel-shell{
-  position:relative;
-  margin-top:6px;
+  border-radius:30px;
+  overflow:hidden;
 }
 
 .carousel{
   position:relative;
   overflow:hidden;
   height:320px;
+
+  border-radius:30px;
+  background:rgba(255,255,255,.03);
+}
 }
 
 /* =====================================
