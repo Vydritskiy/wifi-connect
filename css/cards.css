@@ -323,11 +323,13 @@
   position:absolute;
   left:50%;
   top:50%;
+
   width:3px;
-  height:18px;
-  background:#fff;
+  height:14px;
   border-radius:2px;
-  transform-origin:center -74px;
+  background:#fff;
+
+  transform-origin:center -58px;
 }
 
 .m12{ transform:translate(-50%,-50%) rotate(0deg); }
