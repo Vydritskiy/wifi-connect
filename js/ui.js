@@ -262,16 +262,6 @@ bind(el.btnAdminToggle, toggleAdmin);
 bind(el.btnAdminClose, toggleAdmin);
 bind(el.btnAdminBackdrop, toggleAdmin);
 
-window.addEventListener(
-  "online",
-  updateOnlineStatus
-);
-
-window.addEventListener(
-  "offline",
-  updateOnlineStatus
-);
-
 el.carousel?.addEventListener(
   "touchstart",
   touchStart,
@@ -294,5 +284,4 @@ window.addEventListener("resize", () => {
 
 applyConfigToUI();
 setupCarousel();
-updateOnlineStatus();
 checkWifiConnection();
