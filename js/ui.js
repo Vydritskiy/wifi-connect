@@ -70,21 +70,24 @@ function slideTo(i) {
 
 function syncMeta() {
   const logical =
-    (current - 1 + REAL_COUNT) %
-    REAL_COUNT;
+    (current - 1 + REAL_COUNT) % REAL_COUNT;
 
   const dots = el.dots || [];
 
-  dots.forEach((dot, index) => {
-    dot.classList.toggle(
-      "active",
-      index === logical
-    );
+  dots.forEach((dot, i) => {
+    dot.classList.toggle("active", i === logical);
   });
 
-  updateMeta();
-}
+  if (el.netStatus) {
+    const ssid =
+      logical === 0
+        ? CONFIG.ssid5
+        : CONFIG.ssid24;
 
+    el.netStatus.textContent =
+      `Выбрана сеть: ${ssid}`;
+  }
+}
 export function nextSlide() {
   if (busy) return;
   busy = true;
