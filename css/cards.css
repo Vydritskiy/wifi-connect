@@ -197,78 +197,44 @@
 }
 
 .super-card{
-  display:flex;
-  flex-direction:column;
-  gap:10px;
-
-  padding:16px;
-  border-radius:var(--radius-lg);
-
-  background:rgba(255,255,255,.04);
-  border:1px solid var(--stroke);
-
-  box-shadow:var(--shadow-soft);
+  padding:12px;
+  gap:8px;
+  border-radius:22px;
 }
 
-/* top row */
 .super-top{
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  gap:12px;
+  gap:8px;
 }
 
 .super-city{
-  font-size:15px;
-  font-weight:700;
+  font-size:14px;
 }
 
 .super-cond{
-  font-size:14px;
-  color:var(--text-soft);
-}
-
-/* temperature */
-.super-temp{
-  font-size:42px;
-  font-weight:800;
-  line-height:1;
-  letter-spacing:-0.03em;
-}
-
-/* weather meta */
-.super-meta{
-  font-size:14px;
-  color:var(--text-soft);
-}
-
-/* divider */
-.super-divider{
-  height:1px;
-  background:rgba(255,255,255,.08);
-  margin:2px 0;
-}
-
-/* speed rows */
-.super-speed-row{
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  gap:12px;
-
-  font-size:15px;
-}
-
-.super-speed-row span:last-child{
-  font-weight:700;
-}
-
-/* status */
-.super-status{
-  margin-top:4px;
-
   font-size:13px;
-  color:var(--text-soft);
+}
+
+.super-temp{
+  font-size:34px;
+  line-height:1;
+}
+
+.super-meta{
+  font-size:13px;
+}
+
+.super-divider{
+  margin:0;
+}
+
+.super-speed-row{
+  gap:8px;
+  font-size:14px;
+}
+
+.super-status{
+  margin-top:2px;
+  font-size:12px;
 }
 
 /* =====================================
