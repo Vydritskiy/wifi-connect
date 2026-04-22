@@ -235,8 +235,22 @@
 }
 
 .super-speed-row{
-  gap:6px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+
+  gap:12px;
   font-size:14px;
+}
+
+.super-speed-row span:first-child{
+  opacity:.92;
+}
+
+.super-speed-row span:last-child{
+  font-weight:700;
+  text-align:right;
+  white-space:nowrap;
 }
 
 .super-status{
