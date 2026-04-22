@@ -29,8 +29,8 @@
 ===================================== */
 
 .track{
-  height:100%;
   display:flex;
+  height:100%;
   will-change:transform;
 
   transition:
@@ -46,8 +46,6 @@
 ===================================== */
 
 .slide{
-  position:relative;
-
   flex:0 0 100%;
   width:100%;
   height:100%;
@@ -117,8 +115,8 @@
 
 .slide-frequency{
   position:absolute;
-  top:2px;
-  left:4px;
+  top:4px;
+  left:6px;
   z-index:2;
 
   font-size:18px;
@@ -138,61 +136,71 @@
 }
 
 /* =====================================
-   EDGE ARROWS
+   EDGE ARROWS (FIXED)
 ===================================== */
 
 .nav-arrow{
   position:absolute;
-  top:16px;
-  bottom:16px;
+  top:22px;
+  bottom:22px;
 
-  width:10px;
-  z-index:5;
+  width:12px;
+  z-index:30;
 
   border:none;
   outline:none;
+  padding:0;
   cursor:pointer;
 
   display:flex;
   align-items:center;
   justify-content:center;
 
-  color:rgba(255,255,255,.92);
+  color:rgba(255,255,255,.95);
   font-size:18px;
   font-weight:700;
+  line-height:1;
 
-  background:rgba(0,0,0,.14);
-  backdrop-filter:blur(6px);
+  background:
+    linear-gradient(
+      180deg,
+      rgba(0,0,0,.08),
+      rgba(0,0,0,.22)
+    );
 
   transition:
     width .18s ease,
     background .18s ease,
-    box-shadow .18s ease;
+    box-shadow .18s ease,
+    opacity .18s ease;
 }
 
 .nav-prev{
-  left:0;
-  border-radius:24px 0 0 24px;
-  border-right:1px solid rgba(255,255,255,.08);
+  left:18px;
+  border-radius:18px 0 0 18px;
 }
 
 .nav-next{
-  right:0;
-  border-radius:0 24px 24px 0;
-  border-left:1px solid rgba(255,255,255,.08);
+  right:18px;
+  border-radius:0 18px 18px 0;
 }
 
 .nav-arrow:hover{
-  width:14px;
-  background:rgba(255,255,255,.08);
+  width:16px;
+
+  background:
+    linear-gradient(
+      180deg,
+      rgba(255,255,255,.08),
+      rgba(0,0,0,.14)
+    );
 
   box-shadow:
-    inset 0 0 10px rgba(255,255,255,.06),
-    0 0 14px rgba(80,180,255,.18);
+    0 0 12px rgba(80,180,255,.18);
 }
 
 .nav-arrow:active{
-  background:rgba(255,255,255,.14);
+  background:rgba(255,255,255,.12);
 }
 
 /* =====================================
@@ -201,6 +209,7 @@
 
 .dots{
   margin-top:12px;
+
   display:flex;
   justify-content:center;
   gap:8px;
@@ -251,13 +260,22 @@
   }
 
   .nav-arrow{
-    width:8px;
-    font-size:16px;
-    top:12px;
-    bottom:12px;
+    top:18px;
+    bottom:18px;
+
+    width:10px;
+    font-size:14px;
+  }
+
+  .nav-prev{
+    left:12px;
+  }
+
+  .nav-next{
+    right:12px;
   }
 
   .nav-arrow:hover{
-    width:10px;
+    width:12px;
   }
 }
