@@ -247,30 +247,30 @@
 }
 
 /* =====================================
-   TOP WEATHER AREA (TIGHT GRID)
+   WEATHER GRID
 ===================================== */
 
 .super-top{
   display:grid;
-  grid-template-columns:1fr 140px;
+  grid-template-columns:1fr auto;
+  grid-template-rows:auto auto;
   grid-template-areas:
     "left cond"
     "meta hum";
 
-  column-gap:12px;
-  row-gap:2px;
+  column-gap:16px;
+  row-gap:6px;
 
   align-items:start;
 }
 
-/* LEFT */
-
+/* left block */
 .super-left{
   grid-area:left;
 
   display:flex;
   flex-direction:column;
-  gap:2px;
+  gap:4px;
 }
 
 .super-city{
@@ -284,22 +284,13 @@
   font-weight:800;
   line-height:1;
   letter-spacing:-0.03em;
-  margin-top:2px;
 }
 
-/* RIGHT TOP */
-
+/* top-right */
 .super-right{
-  display:flex;
-  flex-direction:column;
-  align-items:flex-end;
-  justify-content:space-between;
-
-  min-width:140px;
-  height:92px;
+  grid-area:cond;
 }
 
-/* погода сверху */
 .super-cond{
   font-size:13px;
   line-height:1.2;
@@ -307,8 +298,7 @@
   white-space:nowrap;
 }
 
-/* SECOND ROW */
-
+/* bottom-left */
 .super-meta{
   grid-area:meta;
 
@@ -316,16 +306,20 @@
   color:var(--text-soft);
   line-height:1.2;
   margin:0;
-  align-self:start;
 }
 
-/* влажность снизу */
+/* bottom-right */
 .super-humidity{
+  grid-area:hum;
+
   font-size:13px;
   color:var(--text-soft);
   line-height:1.2;
   text-align:right;
   white-space:nowrap;
+
+  justify-self:end;
+  align-self:center;
 }
 
 /* divider */
