@@ -19,7 +19,9 @@
   overflow:hidden;
 
   height:320px;
+
   border-radius:34px;
+  isolation:isolate;
 }
 
 /* =====================================
@@ -29,6 +31,9 @@
 .track{
   display:flex;
   height:100%;
+
+  border-radius:34px;
+
   will-change:transform;
 
   transition:
@@ -44,10 +49,8 @@
 ===================================== */
 
 .slide{
-  flex:0 0 100%;
-  width:100%;
-  height:100%;
-  padding:0;
+  overflow:hidden;
+  border-radius:34px;
 }
 
 /* =====================================
