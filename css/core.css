@@ -32,20 +32,26 @@
 
 /* Morning */
 body.theme-morning{
-  --accent:#8fd3ff;
-  --accent2:#b7e7ff;
+  --accent:#9ed8ff;
+  --accent2:#d6f0ff;
 
-  --bg1:#355c8d;
-  --bg2:#6ea4df;
+  --bg1:#5b7fae;
+  --bg2:#9cc3f2;
+
+  --text:#ffffff;
+  --text-soft:rgba(255,255,255,.82);
 }
 
 /* Day */
 body.theme-day{
-  --accent:#2ea7ff;
-  --accent2:#6ed6ff;
+  --accent:#00c6ff;
+  --accent2:#67f0ff;
 
-  --bg1:#15314f;
-  --bg2:#245e96;
+  --bg1:#1565c0;
+  --bg2:#42a5f5;
+
+  --text:#ffffff;
+  --text-soft:rgba(255,255,255,.84);
 }
 
 /* Evening */
