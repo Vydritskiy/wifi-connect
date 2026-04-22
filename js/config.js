@@ -92,6 +92,7 @@ export const el = {
   superCity: document.getElementById("superCity"),
   superCond: document.getElementById("superCond"),
   superTemp: document.getElementById("superTemp"),
+  superHumidity: document.getElementById("superHumidity"),
   superMeta: document.getElementById("superMeta"),
   superPing: document.getElementById("superPing"),
   superDown: document.getElementById("superDown"),
