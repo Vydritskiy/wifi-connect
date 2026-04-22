@@ -5,12 +5,23 @@
 .carousel-shell{
   position:relative;
   margin-top:6px;
+
+  padding:10px;
+  border-radius:34px;
+
+  background:rgba(255,255,255,.03);
+  border:1px solid rgba(255,255,255,.05);
+
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.04),
+    0 14px 30px rgba(0,0,0,.12);
 }
 
 .carousel{
   position:relative;
   overflow:hidden;
   height:320px;
+  border-radius:30px;
 }
 
 /* =====================================
