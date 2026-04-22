@@ -290,12 +290,16 @@
 /* RIGHT TOP */
 
 .super-right{
-  grid-area:cond;
-
   display:flex;
-  justify-content:flex-end;
+  flex-direction:column;
+  align-items:flex-end;
+  justify-content:space-between;
+
+  min-width:140px;
+  height:64px;
 }
 
+/* погода сверху */
 .super-cond{
   font-size:13px;
   line-height:1.2;
@@ -315,17 +319,15 @@
   align-self:start;
 }
 
+/* влажность снизу */
 .super-humidity{
-  position:absolute;
-  right:0;
-  top:58px;
-
   font-size:13px;
   color:var(--text-soft);
   line-height:1.2;
   text-align:right;
   white-space:nowrap;
 }
+
 /* divider */
 
 .super-divider{
