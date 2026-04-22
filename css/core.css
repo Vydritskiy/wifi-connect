@@ -32,14 +32,11 @@
 
 /* Morning */
 body.theme-morning{
-  --accent:#69c8ff;
-  --accent2:#8be0ff;
+  --accent:#8fd3ff;
+  --accent2:#b7e7ff;
 
-  --bg1:#1a2740;
-  --bg2:#2f4e7d;
-
-  --text:#ffffff;
-  --text-soft:rgba(255,255,255,.78);
+  --bg1:#355c8d;
+  --bg2:#6ea4df;
 }
 
 /* Day */
@@ -49,9 +46,6 @@ body.theme-day{
 
   --bg1:#15314f;
   --bg2:#245e96;
-
-  --text:#ffffff;
-  --text-soft:rgba(255,255,255,.78);
 }
 
 /* Evening */
@@ -61,9 +55,6 @@ body.theme-evening{
 
   --bg1:#241629;
   --bg2:#5b2f52;
-
-  --text:#ffffff;
-  --text-soft:rgba(255,255,255,.76);
 }
 
 /* Night */
@@ -73,11 +64,7 @@ body.theme-night{
 
   --bg1:#05070d;
   --bg2:#101726;
-
-  --text:#ffffff;
-  --text-soft:rgba(255,255,255,.70);
 }
-
 /* =====================================
    BASE
 ===================================== */
