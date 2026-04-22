@@ -1,110 +1,136 @@
 /* =========================================
    UI.JS
-   Carousel + Actions + Admin + Status
+   Clean stable version
 ========================================= */
 
 import {
   CONFIG,
   el,
-  slides,
   REAL_COUNT,
-  index,
-  slideWidth,
-  isAnimating,
 
-  setIndex,
-  setAnimating,
-
-  getCurrentSsid,
   updateMeta,
-  recalcWidth,
   applyConfigToUI
 } from "./config.js";
 
-/* -----------------------------------------
-   CLONES (infinite carousel)
------------------------------------------ */
+/* =========================================
+   CAROUSEL
+========================================= */
 
-(function createClones() {
+let current = 1;
+let width = 0;
+let busy = false;
+
+function setupCarousel() {
   if (!el.track || REAL_COUNT < 2) return;
 
-  const first = slides[0].cloneNode(true);
-  const last = slides[REAL_COUNT - 1].cloneNode(true);
+  const originalSlides = Array.from(el.track.children);
 
-  el.track.appendChild(first);
-  el.track.prepend(last);
-})();
+  el.track.innerHTML = "";
 
-/* -----------------------------------------
-   CAROUSEL
------------------------------------------ */
+  const firstClone =
+    originalSlides[0].cloneNode(true);
 
-function unlock() {
-  clearTimeout(window.__carouselLock);
-  setAnimating(false);
+  const lastClone =
+    originalSlides[
+      originalSlides.length - 1
+    ].cloneNode(true);
+
+  el.track.appendChild(lastClone);
+
+  originalSlides.forEach(slide => {
+    el.track.appendChild(slide);
+  });
+
+  el.track.appendChild(firstClone);
+
+  width = el.carousel.offsetWidth;
+  jumpTo(1);
 }
 
-export function goTo(nextIndex) {
-  if (!el.track || isAnimating) return;
+function jumpTo(i) {
+  current = i;
 
-  setAnimating(true);
-  setIndex(nextIndex);
+  el.track.classList.add("no-anim");
+  el.track.style.transform =
+    `translateX(${-current * width}px)`;
+
+  void el.track.offsetWidth;
 
   el.track.classList.remove("no-anim");
-  el.track.style.transform =
-    `translateX(${-nextIndex * slideWidth}px)`;
 
-  clearTimeout(window.__carouselLock);
-  window.__carouselLock =
-    setTimeout(unlock, 700);
+  syncMeta();
+}
+
+function slideTo(i) {
+  current = i;
+
+  el.track.style.transform =
+    `translateX(${-current * width}px)`;
+}
+
+function syncMeta() {
+  const logical =
+    (current - 1 + REAL_COUNT) %
+    REAL_COUNT;
+
+  const dots = el.dots || [];
+
+  dots.forEach((dot, index) => {
+    dot.classList.toggle(
+      "active",
+      index === logical
+    );
+  });
+
+  updateMeta();
 }
 
 export function nextSlide() {
-  goTo(index + 1);
+  if (busy) return;
+  busy = true;
+
+  slideTo(current + 1);
+
+  setTimeout(() => {
+    if (current === REAL_COUNT + 1) {
+      jumpTo(1);
+    }
+
+    syncMeta();
+    busy = false;
+  }, 560);
 }
 
 export function prevSlide() {
-  goTo(index - 1);
+  if (busy) return;
+  busy = true;
+
+  slideTo(current - 1);
+
+  setTimeout(() => {
+    if (current === 0) {
+      jumpTo(REAL_COUNT);
+    }
+
+    syncMeta();
+    busy = false;
+  }, 560);
 }
 
-function fixLoop() {
-  if (index === 0) {
-    el.track.classList.add("no-anim");
-    setIndex(REAL_COUNT);
-    el.track.style.transform =
-      `translateX(${-REAL_COUNT * slideWidth}px)`;
-  }
-
-  if (index === REAL_COUNT + 1) {
-    el.track.classList.add("no-anim");
-    setIndex(1);
-    el.track.style.transform =
-      `translateX(${-slideWidth}px)`;
-  }
-
-  updateMeta();
-  unlock();
-}
-
-el.track?.addEventListener(
-  "transitionend",
-  fixLoop
-);
-
-/* -----------------------------------------
+/* =========================================
    SWIPE
------------------------------------------ */
+========================================= */
 
 let startX = 0;
 let startY = 0;
 
-function onTouchStart(e) {
+function touchStart(e) {
   const t = e.touches[0];
   startX = t.clientX;
   startY = t.clientY;
 }
 
-function onTouchEnd(e) {
+function touchEnd(e) {
   const t = e.changedTouches[0];
 
   const dx = t.clientX - startX;
@@ -120,101 +146,75 @@ function onTouchEnd(e) {
   }
 }
 
-el.carousel?.addEventListener(
-  "touchstart",
-  onTouchStart,
-  { passive:true }
-);
-
-el.carousel?.addEventListener(
-  "touchend",
-  onTouchEnd
-);
-
-/* -----------------------------------------
+/* =========================================
    ACTIONS
------------------------------------------ */
+========================================= */
 
-export function copyPass() {
+export async function copyPass(e) {
+  e?.preventDefault();
+
   const pass = CONFIG.pass;
 
-  if (
-    navigator.clipboard &&
-    window.isSecureContext
-  ) {
-    navigator.clipboard
-      .writeText(pass)
-      .then(() => alert("Пароль скопирован"));
-  } else {
+  try {
+    await navigator.clipboard.writeText(pass);
+    alert("Пароль скопирован");
+  } catch {
     prompt("Скопируйте пароль:", pass);
   }
 }
 
-export function openMaps() {
+export function openMaps(e) {
+  e?.preventDefault();
+
+  if (!CONFIG.mapsUrl) return;
+
   window.open(
     CONFIG.mapsUrl,
     "_blank",
-    "noopener"
+    "noopener,noreferrer"
   );
 }
 
-export function autoConnect() {
-  const ssid = getCurrentSsid();
+export function autoConnect(e) {
+  e?.preventDefault();
+
+  const ssid =
+    current === 1
+      ? CONFIG.ssid5
+      : CONFIG.ssid24;
+
   const pass = CONFIG.pass;
 
-  const ua =
-    navigator.userAgent.toLowerCase();
-
-  if (/android/.test(ua)) {
-    const payload =
+  if (/android/i.test(navigator.userAgent)) {
+    location.href =
       `WIFI:T:WPA;S:${ssid};P:${pass};;`;
 
-    location.href = payload;
     return;
   }
 
   copyPass();
-
-  alert(
-    `Выберите сеть ${ssid} вручную`
-  );
+  alert(`Выберите сеть ${ssid}`);
 }
 
-/* -----------------------------------------
-   ONLINE STATUS
------------------------------------------ */
+/* =========================================
+   STATUS
+========================================= */
 
 export function updateOnlineStatus() {
   if (!el.netStatus) return;
 
-  const online = navigator.onLine;
-
-  el.netStatus.textContent = online
-    ? `Интернет: онлайн ✅`
-    : `Интернет: офлайн ⛔`;
+  el.netStatus.textContent =
+    navigator.onLine
+      ? "Интернет: онлайн ✅"
+      : "Интернет: офлайн ⛔";
 }
-
-window.addEventListener(
-  "online",
-  updateOnlineStatus
-);
-
-window.addEventListener(
-  "offline",
-  updateOnlineStatus
-);
-
-/* -----------------------------------------
-   CONNECTED BANNER
------------------------------------------ */
 
 export function checkWifiConnection() {
   let connected = false;
 
   const conn =
     navigator.connection ||
-    navigator.webkitConnection ||
-    navigator.mozConnection;
+    navigator.webkitConnection;
 
   if (
     conn &&
@@ -241,17 +241,17 @@ export function checkWifiConnection() {
   }
 }
 
-/* -----------------------------------------
-   ADMIN PANEL
------------------------------------------ */
+/* =========================================
+   ADMIN
+========================================= */
 
 export function toggleAdmin() {
   el.adminPanel?.classList.toggle("open");
 }
 
-/* -----------------------------------------
+/* =========================================
    EVENTS
------------------------------------------ */
+========================================= */
 
 function bind(node, fn) {
   node?.addEventListener("click", fn);
@@ -268,17 +268,37 @@ bind(el.btnAdminToggle, toggleAdmin);
 bind(el.btnAdminClose, toggleAdmin);
 bind(el.btnAdminBackdrop, toggleAdmin);
 
-/* -----------------------------------------
-   STARTUP
------------------------------------------ */
-
 window.addEventListener(
-  "resize",
-  recalcWidth
+  "online",
+  updateOnlineStatus
 );
 
+window.addEventListener(
+  "offline",
+  updateOnlineStatus
+);
+
+el.carousel?.addEventListener(
+  "touchstart",
+  touchStart,
+  { passive:true }
+);
+
+el.carousel?.addEventListener(
+  "touchend",
+  touchEnd
+);
+
+window.addEventListener("resize", () => {
+  width = el.carousel.offsetWidth;
+  jumpTo(current);
+});
+
+/* =========================================
+   INIT
+========================================= */
+
 applyConfigToUI();
-recalcWidth();
-updateMeta();
+setupCarousel();
 updateOnlineStatus();
 checkWifiConnection();
