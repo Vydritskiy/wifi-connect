@@ -150,21 +150,32 @@ function renderError(city, msg) {
     el.superCity.textContent = city;
   }
 
+  if (el.superDate) {
+    el.superDate.textContent = "";
+  }
+
   if (el.superTemp) {
     el.superTemp.textContent = "—°C";
   }
 
+  if (el.superMeta) {
+    el.superMeta.textContent = msg;
+  }
+
   if (el.superCond) {
-    el.superCond.textContent =
-      "нет данных";
+    el.superCond.textContent = "нет данных";
   }
 
   if (el.superHumidity) {
-  el.superHumidity.textContent = `влажность ${hum}%`;
-}
+    el.superHumidity.textContent = "";
+  }
 
-  if (el.superMeta) {
-    el.superMeta.textContent = msg;
+  if (el.superWind) {
+    el.superWind.textContent = "";
+  }
+
+  if (el.superPressure) {
+    el.superPressure.textContent = "";
   }
 }
 
