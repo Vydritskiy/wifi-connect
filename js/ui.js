@@ -1,274 +1,284 @@
 /* =========================================
-   CONFIG.JS
-   Core config + DOM refs + shared state
+   UI.JS
+   Carousel + Actions + Admin + Status
 ========================================= */
 
+import {
+  CONFIG,
+  el,
+  slides,
+  REAL_COUNT,
+  index,
+  slideWidth,
+  isAnimating,
+
+  setIndex,
+  setAnimating,
+
+  getCurrentSsid,
+  updateMeta,
+  recalcWidth,
+  applyConfigToUI
+} from "./config.js";
+
 /* -----------------------------------------
-   DEFAULT CONFIG
+   CLONES (infinite carousel)
 ----------------------------------------- */
 
-export const defaultConfig = {
-  ssid5: "r2d5",
-  ssid24: "r2d2",
-  pass: "Jgthfnbdysq1913",
+(function createClones() {
+  if (!el.track || REAL_COUNT < 2) return;
 
-  welcome: "Добро пожаловать! Чувствуй себя как дома 🧡",
+  const first = slides[0].cloneNode(true);
+  const last = slides[REAL_COUNT - 1].cloneNode(true);
 
-  mapsUrl:
-    "https://www.google.com/maps/place/вулиця+Андрія+Малишка,+31А,+Київ",
-
-  city: "Kyiv",
-  weatherApiKey: "6530afae9a05d8f6e1c997682469a69d"
-};
+  el.track.appendChild(first);
+  el.track.prepend(last);
+})();
 
 /* -----------------------------------------
-   STORAGE
+   CAROUSEL
 ----------------------------------------- */
 
-export function loadConfig() {
-  try {
-    const raw = localStorage.getItem("wifiGuestConfig");
-    if (!raw) return { ...defaultConfig };
+function unlock() {
+  clearTimeout(window.__carouselLock);
+  setAnimating(false);
+}
 
-    const saved = JSON.parse(raw);
+export function goTo(nextIndex) {
+  if (!el.track || isAnimating) return;
 
-    const {
-      weatherApiKey,
-      ...safeData
-    } = saved || {};
+  setAnimating(true);
+  setIndex(nextIndex);
 
-    return {
-      ...defaultConfig,
-      ...safeData
-    };
+  el.track.classList.remove("no-anim");
+  el.track.style.transform =
+    `translateX(${-nextIndex * slideWidth}px)`;
 
-  } catch {
-    return { ...defaultConfig };
+  clearTimeout(window.__carouselLock);
+  window.__carouselLock =
+    setTimeout(unlock, 700);
+}
+
+export function nextSlide() {
+  goTo(index + 1);
+}
+
+export function prevSlide() {
+  goTo(index - 1);
+}
+
+function fixLoop() {
+  if (index === 0) {
+    el.track.classList.add("no-anim");
+    setIndex(REAL_COUNT);
+    el.track.style.transform =
+      `translateX(${-REAL_COUNT * slideWidth}px)`;
   }
+
+  if (index === REAL_COUNT + 1) {
+    el.track.classList.add("no-anim");
+    setIndex(1);
+    el.track.style.transform =
+      `translateX(${-slideWidth}px)`;
+  }
+
+  updateMeta();
+  unlock();
 }
 
-export let CONFIG = loadConfig();
-
-export function saveConfigToStorage() {
-  try {
-    const { weatherApiKey, ...safeData } = CONFIG;
-
-    localStorage.setItem(
-      "wifiGuestConfig",
-      JSON.stringify(safeData)
-    );
-  } catch {}
-}
-
-/* -----------------------------------------
-   DOM REFERENCES
------------------------------------------ */
-
-export const el = {
-  /* layout */
-  carousel: document.getElementById("carousel"),
-  track: document.getElementById("track"),
-  card: document.querySelector(".card"),
-
-  /* text */
-  welcomeEl: document.getElementById("welcomeText"),
-  netStatus: document.getElementById("netStatus"),
-
-  /* dots */
-  dots: Array.from(document.querySelectorAll(".dots span")),
-
-  /* buttons */
-  btnPrev: document.getElementById("btnPrev"),
-  btnNext: document.getElementById("btnNext"),
-
-  btnAutoConnect: document.getElementById("btnAutoConnect"),
-  btnCopyPass: document.getElementById("copyBtn"),
-  btnOpenMaps: document.getElementById("mapBtn"),
-
-  /* connected */
-  connectedBanner: document.getElementById("connectedBanner"),
-
-  /* weather */
-  weatherBg: document.getElementById("weatherBg"),
-  superCity: document.getElementById("superCity"),
-  superCond: document.getElementById("superCond"),
-  superTemp: document.getElementById("superTemp"),
-  superMeta: document.getElementById("superMeta"),
-  superPing: document.getElementById("superPing"),
-  superDown: document.getElementById("superDown"),
-  superUp: document.getElementById("superUp"),
-  superStatus: document.getElementById("superStatus"),
-
-  /* admin */
-  adminPanel: document.getElementById("adminPanel"),
-  btnAdminToggle: document.getElementById("btnAdminToggle"),
-  btnAdminClose: document.getElementById("btnAdminClose"),
-  btnAdminBackdrop: document.getElementById("btnAdminBackdrop"),
-  btnAdminSave: document.getElementById("btnAdminSave"),
-  btnAdminReset: document.getElementById("btnAdminReset"),
-
-  admWelcome: document.getElementById("admWelcome"),
-  admSsid5: document.getElementById("admSsid5"),
-  admSsid24: document.getElementById("admSsid24"),
-  admPass: document.getElementById("admPass")
-};
-
-/* -----------------------------------------
-   CAROUSEL STATE
------------------------------------------ */
-
-export let slides = Array.from(
-  document.querySelectorAll(".slide")
+el.track?.addEventListener(
+  "transitionend",
+  fixLoop
 );
 
-export const REAL_COUNT = slides.length;
-
-export let index = 1;
-export let slideWidth = 0;
-export let isAnimating = false;
-
 /* -----------------------------------------
-   DEVICE INFO
+   SWIPE
 ----------------------------------------- */
 
-export const ua = navigator.userAgent.toLowerCase();
+let startX = 0;
+let startY = 0;
 
-export const isAndroid = /android/.test(ua);
-export const isIOS = /iphone|ipad|ipod/.test(ua);
-
-export const oldAndroid =
-  /android\s([0-6]\.|7\.0)/i.test(ua);
-
-export const oldIOS =
-  /os\s(9_|10_)/i.test(ua);
-
-/* -----------------------------------------
-   WEATHER STATE
------------------------------------------ */
-
-export let lastWeatherKind = null;
-export let lastWeatherIsNight = false;
-export let lastWeatherTemp = null;
-
-export function setWeatherState(kind, night, temp){
-  lastWeatherKind = kind;
-  lastWeatherIsNight = night;
-  lastWeatherTemp = temp;
+function onTouchStart(e) {
+  const t = e.touches[0];
+  startX = t.clientX;
+  startY = t.clientY;
 }
 
-/* -----------------------------------------
-   HELPERS
------------------------------------------ */
+function onTouchEnd(e) {
+  const t = e.changedTouches[0];
 
-export function getCurrentBand() {
-  const logical =
-    (index - 1 + REAL_COUNT) % REAL_COUNT;
+  const dx = t.clientX - startX;
+  const dy = t.clientY - startY;
 
-  return logical === 0 ? "5" : "24";
-}
-
-export function getSsidForBand(band) {
-  return band === "5"
-    ? CONFIG.ssid5
-    : CONFIG.ssid24;
-}
-
-export function getCurrentSsid() {
-  return getSsidForBand(getCurrentBand());
-}
-
-/* -----------------------------------------
-   UI APPLY
------------------------------------------ */
-
-export function applyConfigToUI() {
-  if (el.welcomeEl) {
-    el.welcomeEl.textContent = CONFIG.welcome;
-  }
-
-  document
-    .querySelectorAll(".slide")
-    .forEach(slide => {
-
-      const band =
-        slide.dataset.net === "r2d5"
-          ? "5"
-          : "24";
-
-      const caption =
-        slide.querySelector(".slide-caption");
-
-      if (caption) {
-        caption.textContent =
-          band === "5"
-            ? `${CONFIG.ssid5} · быстрее`
-            : `${CONFIG.ssid24} · стабильнее`;
-      }
-    });
-
-  if (el.btnOpenMaps) {
-    el.btnOpenMaps.href = CONFIG.mapsUrl;
+  if (
+    Math.abs(dx) > Math.abs(dy) &&
+    Math.abs(dx) > 45
+  ) {
+    dx < 0
+      ? nextSlide()
+      : prevSlide();
   }
 }
 
+el.carousel?.addEventListener(
+  "touchstart",
+  onTouchStart,
+  { passive:true }
+);
+
+el.carousel?.addEventListener(
+  "touchend",
+  onTouchEnd
+);
+
 /* -----------------------------------------
-   CAROUSEL META
+   ACTIONS
 ----------------------------------------- */
 
-export function updateMeta() {
-  const logical =
-    (index - 1 + REAL_COUNT) % REAL_COUNT;
+export function copyPass() {
+  const pass = CONFIG.pass;
 
-  el.dots.forEach((dot, i) => {
-    dot.classList.toggle(
-      "active",
-      i === logical
-    );
-  });
-
-  if (el.netStatus) {
-    const ssid = getCurrentSsid();
-
-    el.netStatus.textContent =
-      `Выбрана сеть: ${ssid}`;
+  if (
+    navigator.clipboard &&
+    window.isSecureContext
+  ) {
+    navigator.clipboard
+      .writeText(pass)
+      .then(() => alert("Пароль скопирован"));
+  } else {
+    prompt("Скопируйте пароль:", pass);
   }
 }
 
-export function recalcWidth() {
-  if (!el.carousel || !el.track) return;
+export function openMaps() {
+  window.open(
+    CONFIG.mapsUrl,
+    "_blank",
+    "noopener"
+  );
+}
 
-  slideWidth = el.carousel.offsetWidth;
+export function autoConnect() {
+  const ssid = getCurrentSsid();
+  const pass = CONFIG.pass;
 
-  el.track.style.transition = "none";
-  el.track.style.transform =
-    `translateX(${-index * slideWidth}px)`;
+  const ua =
+    navigator.userAgent.toLowerCase();
 
-  void el.track.offsetWidth;
+  if (/android/.test(ua)) {
+    const payload =
+      `WIFI:T:WPA;S:${ssid};P:${pass};;`;
+
+    location.href = payload;
+    return;
+  }
+
+  copyPass();
+
+  alert(
+    `Выберите сеть ${ssid} вручную`
+  );
 }
 
 /* -----------------------------------------
-   MUTATORS
+   ONLINE STATUS
 ----------------------------------------- */
 
-export function setIndex(v){
-  index = v;
+export function updateOnlineStatus() {
+  if (!el.netStatus) return;
+
+  const online = navigator.onLine;
+
+  el.netStatus.textContent = online
+    ? `Интернет: онлайн ✅`
+    : `Интернет: офлайн ⛔`;
 }
 
-export function setAnimating(v){
-  isAnimating = v;
-}
+window.addEventListener(
+  "online",
+  updateOnlineStatus
+);
 
-export function setSlideWidth(v){
-  slideWidth = v;
+window.addEventListener(
+  "offline",
+  updateOnlineStatus
+);
+
+/* -----------------------------------------
+   CONNECTED BANNER
+----------------------------------------- */
+
+export function checkWifiConnection() {
+  let connected = false;
+
+  const conn =
+    navigator.connection ||
+    navigator.webkitConnection ||
+    navigator.mozConnection;
+
+  if (
+    conn &&
+    (
+      conn.type === "wifi" ||
+      conn.effectiveType === "wifi"
+    )
+  ) {
+    connected = true;
+  }
+
+  if (window.__speedDownMbps >= 8) {
+    connected = true;
+  }
+
+  el.connectedBanner?.classList.toggle(
+    "show",
+    connected
+  );
+
+  if (el.btnAutoConnect) {
+    el.btnAutoConnect.style.display =
+      connected ? "none" : "";
+  }
 }
 
 /* -----------------------------------------
-   START POSITION
+   ADMIN PANEL
 ----------------------------------------- */
 
-(function autoPick() {
-  index =
-    (oldAndroid || oldIOS)
-      ? 2
-      : 1;
-})();
+export function toggleAdmin() {
+  el.adminPanel?.classList.toggle("open");
+}
+
+/* -----------------------------------------
+   EVENTS
+----------------------------------------- */
+
+function bind(node, fn) {
+  node?.addEventListener("click", fn);
+}
+
+bind(el.btnPrev, prevSlide);
+bind(el.btnNext, nextSlide);
+
+bind(el.btnCopyPass, copyPass);
+bind(el.btnOpenMaps, openMaps);
+bind(el.btnAutoConnect, autoConnect);
+
+bind(el.btnAdminToggle, toggleAdmin);
+bind(el.btnAdminClose, toggleAdmin);
+bind(el.btnAdminBackdrop, toggleAdmin);
+
+/* -----------------------------------------
+   STARTUP
+----------------------------------------- */
+
+window.addEventListener(
+  "resize",
+  recalcWidth
+);
+
+applyConfigToUI();
+recalcWidth();
+updateMeta();
+updateOnlineStatus();
+checkWifiConnection();
