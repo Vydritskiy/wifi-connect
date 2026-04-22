@@ -177,15 +177,14 @@
 }
 
 /* =====================================
-   FINAL EDGE BUTTONS
+   UNIVERSAL EDGE BUTTONS
+   desktop + mobile identical
 ===================================== */
 
 .nav-arrow{
   position:absolute;
-
   top:0;
   bottom:0;
-
   width:10px;
   z-index:999;
 
@@ -200,10 +199,6 @@
   align-items:center;
   justify-content:center;
 
-  color:rgba(255,255,255,.82);
-  font-size:11px;
-  line-height:1;
-
   background:
     linear-gradient(
       180deg,
@@ -211,10 +206,18 @@
       rgba(0,0,0,.12)
     );
 
-  transition:
-    width .18s ease,
-    background .18s ease,
-    opacity .18s ease;
+  -webkit-appearance:none;
+  appearance:none;
+  border-radius:0;
+}
+
+.nav-arrow img,
+.nav-arrow svg{
+  width:11px;
+  height:11px;
+  opacity:.82;
+  display:block;
+  pointer-events:none;
 }
 
 .left{
