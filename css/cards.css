@@ -345,13 +345,13 @@
 
 .minute{
   width:3px;
-  height:46px;
+  height:42px;
   background:#fff;
 }
 
 .second{
   width:2px;
-  height:56px;
+  height:52px;
   background:#ffb347;
 }
 
