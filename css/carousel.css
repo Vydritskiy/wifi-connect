@@ -139,12 +139,16 @@
    EDGE BUTTONS
 ===================================== */
 
+/* =====================================
+   EDGE BUTTONS DESKTOP
+===================================== */
+
 .nav-arrow{
   position:absolute;
-  top:6px;
-  bottom:6px;
+  top:10px;
+  bottom:10px;
 
-  width:8px;
+  width:6px;
   z-index:999;
 
   border:none;
@@ -158,42 +162,44 @@
   align-items:center;
   justify-content:center;
 
-  color:rgba(255,255,255,.92);
-  font-size:13px;
+  color:rgba(255,255,255,.78);
+  font-size:10px;
   line-height:1;
 
   background:
     linear-gradient(
       180deg,
-      rgba(0,0,0,.06),
-      rgba(0,0,0,.14)
+      rgba(0,0,0,.03),
+      rgba(0,0,0,.10)
     );
+
+  opacity:.85;
 
   transition:
     width .18s ease,
-    background .18s ease,
-    opacity .18s ease;
+    opacity .18s ease,
+    background .18s ease;
 }
 
 .left{
-  left:4px;
-  border-radius:26px 0 0 26px;
+  left:2px;
+  border-radius:28px 0 0 28px;
 }
 
 .right{
-  right:4px;
-  border-radius:0 26px 26px 0;
+  right:2px;
+  border-radius:0 28px 28px 0;
 }
 
 .nav-arrow:hover{
-  width:10px;
-  background:rgba(255,255,255,.06);
+  width:8px;
+  opacity:1;
+  background:rgba(255,255,255,.05);
 }
 
 .nav-arrow:active{
-  background:rgba(255,255,255,.12);
+  background:rgba(255,255,255,.10);
 }
-
 /* =====================================
    DOTS
 ===================================== */
