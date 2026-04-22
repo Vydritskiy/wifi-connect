@@ -203,15 +203,6 @@ export function autoConnect(e) {
    STATUS
 ========================================= */
 
-export function updateOnlineStatus() {
-  if (!el.netStatus) return;
-
-  el.netStatus.textContent =
-    navigator.onLine
-      ? "Интернет: онлайн ✅"
-      : "Интернет: офлайн ⛔";
-}
-
 export function checkWifiConnection() {
   let connected = false;
 
