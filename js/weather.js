@@ -6,24 +6,34 @@ import {
 } from "./config.js";
 
 /* =========================================
-   Определение города по IP
+   Detect city by IP
 ========================================= */
+
 export async function detectCityFromDevice() {
   try {
     const res = await fetch("https://ipapi.co/json/");
     const data = await res.json();
-    CONFIG.city = data?.city || defaultConfig.city;
-  } catch (e) {
+
+    CONFIG.city =
+      data?.city || defaultConfig.city;
+
+  } catch {
     CONFIG.city = defaultConfig.city;
   }
 }
 
 /* =========================================
-   Получение погоды
+   Fetch weather
 ========================================= */
+
 export async function fetchWeather() {
-  const city = (CONFIG.city || defaultConfig.city).trim();
-  const apiKey = (CONFIG.weatherApiKey || "").trim();
+  const city =
+    (CONFIG.city || defaultConfig.city)
+      .trim();
+
+  const apiKey =
+    (CONFIG.weatherApiKey || "")
+      .trim();
 
   if (!apiKey) {
     renderError(city, "Нет API key");
@@ -43,7 +53,10 @@ export async function fetchWeather() {
     const data = await res.json();
 
     if (!res.ok) {
-      renderError(city, data?.message || "Ошибка API");
+      renderError(
+        city,
+        data?.message || "Ошибка API"
+      );
       return;
     }
 
@@ -53,60 +66,131 @@ export async function fetchWeather() {
     updateTimeBanner();
 
   } catch (e) {
-    renderError(city, e.message || "Ошибка сети");
+    renderError(
+      city,
+      e.message || "Ошибка сети"
+    );
   }
 }
 
 /* =========================================
-   Вывод погоды
+   Render weather
 ========================================= */
-function renderWeather(data) {
-  const city = data.name || CONFIG.city;
-  const temp = Math.round(data.main.temp);
-  const feels = Math.round(data.main.feels_like);
-  const hum = Math.round(data.main.humidity);
-  const desc = data.weather?.[0]?.description || "—";
 
-  el.superCity.textContent = city;
-  el.superTemp.textContent = `${temp}°C`;
-  el.superCond.textContent = desc;
-  el.superMeta.textContent =
-    `Ощущается как ${feels}° · влажность ${hum}%`;
+function renderWeather(data) {
+  const city =
+    data.name || CONFIG.city;
+
+  const temp =
+    Math.round(data.main.temp);
+
+  const feels =
+    Math.round(data.main.feels_like);
+
+  const hum =
+    Math.round(data.main.humidity);
+
+  const desc =
+    data.weather?.[0]?.description || "—";
+
+  if (el.superCity) {
+    el.superCity.textContent = city;
+  }
+
+  if (el.superTemp) {
+    el.superTemp.textContent =
+      `${temp}°C`;
+  }
+
+  if (el.superCond) {
+    el.superCond.textContent = desc;
+  }
+
+  if (el.superMeta) {
+    el.superMeta.textContent =
+      `Ощущается как ${feels}° · влажность ${hum}%`;
+  }
 }
 
 function renderError(city, msg) {
-  el.superCity.textContent = city;
-  el.superTemp.textContent = "—°C";
-  el.superCond.textContent = "нет данных";
-  el.superMeta.textContent = msg;
+  if (el.superCity) {
+    el.superCity.textContent = city;
+  }
+
+  if (el.superTemp) {
+    el.superTemp.textContent = "—°C";
+  }
+
+  if (el.superCond) {
+    el.superCond.textContent =
+      "нет данных";
+  }
+
+  if (el.superMeta) {
+    el.superMeta.textContent = msg;
+  }
 }
 
 /* =========================================
-   Тип погоды
+   Weather type
 ========================================= */
-function updateWeatherState(data) {
-  const weather = data.weather?.[0] || {};
-  const main = (weather.main || "").toLowerCase();
-  const id = weather.id || 0;
-  const temp = Math.round(data.main.temp);
 
-  const hour = new Date().getHours();
-  const isNight = hour >= 22 || hour < 6;
+function updateWeatherState(data) {
+  const weather =
+    data.weather?.[0] || {};
+
+  const main =
+    (weather.main || "")
+      .toLowerCase();
+
+  const id =
+    weather.id || 0;
+
+  const temp =
+    Math.round(data.main.temp);
+
+  const hour =
+    new Date().getHours();
+
+  const isNight =
+    hour >= 22 || hour < 6;
 
   let kind = "clear";
 
   if (main.includes("clear")) {
     kind = "clear";
+
   } else if (main.includes("cloud")) {
-    if (id === 804) kind = "clouds-overcast";
-    else if (id === 802 || id === 803) kind = "clouds-broken";
-    else kind = "clouds-few";
+
+    if (id === 804)
+      kind = "clouds-overcast";
+    else if (
+      id === 802 ||
+      id === 803
+    )
+      kind = "clouds-broken";
+    else
+      kind = "clouds-few";
+
   } else if (main.includes("rain")) {
-    kind = (id >= 500 && id <= 504) ? "rain-light" : "rain-heavy";
+
+    kind =
+      (id >= 500 && id <= 504)
+        ? "rain-light"
+        : "rain-heavy";
+
   } else if (main.includes("snow")) {
-    kind = (id >= 600 && id < 620) ? "snow-light" : "snow-heavy";
-  } else if (main.includes("thunder")) {
+
+    kind =
+      (id >= 600 && id < 620)
+        ? "snow-light"
+        : "snow-heavy";
+
+  } else if (
+    main.includes("thunder")
+  ) {
     kind = "thunder";
+
   } else if (
     main.includes("mist") ||
     main.includes("fog") ||
@@ -115,60 +199,72 @@ function updateWeatherState(data) {
     kind = "fog";
   }
 
-  setWeatherState(kind, isNight, temp);
+  setWeatherState(
+    kind,
+    isNight,
+    temp
+  );
 }
 
 /* =========================================
-   Фон
+   Background
 ========================================= */
+
 export function updateWeatherBackground() {
   if (!el.weatherBg) return;
-  el.weatherBg.className = "weather-bg";
+
+  el.weatherBg.className =
+    "weather-bg";
 }
 
 /* =========================================
-   Баннер времени суток
+   Time banner text only
 ========================================= */
+
 export function updateTimeBanner() {
   if (!el.timeBanner) return;
 
-  const hour = new Date().getHours();
-  document.body.classList.remove(
-  "theme-morning",
-  "theme-day",
-  "theme-evening",
-  "theme-night"
-);
+  const hour =
+    new Date().getHours();
 
-if (hour >= 5 && hour < 11) {
-  document.body.classList.add("theme-morning");
-} else if (hour >= 11 && hour < 18) {
-  document.body.classList.add("theme-day");
-} else if (hour >= 18 && hour < 23) {
-  document.body.classList.add("theme-evening");
-} else {
-  document.body.classList.add("theme-night");
-}
+  let title =
+    "Добро пожаловать";
 
-  let title = "Добро пожаловать";
-  let sub = "Wi-Fi готов к работе.";
+  let sub =
+    "Wi-Fi готов к работе.";
 
-  if (hour >= 5 && hour < 11) {
+  if (hour >= 6 && hour < 12) {
     title = "Доброе утро";
     sub = "Кофе и интернет уже ждут.";
-  } else if (hour >= 11 && hour < 18) {
+
+  } else if (
+    hour >= 12 &&
+    hour < 18
+  ) {
     title = "Хорошего дня";
     sub = "Интернет есть — можно творить.";
-  } else if (hour >= 18 && hour < 23) {
+
+  } else if (
+    hour >= 18 &&
+    hour < 22
+  ) {
     title = "Уютного вечера";
     sub = "Фильмы, игры и стабильный Wi-Fi.";
+
   } else {
     title = "Ночной режим";
     sub = "Роутер не спит.";
   }
 
-  el.timeBannerTitle.textContent = title;
-  el.timeBannerSub.textContent = sub;
+  if (el.timeBannerTitle) {
+    el.timeBannerTitle.textContent =
+      title;
+  }
+
+  if (el.timeBannerSub) {
+    el.timeBannerSub.textContent =
+      sub;
+  }
 
   if (el.timeBannerArt) {
     el.timeBannerArt.style.backgroundImage =
