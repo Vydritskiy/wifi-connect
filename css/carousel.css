@@ -268,41 +268,104 @@
 }
 
 /* =====================================
-   MOBILE FULL REWRITE
+   MOBILE VERSION
 ===================================== */
 
 @media screen and (max-width:560px){
 
+  /* shell */
+  .carousel-shell{
+    margin-top:6px;
+    padding:0;
+    border-radius:28px;
+  }
+
+  /* viewport */
   .carousel{
     width:100%;
     height:320px;
-    border-radius:28px;
     overflow:hidden;
-    position:relative;
+
+    border-radius:28px;
+    clip-path:inset(0 round 28px);
+    isolation:isolate;
   }
 
+  /* track */
   .track{
+    display:flex;
     height:100%;
+    will-change:transform;
+    transform:translateZ(0);
+
+    transition:
+      transform .55s cubic-bezier(.22,.61,.36,1);
   }
 
+  /* slide */
   .slide{
+    flex:0 0 100%;
     width:100%;
     height:100%;
     padding:0;
-  }
-
-  .slide-card{
-    width:100%;
-    height:100%;
-    padding:12px;
-    border-radius:28px;
     overflow:hidden;
   }
 
-  .slide-inner{
+  /* card */
+  .slide-card{
+    position:relative;
     width:100%;
     height:100%;
+
+    padding:12px;
+    border-radius:28px;
+    overflow:hidden;
+
+    background:var(--glass);
+    border:1px solid var(--stroke);
+
+    backdrop-filter:blur(30px) saturate(180%);
+    -webkit-backdrop-filter:blur(30px) saturate(180%);
+
+    box-shadow:
+      inset 0 1px 0 rgba(255,255,255,.18),
+      inset 0 -2px 0 rgba(0,0,0,.14),
+      0 8px 18px rgba(0,0,0,.08);
+  }
+
+  .slide-card::before{
+    content:"";
+    position:absolute;
+    inset:0;
+    border-radius:28px;
+    pointer-events:none;
+
+    background:
+      radial-gradient(circle at top right,
+        rgba(255,255,255,.12),
+        transparent 30%),
+      linear-gradient(180deg,
+        rgba(255,255,255,.08),
+        transparent 24%);
+  }
+
+  .slide-card::after{
+    content:"";
+    position:absolute;
+    inset:0;
+    border-radius:28px;
+    pointer-events:none;
+
+    box-shadow:
+      inset 0 12px 18px rgba(255,255,255,.04),
+      inset 0 -14px 18px rgba(0,0,0,.06);
+  }
+
+  /* content */
+  .slide-inner{
     position:relative;
+    width:100%;
+    height:100%;
   }
 
   .slide-inner img{
@@ -319,67 +382,95 @@
     position:absolute;
     top:14px;
     left:16px;
-    font-size:18px;
     z-index:5;
+
+    font-size:18px;
+    font-weight:800;
+    line-height:1;
+    letter-spacing:.3px;
+
+    color:rgba(88,103,120,.95);
+
+    text-shadow:
+      0 1px 0 rgba(255,255,255,.08),
+      0 2px 6px rgba(0,0,0,.06);
   }
 
-  /* arrows */
+  /* arrows = desktop style */
   .nav-arrow{
-  position:absolute;
-  top:0;
-  bottom:0;
+    position:absolute;
+    top:0;
+    bottom:0;
 
-  width:8px;
-  z-index:60;
+    width:10px;
+    z-index:999;
 
-  display:flex;
-  align-items:center;
-  justify-content:center;
+    border:none;
+    outline:none;
+    margin:0;
+    padding:0;
 
-  padding:0;
-  margin:0;
-  border:none;
-  outline:none;
+    display:flex;
+    align-items:center;
+    justify-content:center;
 
-  font-size:10px;
-  color:rgba(255,255,255,.72);
+    color:rgba(255,255,255,.82);
+    font-size:11px;
+    line-height:1;
 
-  background:
-    linear-gradient(
-      180deg,
-      rgba(0,0,0,.02),
-      rgba(0,0,0,.08)
-    );
+    background:
+      linear-gradient(
+        180deg,
+        rgba(0,0,0,.04),
+        rgba(0,0,0,.12)
+      );
 
-  transition:.18s ease;
-}
+    transition:
+      width .18s ease,
+      background .18s ease,
+      opacity .18s ease;
+  }
 
-.left{
-  left:0;
-  border-radius:28px 0 0 28px;
-}
+  .left{
+    left:0;
+    border-radius:28px 0 0 28px;
+  }
 
-.right{
-  right:0;
-  border-radius:0 28px 28px 0;
-}
+  .right{
+    right:0;
+    border-radius:0 28px 28px 0;
+  }
 
-.nav-arrow:active{
-  background:rgba(255,255,255,.06);
-}
+  .nav-arrow:active{
+    background:rgba(255,255,255,.10);
+  }
 
   /* dots */
   .dots{
     margin-top:12px;
+
+    display:flex;
+    justify-content:center;
     gap:8px;
   }
 
   .dots span{
     width:8px;
     height:8px;
+    border-radius:999px;
+
+    background:rgba(255,255,255,.24);
+    transition:all .22s ease;
   }
 
   .dots span.active{
     width:22px;
+
+    background:
+      linear-gradient(
+        90deg,
+        var(--accent),
+        var(--accent2)
+      );
   }
 }
