@@ -133,8 +133,8 @@ function renderError(city, msg) {
   }
 
   if (el.superHumidity) {
-    el.superHumidity.textContent = "—";
-  }
+  el.superHumidity.textContent = `влажность ${hum}%`;
+}
 
   if (el.superMeta) {
     el.superMeta.textContent = msg;
