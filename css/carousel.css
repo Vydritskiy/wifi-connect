@@ -268,36 +268,64 @@
 }
 
 /* =====================================
-   MOBILE
+   MOBILE VERSION (clean rewrite)
 ===================================== */
 
-@media (max-width:560px){
+@media screen and (max-width:560px){
 
+  /* card area */
   .carousel{
-    height:360px;
+    width:100%;
+    height:320px;
     border-radius:28px;
+    overflow:hidden;
+  }
+
+  .slide{
+    width:100%;
+    height:100%;
+    padding:0;
   }
 
   .slide-card{
+    width:100%;
     height:100%;
+
+    padding:12px;
     border-radius:28px;
-    padding:14px;
   }
 
+  .slide-inner{
+    width:100%;
+    height:100%;
+    position:relative;
+  }
+
+  /* image */
   .slide-inner img{
-    width:82%;
-    max-height:82%;
+    width:80%;
+    max-height:80%;
+
+    position:absolute;
+    inset:0;
+    margin:auto;
+    object-fit:contain;
   }
 
+  /* title */
   .slide-frequency{
     top:14px;
     left:16px;
-    font-size:20px;
+    font-size:18px;
+    line-height:1;
   }
 
+  /* arrows */
   .nav-arrow{
-    width:18px;
-    font-size:16px;
+    top:0;
+    bottom:0;
+    width:14px;
+    font-size:14px;
   }
 
   .left{
@@ -310,108 +338,18 @@
     border-radius:0 28px 28px 0;
   }
 
+  /* dots */
   .dots{
-    margin-top:14px;
+    margin-top:12px;
+    gap:8px;
   }
 
-  .actions-wrap{
-    margin-top:18px;
-  }
-}
-
-/* =====================================
-   SMALL MOBILE
-===================================== */
-
-@media (max-width:420px){
-
-  .carousel{ height:230px; }
-
-  .slide-inner img{
-    width:72%;
-    max-height:72%;
+  .dots span{
+    width:8px;
+    height:8px;
   }
 
-  .slide-frequency{
-    font-size:16px;
-    top:10px;
-    left:12px;
-  }
-
-  .nav-arrow{
-    width:12px;
-    font-size:12px;
-  }
-}
-
-/* =====================================
-   TABLET
-===================================== */
-
-@media (min-width:561px) and (max-width:900px){
-
-  .carousel{ height:300px; }
-
-  .slide-inner img{
-    width:74%;
-    max-height:74%;
-  }
-}
-
-/* =====================================
-   FORCE MOBILE FIX
-===================================== */
-
-@media screen and (max-width:560px){
-
-  .carousel{
-    height:360px !important;
-    min-height:360px !important;
-    border-radius:28px !important;
-  }
-
-  .slide{
-    height:100% !important;
-  }
-
-  .slide-card{
-    height:100% !important;
-    width:100% !important;
-    border-radius:28px !important;
-    padding:14px !important;
-  }
-
-  .slide-inner{
-    height:100% !important;
-  }
-
-  .slide-inner img{
-    width:82% !important;
-    max-height:82% !important;
-  }
-
-  .slide-frequency{
-    top:14px !important;
-    left:16px !important;
-    font-size:20px !important;
-  }
-
-  .nav-arrow{
-    width:18px !important;
-    font-size:16px !important;
-  }
-
-  .left{
-    left:0 !important;
-    border-radius:28px 0 0 28px !important;
-  }
-
-  .right{
-    right:0 !important;
-    border-radius:0 28px 28px 0 !important;
-  }
-
-  .dots{
-    margin-top:14px !important;
+  .dots span.active{
+    width:22px;
   }
 }
