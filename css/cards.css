@@ -283,16 +283,12 @@
   display:flex;
   flex-direction:column;
   align-items:flex-end;
-  justify-content:space-between;
 
   min-width:140px;
-  min-height:64px;
-  gap:8px;
 }
 
-.super-cond{
-  position:static;
 
+.super-cond{
   font-size:13px;
   line-height:1.2;
   text-align:right;
@@ -300,9 +296,7 @@
 }
 
 .super-humidity{
-  position:static;
-
-  margin-top:auto;
+  margin-top:52px; /* регулируй 48-60px если нужно */
 
   font-size:13px;
   color:var(--text-soft);
