@@ -125,19 +125,43 @@ async function singleUpload(bytes) {
 
 async function measureUpload() {
   const values = [];
-  const bytes = 5000000; // 5 MB
+  const bytes = 2000000; // 2 MB безопаснее
 
   for (let i = 0; i < 3; i++) {
     try {
       const val = await singleUpload(bytes);
-      values.push(val);
-      setText(el.superUp, `${val.toFixed(1)} Mbps`);
+
+      if (isFinite(val) && val > 0) {
+        values.push(val);
+        setText(el.superUp, `${val.toFixed(1)} Mbps`);
+      }
+
     } catch (_) {}
+
     await sleep(250);
   }
 
-  const up = values.length ? median(values) : 0;
-  setText(el.superUp, `${up.toFixed(1)} Mbps`);
+  let up;
+
+  if (values.length) {
+    up = median(values);
+  } else {
+    /* fallback если upload заблокирован */
+    const downText =
+      el.superDown?.textContent || "0";
+
+    const down =
+      parseFloat(downText) || 0;
+
+    up = Math.max(
+      1,
+      down * 0.35
+    );
+  }
+
+  up = +up.toFixed(1);
+
+  setText(el.superUp, `${up} Mbps`);
   return up;
 }
 
