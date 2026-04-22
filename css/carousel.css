@@ -268,112 +268,17 @@
 }
 
 /* =====================================
-   MOBILE = DESKTOP SCALED
+   MOBILE = SAME AS DESKTOP
 ===================================== */
 
 @media screen and (max-width:560px){
 
   .carousel-shell{
-    margin-top:6px;
-    padding:0;
-    border-radius:28px;
+    width:100%;
   }
 
   .carousel{
-    position:relative;
-    overflow:hidden;
-
-    height:320px;          /* сохраняем desktop пропорцию */
-    border-radius:28px;
-
-    clip-path:inset(0 round 28px);
-    isolation:isolate;
-  }
-
-  .track{
-    display:flex;
-    height:100%;
-    will-change:transform;
-    transform:translateZ(0);
-
-    transition:
-      transform .55s cubic-bezier(.22,.61,.36,1);
-  }
-
-  .slide{
-    flex:0 0 100%;
     width:100%;
-    height:100%;
-    padding:0;
-    overflow:hidden;
   }
 
-  .slide-card{
-    position:relative;
-    overflow:hidden;
-
-    width:100%;
-    height:100%;
-
-    padding:14px;
-    border-radius:28px;
-  }
-
-  .slide-card::before,
-  .slide-card::after{
-    border-radius:28px;
-  }
-
-  .slide-inner{
-    position:relative;
-    width:100%;
-    height:100%;
-  }
-
-  .slide-inner img{
-    position:absolute;
-    inset:0;
-    margin:auto;
-
-    width:78%;
-    max-height:78%;
-    object-fit:contain;
-  }
-
-  .slide-frequency{
-    top:16px;
-    left:18px;
-    font-size:20px;
-  }
-
-  .nav-arrow{
-    top:0;
-    bottom:0;
-
-    width:10px;
-    font-size:11px;
-  }
-
-  .left{
-    left:0;
-    border-radius:28px 0 0 28px;
-  }
-
-  .right{
-    right:0;
-    border-radius:0 28px 28px 0;
-  }
-
-  .dots{
-    margin-top:12px;
-  }
-
-  .dots span{
-    width:8px;
-    height:8px;
-  }
-
-  .dots span.active{
-    width:22px;
-  }
 }
