@@ -928,7 +928,7 @@
   }
 
   .weather-center{
-    transform: translateX(-12px);
+    transform: translateX(-11px);
   }
 
   .weather-clock{
@@ -970,7 +970,7 @@
   #weather-up,
   #weather-ping,
   #weather-status{
-    font-size:7px;
+    font-size:10px;
     padding-top:12px;
   }
 
@@ -978,7 +978,7 @@
   #weather-up::before,
   #weather-ping::before,
   #weather-status::before{
-    font-size:10px;
+    font-size:6px;
   }
 
   .carousel{
