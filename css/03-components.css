@@ -995,3 +995,86 @@
     width:36px;
   }
 }
+
+/* LARGE MOBILE */
+@media (min-width: 390px) and (max-width: 767px){
+
+  .card{
+    padding:16px;
+    border-radius:22px;
+  }
+
+  .actions{
+    height:64px;
+    border-radius:20px;
+  }
+
+  .actions .btn-icon,
+  .actions .action-btn svg{
+    width:22px;
+    height:22px;
+  }
+
+  .weather-card{
+    padding:18px;
+    border-radius:22px;
+  }
+
+  .weather-top{
+    grid-template-columns:1fr 132px 1fr;
+    gap:12px;
+  }
+
+  .weather-clock{
+    --clock-size:118px;
+  }
+
+  #weather-city{
+    font-size:20px;
+  }
+
+  #weather-date{
+    font-size:11px;
+  }
+
+  #weather-temp{
+    font-size:36px;
+    margin-top:12px;
+  }
+
+  #weather-meta{
+    font-size:13px;
+    margin-top:10px;
+  }
+
+  #weather-cond{
+    font-size:15px;
+  }
+
+  #weather-humidity,
+  #weather-wind,
+  #weather-pressure{
+    font-size:12px;
+  }
+
+  .weather-bottom{
+    gap:10px;
+    margin-top:14px;
+  }
+
+  #weather-down,
+  #weather-up,
+  #weather-ping,
+  #weather-status{
+    font-size:16px;
+    padding-top:14px;
+  }
+
+  .carousel{
+    min-height:190px;
+  }
+
+  .nav-arrow{
+    width:38px;
+  }
+}
