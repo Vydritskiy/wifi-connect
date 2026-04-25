@@ -932,7 +932,7 @@
   }
 
    .weather-right{
-    transform: translateX(-10px);
+    transform: translateX(-15px);
   }
 }
 
