@@ -932,7 +932,7 @@
   }
 
    .weather-right{
-    transform: translateX(-20px);
+    transform: translateX(-22px);
   }
 }
 
@@ -952,13 +952,13 @@
   }
 
   #weather-cond{
-    font-size:11px;
+    font-size:10px;
   }
 
   #weather-humidity,
   #weather-wind,
   #weather-pressure{
-    font-size:10px;
+    font-size:9px;
     line-height:1.25;
   }
 
