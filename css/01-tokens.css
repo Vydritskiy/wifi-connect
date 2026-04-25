@@ -1,0 +1,213 @@
+
+/* =========================================
+   DESIGN TOKENS (GLOBAL SYSTEM)
+========================================= */
+
+:root {
+  --accent: #4da6ff;
+  --accent2: #7cc8ff;
+
+  --text: #ffffff;
+  --text-soft: rgba(255,255,255,.72);
+
+  --glass: rgba(255,255,255,.10);
+  --glass-strong: rgba(255,255,255,.14);
+  --stroke: rgba(255,255,255,.16);
+
+  --shadow: 0 18px 40px rgba(0,0,0,.25);
+
+  --radius-xl: 28px;
+  --radius-lg: 22px;
+  --radius-md: 18px;
+
+  --wrap: 560px;
+
+  --base-width: 980;
+  --scale: min(calc(100vw / var(--base-width)), 1);
+}
+
+/* =========================================
+   GLOBAL RESET (ENGINE LEVEL)
+========================================= */
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* =========================================
+   HTML CORE ENGINE
+========================================= */
+
+html {
+  font-size: calc(16px * var(--scale));
+  scroll-behavior: smooth;
+}
+
+html,
+body {
+  width: 100%;
+  height: 100%;
+  min-height: 100vh;
+
+  margin: 0;
+  padding: 0;
+
+  background: #05070d;
+  overflow-x: hidden;
+}
+
+/* =========================================
+   BODY CORE LAYER
+========================================= */
+
+body {
+  font-family:
+    -apple-system,
+    BlinkMacSystemFont,
+    "SF Pro Display",
+    "Segoe UI",
+    sans-serif;
+
+  color: var(--text);
+
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
+/* =========================================
+   MEDIA ENGINE SAFETY
+========================================= */
+
+img,
+picture,
+video,
+canvas,
+svg {
+  display: block;
+  max-width: 100%;
+  height: auto;
+}
+
+/* =========================================
+   BUTTON CORE ENGINE (CRITICAL)
+========================================= */
+
+button {
+  all: unset;
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  cursor: pointer;
+
+  font: inherit;
+  color: inherit;
+}
+
+/* =========================================
+   FORM ENGINE
+========================================= */
+
+input,
+textarea,
+select {
+  font: inherit;
+  color: inherit;
+  background: transparent;
+  border: none;
+  outline: none;
+}
+
+/* =========================================
+   LINK ENGINE
+========================================= */
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+/* =========================================
+   LIST ENGINE
+========================================= */
+
+ul,
+ol {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+/* =========================================
+   TYPOGRAPHY CORE
+========================================= */
+
+h1,h2,h3,h4,h5,h6,p {
+  margin: 0;
+  font: inherit;
+}
+
+/* =========================================
+   TABLE CORE
+========================================= */
+
+table {
+  border-collapse: collapse;
+  border-spacing: 0;
+}
+
+/* =========================================
+   ICON ENGINE (CRITICAL FIX FOR UI)
+========================================= */
+
+svg {
+  display: block;
+  flex-shrink: 0;
+  pointer-events: none;
+}
+
+/* =========================================
+   APP ROOT ENGINE (BABYLON SAFE LAYER)
+========================================= */
+
+.app-root {
+  position: relative;
+  min-height: 100vh;
+  width: 100%;
+
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+}
+
+/* =========================================
+   MAIN WRAPPER ENGINE
+========================================= */
+
+.wrapper {
+  width: min(92vw, var(--wrap));
+  margin: 0 auto;
+
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+
+  padding: 26px 16px;
+
+  position: relative;
+  z-index: 2;
+}
+
+/* =========================================
+   SELECTION ENGINE
+========================================= */
+
+::selection {
+  background: rgba(10,132,255,.28);
+  color: #fff;
+}

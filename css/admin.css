@@ -1,0 +1,246 @@
+/* =====================================
+   RESPONSIVE ADMIN PANEL SYSTEM
+===================================== */
+
+/* FLOAT BUTTON */
+
+.admin-toggle {
+  position: fixed;
+  right: clamp(12px, 2vw, 18px);
+  bottom: clamp(12px, 2vw, 18px);
+
+  width: clamp(40px, 5vw, 48px);
+  height: clamp(40px, 5vw, 48px);
+
+  border-radius: 50%;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  font-size: clamp(16px, 2vw, 20px);
+  cursor: pointer;
+
+  z-index: 45;
+
+  color: var(--text);
+  background: var(--glass-strong);
+  border: 1px solid var(--stroke);
+
+  box-shadow: var(--shadow-soft);
+
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+
+  transition:
+    transform .18s ease,
+    background .18s ease;
+}
+
+.admin-toggle:hover {
+  transform: scale(1.04);
+}
+
+.admin-toggle:active {
+  transform: scale(.96);
+}
+
+/* =====================================
+   PANEL ROOT
+===================================== */
+
+.admin-panel {
+  position: fixed;
+  inset: 0;
+
+  z-index: 44;
+  pointer-events: none;
+}
+
+.admin-panel.open {
+  pointer-events: auto;
+}
+
+/* BACKDROP */
+
+.admin-backdrop {
+  position: absolute;
+  inset: 0;
+
+  background: rgba(0,0,0,.28);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+
+  opacity: 0;
+
+  transition:
+    opacity .28s ease;
+}
+
+.admin-panel.open .admin-backdrop {
+  opacity: 1;
+}
+
+/* =====================================
+   BOTTOM SHEET
+===================================== */
+
+.admin-inner {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+
+  width: min(100%, 560px);
+  margin: 0 auto;
+
+  padding:
+    clamp(14px, 2vw, 18px)
+    clamp(14px, 2.4vw, 20px)
+    calc(env(safe-area-inset-bottom) + clamp(18px, 3vw, 24px));
+
+  border-radius:
+    clamp(22px, 4vw, 28px)
+    clamp(22px, 4vw, 28px)
+    0
+    0;
+
+  background: var(--glass);
+  border: 1px solid var(--stroke);
+
+  box-shadow:
+    0 -10px 35px rgba(0,0,0,.18);
+
+  backdrop-filter:
+    blur(34px)
+    saturate(180%);
+
+  -webkit-backdrop-filter:
+    blur(34px)
+    saturate(180%);
+
+  transform: translateY(100%);
+
+  transition:
+    transform .28s cubic-bezier(.22,.61,.36,1);
+}
+
+.admin-panel.open .admin-inner {
+  transform: translateY(0);
+}
+
+/* GRABBER */
+
+.admin-inner::before {
+  content: "";
+
+  display: block;
+
+  width: clamp(36px, 8vw, 42px);
+  height: clamp(4px, 1vw, 5px);
+
+  margin: 0 auto clamp(12px, 2vw, 14px);
+
+  border-radius: 999px;
+
+  background: rgba(255,255,255,.28);
+}
+
+/* =====================================
+   FIELDS
+===================================== */
+
+.admin-row {
+  margin-bottom: clamp(10px, 2vw, 14px);
+}
+
+.admin-row label {
+  display: block;
+
+  margin-bottom: 6px;
+
+  font-size: clamp(12px, 1.8vw, 13px);
+  font-weight: 600;
+
+  color: var(--text-soft);
+}
+
+.admin-row input,
+.admin-row textarea,
+.admin-row select {
+  width: 100%;
+
+  padding:
+    clamp(11px, 2vw, 13px)
+    clamp(12px, 2vw, 14px);
+
+  border-radius: clamp(14px, 2vw, 16px);
+  border: 1px solid var(--stroke);
+
+  background: rgba(255,255,255,.08);
+  color: var(--text);
+
+  font-size: clamp(14px, 2vw, 15px);
+  outline: none;
+
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+}
+
+/* textarea comfort */
+.admin-row textarea {
+  min-height: 90px;
+  resize: vertical;
+}
+
+/* =====================================
+   BUTTONS
+===================================== */
+
+.admin-btn {
+  width: 100%;
+
+  padding:
+    clamp(13px, 2vw, 15px);
+
+  margin-top: clamp(8px, 1.6vw, 10px);
+
+  border: none;
+  border-radius: clamp(14px, 2vw, 16px);
+
+  cursor: pointer;
+
+  font-size: clamp(14px, 2vw, 15px);
+  font-weight: 600;
+
+  transition:
+    transform .14s ease,
+    opacity .18s ease,
+    background .18s ease;
+}
+
+.admin-btn:hover {
+  opacity: .95;
+}
+
+.admin-btn:active {
+  transform: scale(.985);
+}
+
+.admin-btn.save {
+  color: #fff;
+
+  background:
+    linear-gradient(
+      135deg,
+      var(--accent),
+      var(--accent2)
+    );
+}
+
+.admin-btn.reset {
+  color: var(--text);
+
+  background: rgba(255,255,255,.10);
+  border: 1px solid var(--stroke);
+}

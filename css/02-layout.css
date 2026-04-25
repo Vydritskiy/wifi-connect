@@ -1,0 +1,196 @@
+
+/* =====================================
+   GRID SYSTEM CORE
+===================================== */
+
+.ui-grid-3 {
+  display: grid;
+  grid-template-columns: 1fr 160px 1fr;
+  align-items: center;
+  gap: 12px;
+}
+
+.ui-grid-4 {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  align-items: center;
+  gap: 10px;
+}
+
+/* =====================================
+   ALIGNMENT SYSTEM
+===================================== */
+
+.ui-center {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.ui-left {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.ui-right {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+
+  min-width: 140px;
+  max-width: 180px;
+
+  gap: 4px;
+
+  overflow: hidden;
+  text-align: right;
+}
+
+.ui-right * {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* =====================================
+   ICON SYSTEM (FIXED)
+===================================== */
+
+.icon-btn {
+  width: 48px;
+  height: 48px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 14px;
+
+  flex-shrink: 0;
+
+  transition: 0.2s ease;
+}
+
+.icon-btn:hover {
+  transform: translateY(-1px);
+}
+
+.icon-btn:active {
+  transform: scale(0.94);
+}
+
+.icon-btn svg,
+.icon-btn img {
+  width: 20px;
+  height: 20px;
+  object-fit: contain;
+}
+
+/* =====================================
+   BUTTON SYSTEM
+===================================== */
+
+.btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  cursor: pointer;
+
+  transition: 0.2s ease;
+}
+
+.btn:hover {
+  transform: translateY(-1px);
+}
+
+.btn:active {
+  transform: scale(0.96);
+}
+
+/* =====================================
+   CLOCK SYSTEM
+===================================== */
+
+.ui-clock {
+  width: clamp(90px, 10vw, 140px);
+  aspect-ratio: 1 / 1;
+
+  border-radius: 50%;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  position: relative;
+}
+
+/* =====================================
+   WEATHER BLOCK SAFETY
+===================================== */
+
+.weather {
+  min-width: 140px;
+  max-width: 180px;
+
+  overflow: hidden;
+
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+/* =====================================
+   METRICS SYSTEM
+===================================== */
+
+.metrics {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+
+  text-align: center;
+  align-items: center;
+
+  gap: 10px;
+}
+
+.metrics > div {
+  font-size: 12px;
+  font-weight: 500;
+
+  opacity: 0.85;
+}
+
+/* === VISUAL CONSISTENCY FIX (FINAL) === */
+
+.icon-btn,
+.btn,
+.action-btn {
+  border-radius: 14px;
+  transition: .2s ease;
+}
+
+.icon-btn,
+.action-btn {
+  width: 48px;
+  height: 48px;
+}
+
+.icon-btn svg,
+.icon-btn img,
+.action-btn svg,
+.action-btn img {
+  width: 20px;
+  height: 20px;
+}
+
+.ui-right,
+.weather {
+  min-width: 150px;
+}
+
+.metrics > div {
+  font-size: 12px;
+  line-height: 1.2;
+}

@@ -1,0 +1,168 @@
+
+/* =====================================
+   GLOBAL BOX MODEL
+===================================== */
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+/* =====================================
+   ROOT BASE
+===================================== */
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+
+  width: 100%;
+  height: 100%;
+  min-height: 100vh;
+}
+
+/* =====================================
+   BODY CORE (SAFE FOR UI + BABYLON)
+===================================== */
+
+body {
+  line-height: 1.4;
+
+  overflow-x: hidden;
+
+  /* важно: НЕ блокируем scroll полностью */
+  overflow-y: auto;
+
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+
+  text-rendering: optimizeLegibility;
+}
+
+/* =====================================
+   MEDIA SAFETY LAYER
+===================================== */
+
+img,
+picture,
+video,
+canvas,
+svg {
+  display: block;
+  max-width: 100%;
+  height: auto;
+}
+
+/* =====================================
+   BABYLON CANVAS LAYER
+===================================== */
+
+canvas {
+  display: block;
+}
+
+/* background canvas */
+#skyCanvas {
+  position: fixed;
+  inset: 0;
+
+  width: 100%;
+  height: 100%;
+
+  z-index: 0;
+  pointer-events: none;
+
+  transform: translateZ(0);
+}
+
+/* =====================================
+   BUTTON SYSTEM RESET (IMPORTANT FIX)
+===================================== */
+
+button {
+  all: unset;
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  cursor: pointer;
+}
+
+/* =====================================
+   FORM ELEMENTS
+===================================== */
+
+input,
+textarea,
+select {
+  font: inherit;
+  color: inherit;
+  background: transparent;
+  border: none;
+  outline: none;
+}
+
+/* =====================================
+   LINKS
+===================================== */
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+/* =====================================
+   LISTS
+===================================== */
+
+ul,
+ol {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+/* =====================================
+   TYPOGRAPHY RESET
+===================================== */
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+p {
+  margin: 0;
+  font: inherit;
+}
+
+/* =====================================
+   TABLE RESET
+===================================== */
+
+table {
+  border-collapse: collapse;
+  border-spacing: 0;
+}
+
+/* =====================================
+   SVG FIX (ICON STABILITY)
+===================================== */
+
+svg {
+  display: block;
+  flex-shrink: 0;
+}
+
+/* =====================================
+   SELECTION
+===================================== */
+
+::selection {
+  background: rgba(10,132,255,.28);
+  color: #fff;
+}
