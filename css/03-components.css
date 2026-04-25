@@ -931,6 +931,11 @@
     transform: translateX(-11px);
   }
 
+   .weather-right{
+    transform: translateX(-10px);
+  }
+}
+
   .weather-clock{
     --clock-size:108px;
   }
