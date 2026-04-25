@@ -928,11 +928,11 @@
   }
 
   .weather-center{
-    transform: translateX(-15px);
+    transform: translateX(-12px);
   }
 
    .weather-right{
-    transform: translateX(-15px);
+    transform: translateX(-20px);
   }
 }
 
@@ -975,7 +975,7 @@
   #weather-up,
   #weather-ping,
   #weather-status{
-    font-size:6px;
+    font-size:10px;
     padding-top:12px;
   }
 
@@ -983,7 +983,7 @@
   #weather-up::before,
   #weather-ping::before,
   #weather-status::before{
-    font-size:10px;
+    font-size:6px;
   }
 
   .carousel{
