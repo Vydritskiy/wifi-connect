@@ -935,10 +935,10 @@
     --clock-size:108px;
   }
 
-  #weather-city{font-size:18px;}
+  #weather-city{font-size:16px;}
   #weather-date{font-size:11px;}
   #weather-temp{
-    font-size:32px;
+    font-size:26px;
     margin-top:10px;
   }
   #weather-meta{
@@ -947,13 +947,13 @@
   }
 
   #weather-cond{
-    font-size:14px;
+    font-size:12px;
   }
 
   #weather-humidity,
   #weather-wind,
   #weather-pressure{
-    font-size:12px;
+    font-size:10px;
     line-height:1.25;
   }
 
@@ -970,8 +970,8 @@
   #weather-up,
   #weather-ping,
   #weather-status{
-    font-size:15px;
-    padding-top:14px;
+    font-size:11px;
+    padding-top:12px;
   }
 
   #weather-down::before,
