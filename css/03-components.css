@@ -928,7 +928,7 @@
   }
 
   .weather-center{
-    transform:none;
+    transform: translateX(-12px);
   }
 
   .weather-clock{
