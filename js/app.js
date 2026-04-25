@@ -93,6 +93,12 @@ function boot() {
 
   booted = true;
 
+   document.querySelectorAll('.actions .action-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    setTimeout(() => btn.blur(), 50);
+  });
+});
+
   /* 1. UI already loaded instantly */
 
   /* 2. Weather first */
